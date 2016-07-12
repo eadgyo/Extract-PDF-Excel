@@ -1,0 +1,8 @@
+image: maven
+
+test:app:
+    script:
+    - mvn clean install --settings .m2/settings.xml
+notifications:
+  email:
+    - eadgyo@gmail.com
