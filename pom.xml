@@ -4,15 +4,15 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.cora.extractPdfExcel</groupId>
-    <artifactId>extractPdfExcel</artifactId>
+    <groupId>org.cora.extract_pdf_excel</groupId>
+    <artifactId>extract_pdf_excel</artifactId>
     <version>0.1</version>
-<!--
+
     <properties>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>[1.7,)</maven.compiler.source>
+        <maven.compiler.target>[1.7,)</maven.compiler.target>
     </properties>
--->
+
     <packaging>jar</packaging>
 
     <name>PDFToExcelExtractor</name>
@@ -80,7 +80,7 @@
                     <arguments>
                         <argument>-classpath</argument>
                         <classpath/>
-                        <argument>org.cora.extractPdfExcel</argument>
+                        <argument>org.cora.extract_pdf_excel</argument>
                     </arguments>
                 </configuration>
             </plugin>
@@ -116,7 +116,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>org.cora.extractPdfExcel</mainClass>
+                            <mainClass>org.cora.extract_pdf_excel</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

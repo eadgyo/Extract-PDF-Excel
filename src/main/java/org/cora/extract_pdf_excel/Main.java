@@ -1,9 +1,9 @@
-package org.cora.searchengine;
+package org.cora.extract_pdf_excel;
 
 import java.io.IOException;
 
 /**
- * Created by eadgyo on 12/07/16.
+ * Created by Eadgyo on 12/07/16.
  */
 public class Main
 {
