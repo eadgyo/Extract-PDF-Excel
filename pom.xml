@@ -80,7 +80,7 @@
                     <arguments>
                         <argument>-classpath</argument>
                         <classpath/>
-                        <argument>org.cora.searchengine.application.debug.TestApplication</argument>
+                        <argument>org.cora.extractPdfExcel</argument>
                     </arguments>
                 </configuration>
             </plugin>
@@ -116,7 +116,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>org.cora.searchengine.application.debug.TestApplication</mainClass>
+                            <mainClass>org.cora.extractPdfExcel</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
