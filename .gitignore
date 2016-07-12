@@ -1,0 +1,10 @@
+*.iml
+.idea
+.classpath
+.project
+.settings
+target
+bin
+.save
+save
+*.sh
