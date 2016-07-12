@@ -7,12 +7,12 @@
     <groupId>org.cora.extractPdfExcel</groupId>
     <artifactId>extractPdfExcel</artifactId>
     <version>0.1</version>
-
+<!--
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
-
+-->
     <packaging>jar</packaging>
 
     <name>PDFToExcelExtractor</name>
