@@ -1,7 +1,7 @@
 package org.cora.extract_pdf_excel.models;
 
 /**
- * Created by Eadgyo on 14/07/16.
+ * Created by eadgyo on 14/07/16.
  */
 
 import org.cora.extract_pdf_excel.data.block.Block;

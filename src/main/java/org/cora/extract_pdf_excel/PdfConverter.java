@@ -3,18 +3,23 @@ package org.cora.extract_pdf_excel;
 import com.itextpdf.text.pdf.PdfReader;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.cora.extract_pdf_excel.data.ExtractedData;
+import org.cora.extract_pdf_excel.data.ExtractedPage;
 import org.cora.extract_pdf_excel.data.SortedData;
+import org.cora.extract_pdf_excel.data.SortedPage;
 import org.cora.extract_pdf_excel.data.block.Block;
+import org.cora.extract_pdf_excel.data.lane.Lanes;
 import org.cora.extract_pdf_excel.exception.IncorrectFileTypeException;
-import org.cora.extract_pdf_excel.extraction.PdfParser;
+import org.cora.extract_pdf_excel.process.extraction.PdfParser;
 import org.cora.extract_pdf_excel.models.TextBlockIdentifier;
+import org.cora.extract_pdf_excel.process.arrangement.BlockSorter;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
- * Created by Eadgyo on 12/07/16.
+ * Created by eadgyo on 12/07/16.
  */
 
 /**
@@ -107,23 +112,35 @@ public class PdfConverter
      */
     public static SortedData sortTransformedData(ExtractedData extractedData, int axisIndex, int oppositeIndex)
     {
-        /*
-         * <p> Block adding in lane process search first for lower lane. If lane exists, block is compared with
-         * existing
-         * in lane blocks using opposite lane axis  (Y-axis for columns, X-Axis for lines). If there are at least one
-         * block colliding along opposite axis of the lane, insert in higher colliding lane if existing or split current
-         * lane. Else if lower lane doesn't exist create a new lane and insert entity in it.
-         * </p>
-         */
-        /*Lanes columns = new Lanes();
-        Lanes lines   = new Lanes();
-
-        for (extractedData.get:)
+        // For each extractedPage
+        // Start at one
+        for (int i = 1; i <= extractedData.numberOfPages(); i++)
         {
+            ExtractedPage extractedPage = extractedData.getExtractedPage(i);
 
+            // If page has been extracted
+            if (extractedPage != null)
+            {
+                // Start creating sortedPage
+                Lanes columns = new Lanes();
+                Lanes lines   = new Lanes();
+
+                ArrayList<Block> blocks = extractedPage.getBlocks();
+
+                // Sort each block
+                for (int j = 0; j < blocks.size(); j++)
+                {
+                    Block block =  blocks.get(j);
+                    BlockSorter.insertInLanes(block, columns);
+                    BlockSorter.insertInLanes(block, lines);
+                }
+
+                // End sortedPage creation
+                SortedPage sortedPage = new SortedPage();
+
+            }
         }
 
-        InserterInSortedData.insertInLanes(block, columns);*/
 
         // Get lowerLane from block
 

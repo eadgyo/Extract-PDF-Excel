@@ -1,46 +1,58 @@
 package org.cora.extract_pdf_excel.data;
 
-import org.cora.extract_pdf_excel.data.lane.Lanes;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * Created by Eadgyo on 12/07/16.
+ * Created by eadgyo on 12/07/16.
+ */
+
+/**
+ * Blocks sorted in lines and columns, and separated in pages
  */
 public class SortedData
 {
-    private Lanes Columns;
-    private Lanes Lines;
+    private Map<Integer, SortedPage> sortedPages;
 
     public SortedData()
     {
-        Columns = new Lanes();
-        Lines = new Lanes();
+        sortedPages = new HashMap<Integer, SortedPage>();
     }
 
-    public SortedData(Lanes columns, Lanes lines)
+    /**
+     * Insert an sortedPage
+     *
+     * @param pageIndex   index of concerned page
+     * @param sortedPage inserted sortedPage
+     */
+    public void insertPage(int pageIndex, SortedPage sortedPage)
     {
-        Columns = columns;
-        Lines = lines;
+        this.sortedPages.put(pageIndex, sortedPage);
     }
 
-    public Lanes getColumns()
+    /**
+     * Get all blocks in all page
+     *
+     * @return all blocks separated in page
+     */
+    public Map<Integer, SortedPage> getPages()
     {
-        return Columns;
+        return sortedPages;
     }
 
-    public void setColumns(Lanes columns)
+    /**
+     * Get extracted page using his page index
+     *
+     * @param pageIndex index of page
+     * @return page with extracted data
+     */
+    public SortedPage getSortedPage(int pageIndex)
     {
-        Columns = columns;
+        return sortedPages.get(pageIndex);
     }
 
-    public Lanes getLines()
+    public int numberOfPages()
     {
-        return Lines;
+        return sortedPages.size();
     }
-
-    public void setLines(Lanes lines)
-    {
-        Lines = lines;
-    }
-
-
 }

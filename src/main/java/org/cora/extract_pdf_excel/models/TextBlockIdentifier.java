@@ -1,7 +1,7 @@
 package org.cora.extract_pdf_excel.models;
 
 /**
- * Created by Eadgyo on 12/07/16.
+ * Created by eadgyo on 12/07/16.
  */
 public class TextBlockIdentifier
 {
