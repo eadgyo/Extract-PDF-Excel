@@ -1,8 +1,8 @@
 package org.cora.extract_pdf_excel.data.lane;
 
-import com.itextpdf.awt.geom.Rectangle;
 import org.cora.extract_pdf_excel.data.block.Block;
 
+import java.util.Map;
 import java.util.TreeMap;
 
 /**
@@ -17,11 +17,6 @@ public class Lane
     {
         rectangle = new Rect();
         blocks = new TreeMap<Double, Block>();
-    }
-
-    public Rectangle getRectangle()
-    {
-        return rectangle;
     }
 
     public void setRectangle(Rect rectangle)
@@ -109,5 +104,63 @@ public class Lane
             // Change lane higher coordinate to lane higher coordinate
             rectangle.setLength(axis, block.getPos(axis) + block.getLength(axis) - rectangle.getPos(axis));
         }
+    }
+
+    /**
+     * Get block lower than key
+     *
+     * @param key to be checked
+     * @return lower block and his value in map
+     */
+    public Map.Entry<Double, Block> getLowerBlockEntry(double key)
+    {
+        return blocks.lowerEntry(key);
+    }
+
+    /**
+     * Get block lower than key
+     *
+     * @param key to be checked
+     * @return lower block
+     */
+    public Block getLowerBlock(double key)
+    {
+        Map.Entry<Double, Block> lowerBlockEntry = getLowerBlockEntry(key);
+
+        return (lowerBlockEntry != null) ? lowerBlockEntry.getValue() : null;
+    }
+
+    /**
+     * Get block higher than key
+     *
+     * @param key to be checked
+     * @return higher block and his value in map
+     */
+    public Map.Entry<Double, Block> getHigherBlockEntry(double key)
+    {
+        return blocks.higherEntry(key);
+    }
+
+    /**
+     * Get block higher than key
+     *
+     * @param key to be checked
+     * @return higher block
+     */
+    public Block getHigherBlock(double key)
+    {
+        Map.Entry<Double, Block> higherBlockEntry = getHigherBlockEntry(key);
+
+        return (higherBlockEntry != null) ? higherBlockEntry.getValue() : null;
+    }
+
+    public Rect getBound()
+    {
+        return rectangle;
+    }
+
+    public Block remove(Double key)
+    {
+        return blocks.remove(key);
     }
 }
