@@ -1,14 +1,17 @@
 package org.cora.extract_pdf_excel;
 
+import com.itextpdf.text.pdf.PdfReader;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.cora.extract_pdf_excel.data.ExtractedData;
 import org.cora.extract_pdf_excel.data.SortedData;
-import org.cora.extract_pdf_excel.data.TransformedData;
+import org.cora.extract_pdf_excel.data.block.Block;
 import org.cora.extract_pdf_excel.exception.IncorrectFileTypeException;
-import org.cora.extract_pdf_excel.models.BlockMerger;
-import org.cora.extract_pdf_excel.models.StringFormatter;
+import org.cora.extract_pdf_excel.extraction.PdfParser;
 import org.cora.extract_pdf_excel.models.TextBlockIdentifier;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 /**
  * Created by Eadgyo on 12/07/16.
@@ -39,68 +42,124 @@ public class PdfConverter
      * readable throw <tt> NoSuchFileException</tt>.
      * </p>
      *
-     * <p>
-     * TextBlockIdentifier define text behavior detection (detect space with min space size, detect new line with min
-     * height new line...),  StringFormatter clean extracted data. BlockMerger define merge block behavior (block
-     * lines that form paragraph) You can define their behavior by creating modules (StringFormatterModule. They can
-     * combined one or more modules. Combining multiples modules just combine their effects. Effects are applied one
-     * by one, in added order (the first added is the first applied).
-     * </p>
-     *
      * @param path                pdf file location
-     * @param textBlockIdentifier define text parameters like min space size, or new line min height
-     * @param stringFormatter     format extracted text
-     * @param blockMerger         merge text block
+     * @param textBlockIdentifier TextBlockIdentifier define text separation parameters (space between to letters to
+     *                            create a space, height between to letters creating new line).
      *
-     * @return transformedData. It keeps page separation and add map for each page. Map allows your to make fast search
-     * on extracted data.
+     * @return extractedData separate in blocks containing text and position for each page.
      */
-    public static TransformedData extractFromFile(String path,
-                                                  TextBlockIdentifier textBlockIdentifier,
-                                                  StringFormatter stringFormatter,
-                                                  BlockMerger blockMerger) throws FileNotFoundException,
-                                                                                  IncorrectFileTypeException
+    public static ExtractedData extractFromFile(String path,
+                                                TextBlockIdentifier textBlockIdentifier) throws
+                                                                                         FileNotFoundException,
+                                                                                         IncorrectFileTypeException
     {
+        // Create file reader
+        File file = new File(path);
+
+        if (file.exists())
+        {
+            // Create Pdf Extractor using path location
+            PdfReader pdf = null;
+            try
+            {
+                pdf = new PdfReader(path);
+            }
+            catch (IOException e)
+            {
+                // pdf is not readable
+                throw new IncorrectFileTypeException(path);
+            }
+
+            // Pdf is readable
+            // Create parser to extract data from pdf
+            PdfParser parser = new PdfParser(pdf, textBlockIdentifier);
+
+            // Extract all data
+            parser.readAllPage();
+
+            // return extractedData extracted with parser
+            return parser.getExtractedData();
+        }
+        else
+        {
+            throw new FileNotFoundException(path);
+        }
+    }
+
+    /**
+     * Sort extractedData in both columns and lines.
+     *
+     * <p>
+     * Each block in extractedData are processed one by one. Block is first added to the right column, then in
+     * the right line.
+     * </p>
+     *
+     * <p>
+     * axisIndex and oppositeIndex are used to merge Line and Column process.
+     * </p>
+     *
+     * @param extractedData extracted extractedData from extractFromFile process
+     * @param axisIndex axis of lane, 0 for Line and 1 for Column
+     * @param oppositeIndex opposite axis of lane, 1 for Line and 0 for Column
+     *
+     * @return Sorted Data. Data in extractedData are sorted in the right column and line. It keeps page separation.
+     * Columns and lines contained sorted blocks according to Y-axis for columns and X-axis for lines.
+     */
+    public static SortedData sortTransformedData(ExtractedData extractedData, int axisIndex, int oppositeIndex)
+    {
+        /*
+         * <p> Block adding in lane process search first for lower lane. If lane exists, block is compared with
+         * existing
+         * in lane blocks using opposite lane axis  (Y-axis for columns, X-Axis for lines). If there are at least one
+         * block colliding along opposite axis of the lane, insert in higher colliding lane if existing or split current
+         * lane. Else if lower lane doesn't exist create a new lane and insert entity in it.
+         * </p>
+         */
+        /*Lanes columns = new Lanes();
+        Lanes lines   = new Lanes();
+
+        for (extractedData.get:)
+        {
+
+        }
+
+        InserterInSortedData.insertInLanes(block, columns);*/
+
+        // Get lowerLane from block
+
+        // If lowerLane exists AND lowerLane is colliding
+            // Compare block to existing in lane blocks
+            // If there are one block colliding along opposite axis
+                // Take the inserted block or existing block, with higher coordinate
+                // If another lane is colliding with higherBlock
+                    // Save this lane to reinsert blocks
+                    // Change position of this lane as the min of actualLane coordinate and higherBlock coordinate
+                // Else
+                    // Create a new lane and insert it in lanes
+                    // Save lane to reinsert blocks
+
+                // Save lower lane blocks
+                // Clean lower lane
+                // Clear width by setting lower lane length along axis to 0
+                // Set lower lane length along opposite axis to min of actual length and difference of low coordinate
+                // of savedLane and low coordinate of lowerLane to remove savedLane and lowerLane collision.
+
+                // Reinsert all savedBlocks of lowerLane in his corresponding lane (savedLane or lowerLane)
+
+
+        // Else the correct lane does no exist
+            // Create a new lane with block rect
+            // Insert block in created lane
+
+
+
+        // Insert all blocks in sortedData, in the right column and the right line
+
         return null;
     }
 
     /**
-     * Sort transformedData in both columns and lines.
-     *
-     * <p>
-     *
-     * </p>
-     *
-     * <p>
-     * Each entity in transformedData are processed one by one. Entity is first added to the right column, then in the
-     * right
-     * line. Columns and lines are composed of lanes and adding process use the same lane adding process.
-     * </p>
-     *
-     * <p> Entity adding in lane process search first for lower lane. If lane exists, entity is compared with
-     * existing in lane entities. If there are at least one entity colliding along opposite axis of the lane (Y-axis
-     * for columns, X-Axis for lines), insert in higher colliding lane if existing or split current lane. Else if
-     * lower lane doesn't exist create a new lane and insert entity in it.
-     * </p>
-     *
-     * @param transformedData extracted transformedData from extractFromFile process
-     *
-     * @return Sorted Data. Data in transformedData are sorted in the right column and line. It keeps page seperation.
-     * Columns
-     * and lines contained sorted entities according to Y-axis for columns and X-axis for lines.
-     */
-    public static SortedData sortTransformedData(TransformedData transformedData,
-                                                 BlockMerger blockMerger)
-    {
-        return null;
-    }
-
-    /**
-     * Create excel page from intersection of columns and lines computed from sorted data
-     *
-     * <p>
-     *
-     * </p>
+     * Create excel page from sorted data, using 2D array created,
      *
      * @param sortedData data sorted in column and line
      *
@@ -108,6 +167,24 @@ public class PdfConverter
      */
     public static HSSFSheet createExcelPage(SortedData sortedData)
     {
+        // Create 2D array containing blocks using sorted lines and columns from sortedData
+
+        // return created Excel page using 2D array
+
+        return null;
+    }
+
+    /**
+     * Create excel page from 2D array of blocks, filling box with formatted text.
+     *
+     * @param array2OfBlocks 2D array of blocks
+     * @return created excel page using array2OfBlocks
+     */
+    public static HSSFSheet createExcelPage(Block array2OfBlocks[][])
+    {
+        // Fill Excel Sheet with 2D array
+            // Insert text using formatted text
+
         return null;
     }
 }
