@@ -1,6 +1,5 @@
 package org.cora.extract_pdf_excel.process.arrangement;
 
-import org.cora.extract_pdf_excel.data.SortedData;
 import org.cora.extract_pdf_excel.data.block.Block;
 import org.cora.extract_pdf_excel.data.lane.Lane;
 import org.cora.extract_pdf_excel.data.lane.Lanes;
@@ -12,19 +11,28 @@ import java.util.Map;
  */
 public class BlockSorter
 {
-    public static void insertInSortedData(Block block, SortedData sortedData)
-    {
-
-    }
-
-    public static void insertInLanes(Block block, Lanes lanes)
+    /**
+     * Insert block in sorted lanes
+     *
+     * @param axis         axis lane
+     * @param oppositeAxis opposite axis lane
+     * @param block        inserted block
+     * @param lanes        sorted lanes
+     */
+    public static void insertInLanes(int axis, int oppositeAxis, Block block, Lanes lanes)
     {
         // Get lowerLane from block
-        //getLowerLane()
+        Lane lowerLane = getLowerLane(oppositeAxis, block, lanes);
 
         // If lowerLane exists AND lowerLane is colliding
-            // Compare block to existing in lane blocks
-            // If there are one block colliding along opposite axis
+            if (lowerLane != null && isCollidingWithBlock(oppositeAxis, block, lowerLane))
+            {
+                // Compare block to existing in lane blocks
+
+
+            }
+
+            // While there are block colliding along opposite axis
                 // Take the inserted block or existing block, with higher coordinate
                 // If another lane is colliding with higherBlock
                     // Save this lane to reinsert blocks
@@ -49,31 +57,60 @@ public class BlockSorter
     }
 
     /**
-     * Get lowerLane from block
+     * Get lowerLane from block.
+     * Lane are sorted along their opposite axis.
      *
+     * @param oppositeAxis opposite axis of lane
      * @param block used to getPos lower lane
-     * @param axisIndex axis of lane, 0 for Line and 1 for Column
-     * @param oppositeIndex opposite axis of lane, 1 for Line and 0 for Column
+     * @param lanes group of sorted lanes
      *
      * @return lowerLane or null if there is no lower lane
      */
-    private static Lane getLowerLane(Lanes lanes, Block block, int axisIndex, int oppositeIndex)
+    private static Lane getLowerLane(int oppositeAxis, Block block, Lanes lanes)
     {
         // Take higher coordinate of lane to getPos
-        Double key = block.getBound().getPos(axisIndex);
+        Double key = block.getBound().getPos(oppositeAxis);
 
         // Take higher lane which is not colliding
-        Map.Entry<Double, Lane> blockEntry = lanes.getHigherLaneEntry(key);
+        Map.Entry<Double, Lane> higherLaneEntry = lanes.getHigherLaneEntry(key);
 
-        if (blockEntry != null)
+        // If higher lane exists
+        if (higherLaneEntry != null)
         {
-            // Then take lower lane that may be colliding with block
-            return lanes.getLowerLane(blockEntry.getKey());
+            // Then take lower lane that may be colliding with block from higher lane
+            return lanes.getLowerLane(higherLaneEntry.getKey());
         }
         else
         {
+            // Higher lane doesn't exist, there is maybe one lower lane colliding
             return lanes.getLowerLane(key);
         }
+    }
+
+    /**
+     * Test if a block is colliding with a lane
+     *
+     * @param oppositeAxis opposite axis of lane
+     * @param block tested block
+     * @param lane tested lane
+     * @return true if they are colliding, false if they aren't
+     */
+    private static boolean isCollidingWithBlock(int oppositeAxis, Block block, Lane lane)
+    {
+        return block.getPos(oppositeAxis) < lane.getPos(oppositeAxis) + lane.getLength(oppositeAxis) &&
+                block.getPos(oppositeAxis) + block.getLength(oppositeAxis) > lane.getPos(oppositeAxis);
+    }
+
+    /**
+     * Get in lane block colliding with block
+     * @param oppositeAxis opposite lane axis
+     * @param block checked block
+     * @return block that is colliding with checked block, or null if there are no block.
+     */
+    private static Block getInLaneBlockColliding(int oppositeAxis, Block block, Lane lane)
+    {
+        // Get lower block
+        return null;
     }
 
     /**

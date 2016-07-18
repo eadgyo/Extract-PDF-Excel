@@ -12,4 +12,5 @@ package org.cora.extract_pdf_excel.tools;
  */
 public class DefaultStringFormatter
 {
+
 }

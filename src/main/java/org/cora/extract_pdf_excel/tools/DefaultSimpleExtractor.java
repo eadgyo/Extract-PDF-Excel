@@ -457,12 +457,11 @@ public class DefaultSimpleExtractor implements TextExtractionStrategy
         // If main direction along Y
         if (nBlockFacingTop + nBlockFacingBottom > nBlockFacingLeft + nBlockFacingRight)
         {
-            if (nBlockFacingTop > nBlockFacingBottom)
-            {
-                // Facing top
-                // Don't need to change orientation
-            }
-            else
+            /* if (nBlockFacingTop > nBlockFacingBottom)
+             *      Facing top
+             *      Don't need to change orientation
+             */
+            if (nBlockFacingTop <= nBlockFacingBottom)
             {
                 // Facing bottom
                 for (Block block: extractedBlocks)

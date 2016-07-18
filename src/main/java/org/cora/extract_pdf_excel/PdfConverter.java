@@ -9,9 +9,9 @@ import org.cora.extract_pdf_excel.data.SortedPage;
 import org.cora.extract_pdf_excel.data.block.Block;
 import org.cora.extract_pdf_excel.data.lane.Lanes;
 import org.cora.extract_pdf_excel.exception.IncorrectFileTypeException;
-import org.cora.extract_pdf_excel.process.extraction.PdfParser;
 import org.cora.extract_pdf_excel.models.TextBlockIdentifier;
 import org.cora.extract_pdf_excel.process.arrangement.BlockSorter;
+import org.cora.extract_pdf_excel.process.extraction.PdfParser;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -107,11 +107,18 @@ public class PdfConverter
      * @param axisIndex axis of lane, 0 for Line and 1 for Column
      * @param oppositeIndex opposite axis of lane, 1 for Line and 0 for Column
      *
-     * @return Sorted Data. Data in extractedData are sorted in the right column and line. It keeps page separation.
-     * Columns and lines contained sorted blocks according to Y-axis for columns and X-axis for lines.
+     * @return Sorted Data from extracted pages. Data in extractedData are sorted in the right column and line. It
+     * keeps page separation. Columns and lines contained sorted blocks according to Y-axis for columns and X-axis
+     * for lines.
      */
     public static SortedData sortTransformedData(ExtractedData extractedData, int axisIndex, int oppositeIndex)
     {
+        int xAxis = 0;
+        int yAxis = 1;
+
+        // Grouping all sortedPage
+        SortedData sortedData = new SortedData();
+
         // For each extractedPage
         // Start at one
         for (int i = 1; i <= extractedData.numberOfPages(); i++)
@@ -121,58 +128,29 @@ public class PdfConverter
             // If page has been extracted
             if (extractedPage != null)
             {
-                // Start creating sortedPage
+                // Start creating sortedPage data
                 Lanes columns = new Lanes();
                 Lanes lines   = new Lanes();
+                SortedPage sortedPage = new SortedPage(columns, lines);
 
                 ArrayList<Block> blocks = extractedPage.getBlocks();
 
                 // Sort each block
-                for (int j = 0; j < blocks.size(); j++)
+                for (Block block : blocks)
                 {
-                    Block block =  blocks.get(j);
-                    BlockSorter.insertInLanes(block, columns);
-                    BlockSorter.insertInLanes(block, lines);
+                    BlockSorter.insertInLanes(xAxis, yAxis, block, lines);
+                    BlockSorter.insertInLanes(yAxis, xAxis, block, columns);
                 }
 
-                // End sortedPage creation
-                SortedPage sortedPage = new SortedPage();
+                // Link sortedPage to his extractedPage
+                sortedPage.setLinkExtractedPage(extractedPage);
 
+                // Add sortedPage to sortedData
+                sortedData.insertPage(i, sortedPage);
             }
         }
 
-
-        // Get lowerLane from block
-
-        // If lowerLane exists AND lowerLane is colliding
-            // Compare block to existing in lane blocks
-            // If there are one block colliding along opposite axis
-                // Take the inserted block or existing block, with higher coordinate
-                // If another lane is colliding with higherBlock
-                    // Save this lane to reinsert blocks
-                    // Change position of this lane as the min of actualLane coordinate and higherBlock coordinate
-                // Else
-                    // Create a new lane and insert it in lanes
-                    // Save lane to reinsert blocks
-
-                // Save lower lane blocks
-                // Clean lower lane
-                // Clear width by setting lower lane length along axis to 0
-                // Set lower lane length along opposite axis to min of actual length and difference of low coordinate
-                // of savedLane and low coordinate of lowerLane to remove savedLane and lowerLane collision.
-
-                // Reinsert all savedBlocks of lowerLane in his corresponding lane (savedLane or lowerLane)
-
-
-        // Else the correct lane does no exist
-            // Create a new lane with block rect
-            // Insert block in created lane
-
-
-
-        // Insert all blocks in sortedData, in the right column and the right line
-
-        return null;
+        return sortedData;
     }
 
     /**
