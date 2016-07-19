@@ -112,4 +112,47 @@ public class Lanes
 
         return (higherLaneEntry != null) ? higherLaneEntry.getValue() : null;
     }
+
+    /**
+     * Replace key of one lane
+     *
+     * @param oppositeAxis opposite lane axis
+     * @param oldKey old key in map
+     * @param lane linked lane to key
+     */
+    public void replaceKey(int oppositeAxis, double oldKey, Lane lane)
+    {
+        double newKey = lane.getPos(oppositeAxis);
+
+        if (newKey != oldKey)
+        {
+            Lane removedLane = removeLane(oldKey);
+
+            assert (removedLane == lane);
+
+            lanes.put(newKey, lane);
+        }
+    }
+
+    /**
+     * Insert lane in lanes and fit the end of the lane to higher lane.
+     *
+     * @param oppositeAxis opposite lane axis
+     * @param insertedLane inserted lane
+     */
+    public void insertLaneAndFitToHigher(int oppositeAxis, Lane insertedLane)
+    {
+        // Insert lane
+        insertLane(insertedLane.getPos(oppositeAxis), insertedLane);
+
+        // Get higher lane
+        Lane higherLane = getHigherLane(insertedLane.getPos(oppositeAxis));
+
+        // If higher lane exists
+        if (higherLane != null)
+        {
+            // Fit end of inserted lane to higher lane if
+            insertedLane.fitToHigherLane(oppositeAxis, higherLane);
+        }
+    }
 }
