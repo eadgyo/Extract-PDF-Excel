@@ -2,6 +2,8 @@ package org.cora.extract_pdf_excel.models;
 
 /**
  * Created by eadgyo on 12/07/16.
+ * <p/>
+ * Parameters used to identify separation of blocks.
  */
 public class TextBlockIdentifier
 {

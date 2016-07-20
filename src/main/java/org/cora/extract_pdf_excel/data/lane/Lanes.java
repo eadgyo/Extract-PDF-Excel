@@ -5,10 +5,8 @@ import java.util.TreeMap;
 
 /**
  * Created by eadgyo on 12/07/16.
- */
-
-/**
- * Keep lanes sorted
+ * <p/>
+ * Containing sorted lanes.
  */
 public class Lanes
 {

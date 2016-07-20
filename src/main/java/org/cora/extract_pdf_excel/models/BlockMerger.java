@@ -1,14 +1,14 @@
 package org.cora.extract_pdf_excel.models;
 
-/**
- * Created by eadgyo on 14/07/16.
- */
+
 
 import org.cora.extract_pdf_excel.data.block.Block;
 
 import java.util.Collection;
 
 /**
+ * Created by eadgyo on 14/07/16.
+ * <p/>
  * Merge blocks if they respect merge conditions.
  */
 public abstract class BlockMerger

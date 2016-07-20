@@ -6,6 +6,8 @@ import java.util.ArrayList;
 
 /**
  * Created by eadgyo on 16/07/16.
+ * <p/>
+ * Holds blocks in page and pdf length
  */
 public class ExtractedPage
 {

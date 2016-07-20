@@ -14,6 +14,8 @@ import java.util.Set;
 
 /**
  * Created by eadgyo on 12/07/16.
+ * <p/>
+ * Extract blocks from pdf file.
  */
 public class DefaultSimpleExtractor implements TextExtractionStrategy
 {
@@ -45,12 +47,12 @@ public class DefaultSimpleExtractor implements TextExtractionStrategy
     /**
      * Holds all text info stored for one block.
      */
-    private ArrayList<TextRenderInfo> blockTextInfos = new ArrayList<TextRenderInfo>();
+    private ArrayList<TextRenderInfo> blockTextInfos = new ArrayList<>();
 
     /**
      * List of extracted blocks.
      */
-    private ArrayList<Block> extractedBlocks = new ArrayList<Block>();
+    private ArrayList<Block> extractedBlocks = new ArrayList<>();
 
     /**
      * Hold number of text along x or along y to determine pdf orientation.
@@ -209,9 +211,9 @@ public class DefaultSimpleExtractor implements TextExtractionStrategy
         Rect blockRectangle = createBlockRectangle(xMin, xMax, yMin, yMax, direction);
 
         // Add color and font info
-        Set<BaseColor>    fontColors = new HashSet<BaseColor>();
-        Set<BaseColor>    backColors = new HashSet<BaseColor>();
-        Set<DocumentFont> fonts      = new HashSet<DocumentFont>();
+        Set<BaseColor>    fontColors = new HashSet<>();
+        Set<BaseColor>    backColors = new HashSet<>();
+        Set<DocumentFont> fonts      = new HashSet<>();
         for (TextRenderInfo render : blockTextInfos)
         {
             fontColors.add(render.getStrokeColor());
@@ -264,7 +266,7 @@ public class DefaultSimpleExtractor implements TextExtractionStrategy
                                               Vector lastAscent,
                                               Vector lastDescent)
     {
-        if (isBlockAlongY(startLine.get(1), endLine.get(1)))
+        if (isBlockAlongY(startLine.get(1), lastEnd.get(1)))
         {
             // If Up point is before Down point along y axis
             if (lastAscent.get(1) < lastDescent.get(1))
@@ -275,7 +277,7 @@ public class DefaultSimpleExtractor implements TextExtractionStrategy
         else
         {
             // If Left point is before Right point along y axis
-            if (startLine.get(1) < endLine.get(1))
+            if (startLine.get(1) < lastEnd.get(1))
                 return Direction.LEFT;
             else
                 return Direction.RIGHT;
@@ -289,8 +291,6 @@ public class DefaultSimpleExtractor implements TextExtractionStrategy
 
     private Rect createBlockRectangle(double xMin, double xMax, double yMin, double yMax, Direction direction)
     {
-        Rect rect;
-
         double minMaxOfAllText[] = getMinMaxOfAllText(direction);
 
         double startPointX;
@@ -370,7 +370,7 @@ public class DefaultSimpleExtractor implements TextExtractionStrategy
 
         for (TextRenderInfo textRenderInfo : blockTextInfos)
         {
-            double ascentY = blockTextInfos.get(0).getAscentLine().getStartPoint().get(axisIndex);
+            double ascentY = textRenderInfo.getAscentLine().getStartPoint().get(axisIndex);
             if (ascentY < minAscent)
             {
                 minAscent = ascentY;
@@ -386,7 +386,7 @@ public class DefaultSimpleExtractor implements TextExtractionStrategy
 
         for (TextRenderInfo textRenderInfo : blockTextInfos)
         {
-            double ascentY = blockTextInfos.get(0).getAscentLine().getStartPoint().get(axisIndex);
+            double ascentY = textRenderInfo.getAscentLine().getStartPoint().get(axisIndex);
             if (ascentY > maxAscent)
             {
                 maxAscent = ascentY;
@@ -402,7 +402,7 @@ public class DefaultSimpleExtractor implements TextExtractionStrategy
 
         for (TextRenderInfo textRenderInfo : blockTextInfos)
         {
-            double ascentY = blockTextInfos.get(0).getDescentLine().getStartPoint().get(axisIndex);
+            double ascentY = textRenderInfo.getDescentLine().getStartPoint().get(axisIndex);
             if (ascentY < minDescent)
             {
                 minDescent = ascentY;
@@ -418,7 +418,7 @@ public class DefaultSimpleExtractor implements TextExtractionStrategy
 
         for (TextRenderInfo textRenderInfo : blockTextInfos)
         {
-            double ascentY = blockTextInfos.get(0).getDescentLine().getStartPoint().get(axisIndex);
+            double ascentY = textRenderInfo.getDescentLine().getStartPoint().get(axisIndex);
             if (ascentY > maxDescent)
             {
                 maxDescent = ascentY;

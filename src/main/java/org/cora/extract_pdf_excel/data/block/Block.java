@@ -10,6 +10,8 @@ import java.util.Set;
 
 /**
  * Created by eadgyo on 12/07/16.
+ * <p/>
+ * Holds text and bounds.
  */
 public class Block
 {

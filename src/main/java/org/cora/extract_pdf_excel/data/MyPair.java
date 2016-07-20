@@ -4,6 +4,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 /**
  * Created by eadgyo on 19/07/16.
+ *
  */
 public class MyPair<L, R> extends Pair
 {

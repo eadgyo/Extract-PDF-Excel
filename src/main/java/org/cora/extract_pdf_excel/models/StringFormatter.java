@@ -1,15 +1,13 @@
 package org.cora.extract_pdf_excel.models;
 
-/**
- * Created by eadgyo on 14/07/16.
- */
-
 import com.itextpdf.awt.geom.Rectangle;
 import org.cora.extract_pdf_excel.data.block.Block;
 
 import java.util.Collection;
 
 /**
+ * Created by eadgyo on 14/07/16.
+ * <p/>
  * Format text.
  */
 public abstract class StringFormatter

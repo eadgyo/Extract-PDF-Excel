@@ -4,9 +4,7 @@ import org.cora.extract_pdf_excel.data.lane.Lanes;
 
 /**
  * Created by eadgyo on 18/07/16.
- */
-
-/**
+ * <p/>
  * Blocks sorted in columns and lines for one page
  */
 public class SortedPage

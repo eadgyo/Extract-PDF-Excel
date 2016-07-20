@@ -6,6 +6,8 @@ import java.util.*;
 
 /**
  * Created by eadgyo on 12/07/16.
+ * <p/>
+ * Lane containing sorted sorted blocks.
  */
 public class Lane
 {

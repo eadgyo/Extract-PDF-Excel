@@ -5,9 +5,7 @@ import java.util.Map;
 
 /**
  * Created by eadgyo on 12/07/16.
- */
-
-/**
+ * <p/>
  * Blocks sorted in lines and columns, and separated in pages
  */
 public class SortedData

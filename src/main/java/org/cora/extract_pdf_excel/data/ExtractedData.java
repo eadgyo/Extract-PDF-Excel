@@ -7,10 +7,8 @@ import java.util.*;
 
 /**
  * Created by eadgyo on 12/07/16.
- */
-
-/**
- * Hold extracted data separated in pages.
+ * <p/>
+ * Holds extracted data separated in pages.
  */
 public class ExtractedData
 {

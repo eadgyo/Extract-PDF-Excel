@@ -6,6 +6,8 @@ import com.itextpdf.awt.geom.Rectangle;
 
 /**
  * Created by eadgyo on 17/07/16.
+ * <p/>
+ * Rectangle with getter using indexes.
  */
 public class Rect extends Rectangle
 {
