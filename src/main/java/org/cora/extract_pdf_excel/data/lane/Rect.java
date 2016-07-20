@@ -124,4 +124,33 @@ public class Rect extends Rectangle
                 throw new IndexOutOfBoundsException();
         }
     }
+
+    public double getMidPos(int i)
+    {
+        if (i == 0)
+        {
+            return x + width/2;
+        }
+        else if (i == 1)
+        {
+            return y + height/2;
+        }
+        else
+        {
+            throw new IndexOutOfBoundsException();
+        }
+    }
+
+    public double getEndPos(int i)
+    {
+        switch (i)
+        {
+            case 0:
+                return x + width;
+            case 1:
+                return y + height;
+            default:
+                throw new IndexOutOfBoundsException();
+        }
+    }
 }

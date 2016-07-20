@@ -20,19 +20,17 @@ public abstract class BlockMerger
      * @param b second block.
      * @return <tt> true </tt> if two blocks respect merge conditions.
      */
-    public abstract boolean needBlockMerging(Block a, Block b);
+    protected abstract boolean needBlockMerging(Block a, Block b);
 
     /**
      * Merge two blocks, merge their text and rectangle.
      *
-     * @param a first block.
-     * @param b second block.
-     * @return created block from merge of a and b blocks.
+     * @param axis used axis to merge in the right order
+     * @param removedBlock Block that will be removed, and contains first part.
+     * @param mergeBlock Block that will contain two blocks, and contains at input the second part.
+     *
      */
-    public Block mergeBlock(Block a, Block b)
-    {
-        return null;
-    }
+    protected abstract void mergeBlock(int axis, Block removedBlock, Block mergeBlock);
 
     /**
      * Analyse and merge two by two, blocks that are respecting merge conditions.

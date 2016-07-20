@@ -6,6 +6,7 @@ import org.cora.extract_pdf_excel.data.lane.Column;
 import org.cora.extract_pdf_excel.data.lane.Line;
 import org.cora.extract_pdf_excel.data.lane.Rect;
 
+import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -123,7 +124,7 @@ public class Block
         return fonts.contains(font);
     }
 
-    public Set<BaseColor> getFontColor()
+    public Set<BaseColor> getFontColors()
     {
         return fontColors;
     }
@@ -161,5 +162,50 @@ public class Block
     public void setDirection(Direction direction)
     {
         this.direction = direction;
+    }
+
+    public void insertStartFormatted(String formattedText)
+    {
+        this.formattedText = formattedText + this.formattedText;
+    }
+
+    public void insertStartOriginal(String originalText)
+    {
+        this.originalText = originalText + this.originalText;
+    }
+
+    public void insertEndFormatted(String formattedText)
+    {
+        this.formattedText += formattedText;
+    }
+
+    public void insertEndOriginal(String originalText)
+    {
+        this.originalText += originalText;
+    }
+
+    public void addAllBackColors(Collection<BaseColor> backColors)
+    {
+        this.backColors.addAll(backColors);
+    }
+
+    public void addAllFontColors(Collection<BaseColor> fontColors)
+    {
+        this.fontColors.addAll(fontColors);
+    }
+
+    public void addAllFonts(Collection<DocumentFont> fonts)
+    {
+        this.fonts.addAll(fonts);
+    }
+
+    public double getMidPos(int axis)
+    {
+        return bound.getMidPos(axis);
+    }
+
+    public double getEndPos(int axis)
+    {
+        return bound.getEndPos(axis);
     }
 }
