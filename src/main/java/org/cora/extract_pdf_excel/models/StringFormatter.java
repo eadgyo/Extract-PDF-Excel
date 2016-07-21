@@ -28,40 +28,16 @@ public abstract class StringFormatter
     }
 
     /**
-     * Format text using desired format model.
+     * Format collection of blocks containing unformatted text.
      *
-     * @param rawText               unformatted text.
-     * @param outputStartEndRawText newStart and newEnd are new index for the formatted text depending on rawText. They
-     *                              are stored in an array of 2 int. Array have to be initialized before calling this
-     *                              method. Negative value for the newStart means that rawText size have been extended
-     *                              from start. In the same way, newEnd index after the end of rawText means that
-     *                              rawText have been extended from end.
-     *
-     * @return formatted text.
+     * @param rawBlocks collection of blocks containing unformatted text.
      */
-    public abstract String format(String rawText, int outputStartEndRawText[]);
-
-    /**
-     * Update bound size from newStart and newEnd. By default, it update size by removing total size of removed letters.
-     * Size of removed letters is computing as size of space character.
-     *
-     * @param startEndRawText newStart and newEnd indexes.
-     * @param rawText         text without formatting, used to compute change in end index, and update bound end.
-     * @param modifiedBound   rectangle being modified, updating it size from newStart and newEnd indexes.
-     */
-    public void updateSizeBoundOfBlock(int startEndRawText[], String rawText, Rectangle modifiedBound)
+    public void formatBlocks(Collection<Block> rawBlocks)
     {
-        // Compute start and end difference
-        // (newIndex - lastIndex) * sizeOfSpaceCharacter
-        double deltaStart = startEndRawText[0] * sizeSpaceCharacter;
-        double deltaEnd = (startEndRawText[1] - rawText.length()) * sizeSpaceCharacter;
-
-        // Update start and end of bound
-        modifiedBound.x = modifiedBound.x - deltaStart;
-        modifiedBound.width = modifiedBound.width - deltaEnd;
-
-        // If rectangle width is negative or null, we just approximate width as series of space characters
-        modifiedBound.width = rawText.length() * sizeSpaceCharacter;
+        for (Block rawBlock : rawBlocks)
+        {
+            formatBlock(rawBlock);
+        }
     }
 
     /**
@@ -69,7 +45,7 @@ public abstract class StringFormatter
      *
      * @param rawBlock block containing unformatted text.
      */
-    public void formatBlock(Block rawBlock)
+    protected void formatBlock(Block rawBlock)
     {
         // Will store newStart and newEnd of the formattedText.
         // Will be used to update rectangle size of rawBlock
@@ -86,15 +62,39 @@ public abstract class StringFormatter
     }
 
     /**
-     * Format collection of blocks containing unformatted text.
+     * Format text using desired format model.
      *
-     * @param rawBlocks collection of blocks containing unformatted text.
+     * @param rawText               unformatted text.
+     * @param outputStartEndRawText newStart and newEnd are new index for the formatted text depending on rawText. They
+     *                              are stored in an array of 2 int. Array have to be initialized before calling this
+     *                              method. Negative value for the newStart means that rawText size have been extended
+     *                              from start. In the same way, newEnd index after the end of rawText means that
+     *                              rawText have been extended from end.
+     *
+     * @return formatted text.
      */
-    public void formatBlocks(Collection<Block> rawBlocks)
+    public abstract String format(String rawText, int outputStartEndRawText[]);
+
+    /**
+     * Update bounds length after changing start and end. By default, it update size by removing total size of removed
+     * letters. Size of removed letters is computing as size of space character.
+     *
+     * @param startEndRawText newStart and newEnd indexes.
+     * @param rawText         text without formatting, used to compute change in end index, and update bound end.
+     * @param modifiedBound   rectangle being modified, updating it size from newStart and newEnd indexes.
+     */
+    private void updateSizeBoundOfBlock(int startEndRawText[], String rawText, Rectangle modifiedBound)
     {
-        for (Block rawBlock : rawBlocks)
-        {
-            formatBlock(rawBlock);
-        }
+        // Compute start and end difference
+        // (newIndex - lastIndex) * sizeOfSpaceCharacter
+        double deltaStart = startEndRawText[0] * sizeSpaceCharacter;
+        double deltaEnd   = (startEndRawText[1] - rawText.length()) * sizeSpaceCharacter;
+
+        // Update start and end of bound
+        modifiedBound.x = modifiedBound.x - deltaStart;
+        modifiedBound.width = modifiedBound.width - deltaEnd;
+
+        // If rectangle width is negative or null, we just approximate width as series of space characters
+        modifiedBound.width = rawText.length() * sizeSpaceCharacter;
     }
 }

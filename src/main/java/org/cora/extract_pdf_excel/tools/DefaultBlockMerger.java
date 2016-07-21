@@ -2,6 +2,7 @@ package org.cora.extract_pdf_excel.tools;
 
 import org.cora.extract_pdf_excel.data.block.Block;
 import org.cora.extract_pdf_excel.data.lane.MyUnique;
+import org.cora.extract_pdf_excel.models.BlockMerger;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -11,19 +12,39 @@ import java.util.Iterator;
  * <p/>
  * Merge blocks if they are too close, have at the least one same fontColor and one same backColor.
  */
-public class DefaultBlockMerger
+public class DefaultBlockMerger extends BlockMerger
 {
     /**
-     * Check two by two, if blocks need to be merged and merged them.
+     * threshold factor distance used to know if two blocks are near
+     */
+    private double threshold_dist_factor;
+    /**
+     * threshold factor to allow alignment
+     */
+    private double threshold_align_factor;
+    /**
+     * max threshold to allow alignment
+     */
+    private double max_align_threshold;
+
+    /**
      * @param threshold_dist_factor  threshold factor distance used to know if two blocks are near
      * @param threshold_align_factor threshold factor to allow alignment
-     * @param max_align_threshold    max threshold to allow alignment
-     * @param blocks                 list of blocks need to be checked and merged if needed
+     * @param max_align_threshold    max_align_threshold
      */
-    public static void mergeIfNecessaryBlocks(double threshold_dist_factor,
-                                              double threshold_align_factor,
-                                              double max_align_threshold,
-                                              Collection<Block> blocks)
+    public DefaultBlockMerger(double threshold_dist_factor, double threshold_align_factor, double max_align_threshold)
+    {
+        this.threshold_dist_factor = threshold_dist_factor;
+        this.threshold_align_factor = threshold_align_factor;
+        this.max_align_threshold = max_align_threshold;
+    }
+
+    /**
+     * Check two by two, if blocks need to be merged and merged them.
+     *
+     * @param blocks list of blocks need to be checked and merged if needed
+     */
+    public void mergeIfNecessaryBlocks(Collection<Block> blocks)
     {
         if (blocks.size() < 2)
             return;
@@ -58,13 +79,13 @@ public class DefaultBlockMerger
     }
 
     /**
-     * Check if two blocks need to be merged.
+     * Determine if two blocks respect merge conditions.
      *
-     * @param threshold_dist_factor  threshold factor distance used to know if two blocks are near
-     * @param threshold_align_factor threshold factor to allow alignment
-     * @param max_align_threshold    max threshold to allow alignment
-     * @param first                  first block checked
-     * @param second                 second block checked
+     * @param threshold_dist_factor   threshold factor distance used to know if two blocks are near
+     * @param threshold_align_factor  threshold factor to allow alignment
+     * @param max_align_threshold     max threshold to allow alignment
+     * @param first                   first block checked
+     * @param second                  second block checked
      * @param outputIsFirstLowerBlock used to store lowerBlock comparaison result
      *
      * @return true if two blocks need to be merged, false if they don't
@@ -111,6 +132,13 @@ public class DefaultBlockMerger
                 haveMatchingTypes(first, second);
     }
 
+    /**
+     * Merge two blocks, merge their text and rectangle.
+     *
+     * @param isRemovedBlockLower used test comparison to order contents
+     * @param removedBlock        Block that will be removed, and contains first part.
+     * @param mergeBlock          Block that will contain two blocks, and contains at input the second part.
+     */
     private static void mergeBlock(Boolean isRemovedBlockLower, Block removedBlock, Block mergeBlock)
     {
         if (isRemovedBlockLower)
