@@ -19,6 +19,9 @@ public class DefaultBlockRemover extends BlockRemover
      */
     private Rect bounds;
 
+    /**
+     * @param bounds bound delimiting valid blocks.
+     */
     public DefaultBlockRemover(Rect bounds)
     {
         this.bounds = bounds;
@@ -38,11 +41,27 @@ public class DefaultBlockRemover extends BlockRemover
         }
     }
 
+    /**
+     * Check if two rectangles are colliding
+     * @param rect1 first rectangle checked
+     * @param rect2 second rectangle checked
+     * @return true if they are colliding, false if they are not colliding
+     */
     private static boolean areRectColliding(Rect rect1, Rect rect2)
     {
-        return rect1.getPos(0) < rect2.getPos(0) + rect2.getLength(0) &&
-                rect1.getPos(0) + rect1.getLength(0) > rect2.getPos(0) &&
-                rect1.getPos(1) < rect2.getPos(1) + rect2.getLength(1) &&
-                rect1.getPos(1) + rect1.getLength(1) > rect2.getPos(1);
+        return areCollidingOnAxis(0, rect1, rect2) && areCollidingOnAxis(1, rect1, rect2);
+    }
+
+    /**
+     * Check if two rectangles are colliding along on axis
+     * @param axis checked axis
+     * @param rect1 first rectangle checked
+     * @param rect2 second rectangle checked
+     * @return true if they are colliding along axis, false if they are not colliding along axis
+     */
+    private static boolean areCollidingOnAxis(int axis, Rect rect1, Rect rect2)
+    {
+        return rect1.getPos(axis) < rect2.getPos(axis) + rect2.getLength(axis) &&
+                rect1.getPos(axis) + rect1.getLength(axis) > rect2.getPos(axis);
     }
 }
