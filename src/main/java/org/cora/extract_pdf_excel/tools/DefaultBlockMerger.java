@@ -1,6 +1,7 @@
 package org.cora.extract_pdf_excel.tools;
 
 import org.cora.extract_pdf_excel.data.block.Block;
+import org.cora.extract_pdf_excel.data.lane.MyUnique;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -12,20 +13,17 @@ import java.util.Iterator;
  */
 public class DefaultBlockMerger
 {
-    private static int getOppositeAxis(int axis)
-    {
-        switch (axis)
-        {
-            case 0:
-                return 1;
-            case 1:
-                return 0;
-            default:
-                return -1;
-        }
-    }
-
-    public static void mergeIfNecessaryBlocks(int axis, double threshold_merge_factor, Collection<Block> blocks)
+    /**
+     * Check two by two, if blocks need to be merged and merged them.
+     * @param threshold_dist_factor  threshold factor distance used to know if two blocks are near
+     * @param threshold_align_factor threshold factor to allow alignment
+     * @param max_align_threshold    max threshold to allow alignment
+     * @param blocks                 list of blocks need to be checked and merged if needed
+     */
+    public static void mergeIfNecessaryBlocks(double threshold_dist_factor,
+                                              double threshold_align_factor,
+                                              double max_align_threshold,
+                                              Collection<Block> blocks)
     {
         if (blocks.size() < 2)
             return;
@@ -39,10 +37,16 @@ public class DefaultBlockMerger
             second = first;
             first = iterator.next();
 
-            if (needBlockMerging(axis, threshold_merge_factor, first, second))
+            MyUnique<Boolean> outputIsFirstLowerBlock = new MyUnique<>();
+            if (needBlockMerging(threshold_dist_factor,
+                                 threshold_align_factor,
+                                 max_align_threshold,
+                                 first,
+                                 second,
+                                 outputIsFirstLowerBlock))
             {
                 // Merge blocks
-                mergeBlock(axis, first, second);
+                mergeBlock(outputIsFirstLowerBlock.getT(), first, second);
 
                 // Remove first block
                 iterator.remove();
@@ -53,19 +57,63 @@ public class DefaultBlockMerger
         }
     }
 
-    private static boolean needBlockMerging(int axis, double threshold_merge_factor, Block first, Block second)
+    /**
+     * Check if two blocks need to be merged.
+     *
+     * @param threshold_dist_factor  threshold factor distance used to know if two blocks are near
+     * @param threshold_align_factor threshold factor to allow alignment
+     * @param max_align_threshold    max threshold to allow alignment
+     * @param first                  first block checked
+     * @param second                 second block checked
+     * @param outputIsFirstLowerBlock used to store lowerBlock comparaison result
+     *
+     * @return true if two blocks need to be merged, false if they don't
+     */
+    private static boolean needBlockMerging(double threshold_dist_factor,
+                                            double threshold_align_factor,
+                                            double max_align_threshold,
+                                            Block first,
+                                            Block second,
+                                            MyUnique<Boolean> outputIsFirstLowerBlock)
     {
+        // Axis of the line passing through the text
         int sameOrientationAxis = getSameOrientationAxis(first, second);
 
-        return sameOrientationAxis != -1 &&
+        // If they have not the same orientation
+        if (sameOrientationAxis == -1)
+        {
+            return false;
+        }
 
-                areNear(axis, threshold_merge_factor, first, second) &&
+        // Axis perpendicular to the text line
+        int oppositeAxis = getOppositeAxis(sameOrientationAxis);
+
+        // Store block lower comparison
+        outputIsFirstLowerBlock.setT(first.getPos(oppositeAxis) < second.getPos(oppositeAxis));
+
+        Block higherBLock;
+        Block lowerBlock;
+
+        // If first is lower than second block
+        if (outputIsFirstLowerBlock.getT())
+        {
+            lowerBlock = first;
+            higherBLock = second;
+        }
+        else
+        {
+            lowerBlock = second;
+            higherBLock = first;
+        }
+
+        return areAlign(sameOrientationAxis, lowerBlock, higherBLock, threshold_align_factor, max_align_threshold) &&
+                areNear(oppositeAxis, threshold_dist_factor, lowerBlock, higherBLock) &&
                 haveMatchingTypes(first, second);
     }
 
-    private static void mergeBlock(int axis, Block removedBlock, Block mergeBlock)
+    private static void mergeBlock(Boolean isRemovedBlockLower, Block removedBlock, Block mergeBlock)
     {
-        if (removedBlock.getPos(axis) < mergeBlock.getPos(axis))
+        if (isRemovedBlockLower)
         {
             // Add the removed block content before merge block's contents
             mergeBlock.insertStartFormatted(removedBlock.getFormattedText());
@@ -89,15 +137,19 @@ public class DefaultBlockMerger
     }
 
     /**
-     * Test if two blocks have the same orientation.
+     * Get shared axis orientation. The axis orientation is the axis of the text line.
      *
      * @param first  first block checked
      * @param second second block checked
      *
-     * @return their orientation axis if they have the same orientation, or -1 if they have different orientation
+     * @return orientation axis if they have the same orientation, or -1 if they have different orientation.
      */
     private static int getSameOrientationAxis(Block first, Block second)
     {
+        // If they have the same text orientation
+        if (first.getTextOrientation() == second.getTextOrientation())
+            return -1;
+
         // Get first block direction
         boolean firstDirection          = first.getLength(0) > first.getLength(1);
         boolean firstFacingOrientationX = first.getLength(0) > 0;
@@ -124,6 +176,61 @@ public class DefaultBlockMerger
         }
     }
 
+    private static int getOppositeAxis(int axis)
+    {
+        switch (axis)
+        {
+            case 0:
+                return 1;
+            case 1:
+                return 0;
+            default:
+                return -1;
+        }
+    }
+
+    /**
+     * Check if two blocks are aligned on start, middle or end.
+     *
+     * @param axis                   used axis to check alignment
+     * @param lowerBlock             first checked block
+     * @param higherBlock            second checked block
+     * @param threshold_align_factor threshold factor used to check align
+     * @param max_align_threshold    the maximum threshold used for align detection
+     *
+     * @return true if blocks are aligned on Start, Mid, or End point, return false if they aren't aligned
+     */
+    private static boolean areAlign(int axis,
+                                    Block lowerBlock,
+                                    Block higherBlock,
+                                    double threshold_align_factor,
+                                    double max_align_threshold)
+    {
+        double threshold = Math.min(Math.max(lowerBlock.getPos(axis),
+                                             higherBlock.getPos(axis)) * threshold_align_factor, max_align_threshold);
+
+        double startDifference = lowerBlock.getPos(axis) - higherBlock.getPos(axis);
+
+        // If two blocks are start aligned
+        if (startDifference >= -threshold / 4 && startDifference < threshold / 2)
+            return true;
+
+        double middleDifference = Math.abs(lowerBlock.getMidPos(axis) - higherBlock.getMidPos(axis));
+
+        // If two blocks are middle aligned
+        if (middleDifference < threshold)
+            return true;
+
+        double endDifference = higherBlock.getEndPos(axis) - lowerBlock.getEndPos(axis);
+
+        // If two blocks are end aligned
+        if (endDifference >= -threshold / 4 && endDifference < threshold / 2)
+            return true;
+
+        // No alignement
+        return false;
+    }
+
     /**
      * Test if two blocks are near.
      *
@@ -138,7 +245,7 @@ public class DefaultBlockMerger
     {
         return Math.abs(lowerBlock.getPos(axis) + lowerBlock.getLength(axis) - higherBlock.getPos(axis)) <
                 threshold_near_factor *
-                Math.min(lowerBlock.getLength(axis), higherBlock.getLength(axis));
+                        Math.min(lowerBlock.getLength(axis), higherBlock.getLength(axis));
     }
 
     /**
@@ -196,48 +303,4 @@ public class DefaultBlockMerger
         }
         return false;
     }
-
-    /**
-     * Check if two blocks are aligned on start, middle or end.
-     *
-     * @param axis                   used axis to check alignment
-     * @param lowerBlock             first checked block
-     * @param higherBlock            second checked block
-     * @param threshold_align_factor threshold factor used to check align
-     * @param max_align_threshold    the maximum threshold used for align detection
-     *
-     * @return true if blocks are aligned on Start, Mid, or End point, return false if they aren't aligned
-     */
-    private static boolean areAlign(int axis,
-                                    Block lowerBlock,
-                                    Block higherBlock,
-                                    double threshold_align_factor,
-                                    double max_align_threshold)
-    {
-        double threshold = Math.min(Math.max(lowerBlock.getPos(axis),
-                                             higherBlock.getPos(axis)) * threshold_align_factor, max_align_threshold);
-
-        double startDifference = lowerBlock.getPos(axis) - higherBlock.getPos(axis);
-
-        // If two blocks are start aligned
-        if (startDifference >= -threshold / 4 && startDifference < threshold / 2)
-            return true;
-
-        double middleDifference = Math.abs(lowerBlock.getMidPos(axis) - higherBlock.getMidPos(axis));
-
-        // If two blocks are middle aligned
-        if (middleDifference < threshold)
-            return true;
-
-        double endDifference = higherBlock.getEndPos(axis) - lowerBlock.getEndPos(axis);
-
-        // If two blocks are end aligned
-        if (endDifference >= -threshold / 4 && endDifference < threshold / 2)
-            return true;
-
-        // No alignement
-        return false;
-    }
-
-
 }

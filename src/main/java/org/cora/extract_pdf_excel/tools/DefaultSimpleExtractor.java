@@ -467,19 +467,19 @@ public class DefaultSimpleExtractor implements TextExtractionStrategy
                 for (Block block: extractedBlocks)
                 {
                     // Transform to top orientation
-                    switch (block.getDirection())
+                    switch (block.getBlockOrientation())
                     {
                         case LEFT:
-                            block.setDirection(Direction.RIGHT);
+                            block.setBlockOrientation(Direction.RIGHT);
                             break;
                         case RIGHT:
-                            block.setDirection(Direction.LEFT);
+                            block.setBlockOrientation(Direction.LEFT);
                             break;
                         case TOP:
-                            block.setDirection(Direction.BOTTOM);
+                            block.setBlockOrientation(Direction.BOTTOM);
                             break;
                         case BOTTOM:
-                            block.setDirection(Direction.TOP);
+                            block.setBlockOrientation(Direction.TOP);
                             break;
                     }
 
@@ -500,19 +500,19 @@ public class DefaultSimpleExtractor implements TextExtractionStrategy
                 for (Block block: extractedBlocks)
                 {
                     // Transform direction
-                    switch (block.getDirection())
+                    switch (block.getBlockOrientation())
                     {
                         case LEFT:
-                            block.setDirection(Direction.TOP);
+                            block.setBlockOrientation(Direction.TOP);
                             break;
                         case RIGHT:
-                            block.setDirection(Direction.BOTTOM);
+                            block.setBlockOrientation(Direction.BOTTOM);
                             break;
                         case TOP:
-                            block.setDirection(Direction.RIGHT);
+                            block.setBlockOrientation(Direction.RIGHT);
                             break;
                         case BOTTOM:
-                            block.setDirection(Direction.LEFT);
+                            block.setBlockOrientation(Direction.LEFT);
                             break;
                     }
 
@@ -540,19 +540,19 @@ public class DefaultSimpleExtractor implements TextExtractionStrategy
                 // Facing right
                 for (Block block: extractedBlocks)
                 {
-                    switch (block.getDirection())
+                    switch (block.getBlockOrientation())
                     {
                         case LEFT:
-                            block.setDirection(Direction.BOTTOM);
+                            block.setBlockOrientation(Direction.BOTTOM);
                             break;
                         case RIGHT:
-                            block.setDirection(Direction.TOP);
+                            block.setBlockOrientation(Direction.TOP);
                             break;
                         case TOP:
-                            block.setDirection(Direction.LEFT);
+                            block.setBlockOrientation(Direction.LEFT);
                             break;
                         case BOTTOM:
-                            block.setDirection(Direction.RIGHT);
+                            block.setBlockOrientation(Direction.RIGHT);
                             break;
                     }
 

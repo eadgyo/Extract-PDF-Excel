@@ -24,15 +24,16 @@ public class Block
 
     private Rect bound;
 
+    private Direction textOrientation;
+    private Direction blockOrientation;
+
     private Set<BaseColor> fontColors;
     private Set<BaseColor> backColors;
     private Set<DocumentFont> fonts;
 
-    private Direction direction;
-
     public Block(String originalText,
                  Rect bound,
-                 Direction direction,
+                 Direction blockOrientation,
                  Set<BaseColor> fontColors,
                  Set<BaseColor> backColors,
                  Set<DocumentFont> fonts)
@@ -41,7 +42,7 @@ public class Block
         this.formattedText = originalText;
 
         this.bound = bound;
-        this.direction = direction;
+        this.blockOrientation = blockOrientation;
 
         this.fontColors = fontColors;
         this.backColors = backColors;
@@ -49,13 +50,25 @@ public class Block
         this.line = null;
         this.column = null;
 
-        this.direction = null;
+        this.blockOrientation = null;
+        this.textOrientation = null;
+
         this.fonts = fonts;
     }
 
     /*
      * Getter and setter
      */
+    public Direction getTextOrientation()
+    {
+        return textOrientation;
+    }
+
+    public void setTextOrientation(Direction textOrientation)
+    {
+        this.textOrientation = textOrientation;
+    }
+
     public String getFormattedText()
     {
         return formattedText;
@@ -154,14 +167,14 @@ public class Block
         return backColors.contains(backColor);
     }
 
-    public Direction getDirection()
+    public Direction getBlockOrientation()
     {
-        return direction;
+        return blockOrientation;
     }
 
-    public void setDirection(Direction direction)
+    public void setBlockOrientation(Direction blockOrientation)
     {
-        this.direction = direction;
+        this.blockOrientation = blockOrientation;
     }
 
     public void insertStartFormatted(String formattedText)
