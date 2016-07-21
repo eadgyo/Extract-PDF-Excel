@@ -6,6 +6,7 @@ import org.cora.extract_pdf_excel.data.ExtractedData;
 import org.cora.extract_pdf_excel.data.ExtractedPage;
 import org.cora.extract_pdf_excel.data.SortedData;
 import org.cora.extract_pdf_excel.data.SortedPage;
+import org.cora.extract_pdf_excel.data.array.My2DArray;
 import org.cora.extract_pdf_excel.data.block.Block;
 import org.cora.extract_pdf_excel.data.lane.Lanes;
 import org.cora.extract_pdf_excel.exception.IncorrectFileTypeException;
@@ -156,24 +157,38 @@ public class PdfConverter
      *
      * @param sortedData data sorted in column and line
      *
-     * @return excel sheet
+     * @return excel list of sheets
      */
-    public static HSSFSheet createExcelPage(SortedData sortedData)
+    public static ArrayList<HSSFSheet> createExcelPages(SortedData sortedData)
     {
-        // Create 2D array containing blocks using sorted lines and columns from sortedData
+        ArrayList<HSSFSheet> excelSheets = new ArrayList<>();
 
+        for (int pageIndex = 0; pageIndex < sortedData.numberOfPages(); pageIndex++)
+        {
+            // Get sortedPage
+            SortedPage sortedPage = sortedData.getSortedPage(pageIndex);
+
+            // If page exists (has been loaded)
+            if (sortedPage != null)
+            {
+                // Create 2D array containing blocks using sorted lines and columns from sortedData
+                My2DArray<Block> arrayOfBlocks = sortedPage.create2DArrayOfBlocks();
+                HSSFSheet        excelPage     = createExcelPage(arrayOfBlocks);
+                excelSheets.add(excelPage);
+            }
+        }
         // return created Excel page using 2D array
 
-        return null;
+        return excelSheets;
     }
 
     /**
      * Create excel page from 2D array of blocks, filling box with formatted text.
      *
-     * @param array2OfBlocks 2D array of blocks
+     * @param array2DBlocks 2D array of blocks
      * @return created excel page using array2OfBlocks
      */
-    public static HSSFSheet createExcelPage(Block array2OfBlocks[][])
+    public static HSSFSheet createExcelPage(My2DArray<Block> array2DBlocks)
     {
         // Fill Excel Sheet with 2D array
             // Insert text using formatted text

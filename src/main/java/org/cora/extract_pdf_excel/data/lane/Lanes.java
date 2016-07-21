@@ -1,5 +1,7 @@
 package org.cora.extract_pdf_excel.data.lane;
 
+import org.cora.extract_pdf_excel.data.block.Block;
+
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -88,6 +90,30 @@ public class Lanes
     }
 
     /**
+     * Get ceiling lower than key
+     *
+     * @param key to be checked
+     * @return ceiling lane and his value in map
+     */
+    public Map.Entry<Double, Lane> getCeilingLaneEntry(double key)
+    {
+        return lanes.ceilingEntry(key);
+    }
+
+    /**
+     * Get ceiling lower than key
+     *
+     * @param key to be checked
+     * @return ceiling lane
+     */
+    public Lane getCeilingLane(double key)
+    {
+        Map.Entry<Double, Lane> ceilingLaneEntry = getCeilingLaneEntry(key);
+
+        return (ceilingLaneEntry != null) ? ceilingLaneEntry.getValue() : null;
+    }
+
+    /**
      * Get lane higher than key
      *
      * @param key to be checked
@@ -152,5 +178,68 @@ public class Lanes
             // Fit end of inserted lane to higher lane if
             insertedLane.fitToHigherLane(oppositeAxis, higherLane);
         }
+    }
+
+    /**
+     * Get the index of block in lanes
+     *
+     * @param oppositeAxis opposite lane axis
+     * @param block check block
+     *
+     * @return lane index containing block or -1 if block is not present or block's rectangle has no link.
+     */
+    public int getLaneIndexOfBlock(int oppositeAxis, Block block)
+    {
+        Lane blockLane = getCeilingLane(block.getPos(oppositeAxis));
+        if (blockLane == null)
+            return -1;
+
+        // Get the index of the block lane
+        return getLaneIndex(blockLane);
+    }
+
+    /**
+     * Get the index of the lane
+     *
+     * @param lane checked lane
+     *
+     * @return index or -1 if lane doesn't exist
+     */
+    public int getLaneIndex(Lane lane)
+    {
+        // Get the first element
+        Map.Entry<Double, Lane> firstEntry = lanes.firstEntry();
+
+        // If the first element is the searched one
+        if (firstEntry.getValue() == lane)
+            return 0;
+
+        Map.Entry<Double, Lane> lastEntry = lanes.lastEntry();
+        Map.Entry<Double, Lane> actualEntry = firstEntry;
+        int actualLaneIndex = 0;
+
+        // Parse the rest until we got the last
+        while (actualEntry != lastEntry)
+        {
+            // Get the higher lane
+            actualLaneIndex++;
+            actualEntry = lanes.higherEntry(actualEntry.getKey());
+
+            // If the lane is found
+            if (actualEntry.getValue() == lane)
+            {
+                return actualLaneIndex;
+            }
+        }
+
+        return -1;
+    }
+
+    /**
+     * @return number of lanes
+     */
+    public int size()
+    {
+        return lanes.size();
     }
 }

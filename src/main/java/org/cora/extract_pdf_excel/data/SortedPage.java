@@ -1,5 +1,7 @@
 package org.cora.extract_pdf_excel.data;
 
+import org.cora.extract_pdf_excel.data.array.My2DArray;
+import org.cora.extract_pdf_excel.data.block.Block;
 import org.cora.extract_pdf_excel.data.lane.Lanes;
 
 /**
@@ -9,7 +11,6 @@ import org.cora.extract_pdf_excel.data.lane.Lanes;
  */
 public class SortedPage
 {
-
     private Lanes columns;
     private Lanes lines;
 
@@ -68,5 +69,38 @@ public class SortedPage
     public void setLines(Lanes lines)
     {
         this.lines = lines;
+    }
+
+    /**
+     * Create a 2D array of blocks using sorted lines and sorted columns
+     */
+    public My2DArray<Block> create2DArrayOfBlocks()
+    {
+        // Create array
+        My2DArray<Block> my2DArray = new My2DArray<>();
+
+        // Create each columns
+        for (int col = 0; col < columns.size(); col++)
+        {
+            my2DArray.addColumn();
+        }
+
+        // Create each lines
+        for (int line = 0; line < lines.size(); line++)
+        {
+            my2DArray.addLine();
+        }
+
+        // Fill the array
+        for (int col = 0; col < columns.size(); col++)
+        {
+            /*for (int )
+
+            // Get his line index
+            int line = col
+
+            my2DArray.set*/
+        }
+        return null;
     }
 }

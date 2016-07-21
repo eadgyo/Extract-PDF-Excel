@@ -118,6 +118,26 @@ public class Lane
     }
 
     /**
+     * @return number of lanes
+     */
+    public int size()
+    {
+        return blocks.size();
+    }
+
+    /**
+     * Get a block from a key
+     *
+     * @param key block linked key
+     *
+     * @return block if it exists or null if key is not linked
+     */
+    public Block getBlock(double key)
+    {
+        return blocks.get(key);
+    }
+
+    /**
      * Get block lower than key
      *
      * @param key to be checked
@@ -218,5 +238,29 @@ public class Lane
         double maxLength = higherLane.getPos(oppositeAxis) - getPos(oppositeAxis);
 
         setLength(oppositeAxis, Math.min(getLength(oppositeAxis), maxLength));
+    }
+
+    /**
+     * Check if lane contain block
+     *
+     * @param axis lane axis
+     * @param block checked block
+     *
+     * @return true if block is in lane, false if it isn't
+     */
+    public boolean containsBlock(int axis, Block block)
+    {
+        Block gettedBlock = getBlock(block.getPos(axis));
+
+        return block == gettedBlock;
+    }
+
+    /**
+     * Get all blocks in set
+     * @return list of blocks, not keeping data sorted
+     */
+    public Collection<Block> retrieveBlocks()
+    {
+        return blocks.values();
     }
 }
