@@ -1,11 +1,11 @@
 package org.cora.extract_pdf_excel.process.arrangement;
 
-import org.cora.extract_pdf_excel.data.MyPair;
+import org.cora.extract_pdf_excel.data.geom.Rectangle2;
+import org.cora.extract_pdf_excel.data.utils.MyPair;
 import org.cora.extract_pdf_excel.data.block.Block;
 import org.cora.extract_pdf_excel.data.block.Direction;
 import org.cora.extract_pdf_excel.data.lane.Lane;
 import org.cora.extract_pdf_excel.data.lane.Lanes;
-import org.cora.extract_pdf_excel.data.lane.Rect;
 
 import java.util.Map;
 import java.util.Set;
@@ -58,7 +58,7 @@ class LaneTools
      * @return positon of rect1 relative to rect2, if they have the same lower position, rect1 is considered at the
      * left of rect2
      */
-    static Direction getRelativeDirection(int oneAxis, Rect rect1, Rect rect2)
+    static Direction getRelativeDirection(int oneAxis, Rectangle2 rect1, Rectangle2 rect2)
     {
         // If rect1 is before rect2 on one
         if (rect1.getPos(oneAxis) <= rect2.getPos(oneAxis))

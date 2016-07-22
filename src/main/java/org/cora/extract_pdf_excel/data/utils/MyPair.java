@@ -1,4 +1,4 @@
-package org.cora.extract_pdf_excel.data;
+package org.cora.extract_pdf_excel.data.utils;
 
 import org.apache.commons.lang3.tuple.Pair;
 

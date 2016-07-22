@@ -2,11 +2,12 @@ package org.cora.extract_pdf_excel.data.block;
 
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.pdf.DocumentFont;
+import org.cora.extract_pdf_excel.data.geom.Rectangle2;
 import org.cora.extract_pdf_excel.data.lane.Column;
 import org.cora.extract_pdf_excel.data.lane.Line;
-import org.cora.extract_pdf_excel.data.lane.Rect;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -22,7 +23,7 @@ public class Block
     private Line   line;
     private Column column;
 
-    private Rect bound;
+    private Rectangle2 bound;
 
     private Direction textOrientation;
     private Direction blockOrientation;
@@ -31,8 +32,28 @@ public class Block
     private Set<BaseColor> backColors;
     private Set<DocumentFont> fonts;
 
+    public Block(String originalText, Rectangle2 bound)
+    {
+        this.originalText = originalText;
+        this.formattedText = originalText;
+
+        this.bound = bound;
+
+        this.blockOrientation = null;
+
+        this.line = null;
+        this.column = null;
+
+        this.blockOrientation = null;
+        this.textOrientation = null;
+
+        this.backColors = new HashSet<>();
+        this.fontColors = new HashSet<>();
+        this.fonts = new HashSet<>();
+    }
+
     public Block(String originalText,
-                 Rect bound,
+                 Rectangle2 bound,
                  Direction blockOrientation,
                  Set<BaseColor> fontColors,
                  Set<BaseColor> backColors,
@@ -109,12 +130,12 @@ public class Block
         this.column = column;
     }
 
-    public Rect getBound()
+    public Rectangle2 getBound()
     {
         return bound;
     }
 
-    public void setBound(Rect bound)
+    public void setBound(Rectangle2 bound)
     {
         this.bound = bound;
     }

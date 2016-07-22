@@ -1,6 +1,7 @@
 package org.cora.extract_pdf_excel.data.lane;
 
 import org.cora.extract_pdf_excel.data.block.Block;
+import org.cora.extract_pdf_excel.data.geom.Rectangle2;
 
 import java.util.*;
 
@@ -11,18 +12,18 @@ import java.util.*;
  */
 public class Lane
 {
-    private Rect                   rectangle;
+    private Rectangle2             rectangle;
     private TreeMap<Double, Block> blocks;
 
     public Lane()
     {
-        rectangle = new Rect();
+        rectangle = new Rectangle2();
         blocks = new TreeMap<Double, Block>();
     }
 
-    public void setRectangle(Rect rectangle)
+    public void setRectangle(Rectangle2 rectangle)
     {
-        this.rectangle.setRect(rectangle);
+        this.rectangle.set(rectangle);
     }
 
     public double getPos(int i) { return this.rectangle.getPos(i); }
@@ -185,7 +186,7 @@ public class Lane
         return (higherBlockEntry != null) ? higherBlockEntry.getValue() : null;
     }
 
-    public Rect getBound()
+    public Rectangle2 getBound()
     {
         return rectangle;
     }
@@ -216,7 +217,7 @@ public class Lane
         // Start to reset lane size with first block
         Iterator<Block> iterator = values.iterator();
         Block first = iterator.next();
-        this.rectangle.setRect(first.getBound());
+        this.rectangle.set(first.getBound());
 
         // Reinsert all blocks
         while (iterator.hasNext())

@@ -1,7 +1,7 @@
 package org.cora.extract_pdf_excel.models;
 
-import com.itextpdf.awt.geom.Rectangle;
 import org.cora.extract_pdf_excel.data.block.Block;
+import org.cora.extract_pdf_excel.data.geom.Rectangle2;
 
 import java.util.Collection;
 
@@ -83,7 +83,7 @@ public abstract class StringFormatter
      * @param rawText         text without formatting, used to compute change in end index, and update bound end.
      * @param modifiedBound   rectangle being modified, updating it size from newStart and newEnd indexes.
      */
-    private void updateSizeBoundOfBlock(int startEndRawText[], String rawText, Rectangle modifiedBound)
+    private void updateSizeBoundOfBlock(int startEndRawText[], String rawText, Rectangle2 modifiedBound)
     {
         // Compute start and end difference
         // (newIndex - lastIndex) * sizeOfSpaceCharacter
@@ -91,10 +91,10 @@ public abstract class StringFormatter
         double deltaEnd   = (startEndRawText[1] - rawText.length()) * sizeSpaceCharacter;
 
         // Update start and end of bound
-        modifiedBound.x = modifiedBound.x - deltaStart;
-        modifiedBound.width = modifiedBound.width - deltaEnd;
+        modifiedBound.setX(modifiedBound.getX() - deltaStart);
+        modifiedBound.setWidth(modifiedBound.getWidth() - deltaEnd);
 
         // If rectangle width is negative or null, we just approximate width as series of space characters
-        modifiedBound.width = rawText.length() * sizeSpaceCharacter;
+        modifiedBound.setWidth(rawText.length() * sizeSpaceCharacter);
     }
 }

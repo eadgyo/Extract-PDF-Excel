@@ -2,6 +2,7 @@ package org.cora.extract_pdf_excel.data.lane;
 
 import org.cora.extract_pdf_excel.data.block.Block;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -241,5 +242,13 @@ public class Lanes
     public int size()
     {
         return lanes.size();
+    }
+
+    /**
+     * @return all lines in a collection
+     */
+    public Collection<Lane> getLanes()
+    {
+        return lanes.values();
     }
 }

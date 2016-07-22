@@ -1,4 +1,4 @@
-package org.cora.extract_pdf_excel.data.lane;
+package org.cora.extract_pdf_excel.data.utils;
 
 /**
  * Created by eadgyo on 21/07/16.

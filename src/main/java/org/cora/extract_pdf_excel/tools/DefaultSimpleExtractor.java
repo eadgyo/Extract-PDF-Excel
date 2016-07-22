@@ -5,7 +5,7 @@ import com.itextpdf.text.pdf.DocumentFont;
 import com.itextpdf.text.pdf.parser.*;
 import org.cora.extract_pdf_excel.data.block.Block;
 import org.cora.extract_pdf_excel.data.block.Direction;
-import org.cora.extract_pdf_excel.data.lane.Rect;
+import org.cora.extract_pdf_excel.data.geom.Rectangle2;
 import org.cora.extract_pdf_excel.models.TextBlockIdentifier;
 
 import java.util.ArrayList;
@@ -208,7 +208,7 @@ public class DefaultSimpleExtractor implements TextExtractionStrategy
         // lastAscent and lastDescent are last character rect top center side point and bottom center point
         Direction direction = determineBlockDirection(startLine, endLine, lastAscent, lastDescent);
 
-        Rect blockRectangle = createBlockRectangle(xMin, xMax, yMin, yMax, direction);
+        Rectangle2 blockRectangle = createBlockRectangle(xMin, xMax, yMin, yMax, direction);
 
         // Add color and font info
         Set<BaseColor>    fontColors = new HashSet<>();
@@ -289,7 +289,7 @@ public class DefaultSimpleExtractor implements TextExtractionStrategy
         return Math.abs(y0 - y1) < textBlockIdentifier.thresholdAlongY;
     }
 
-    private Rect createBlockRectangle(double xMin, double xMax, double yMin, double yMax, Direction direction)
+    private Rectangle2 createBlockRectangle(double xMin, double xMax, double yMin, double yMax, Direction direction)
     {
         double minMaxOfAllText[] = getMinMaxOfAllText(direction);
 
@@ -315,7 +315,7 @@ public class DefaultSimpleExtractor implements TextExtractionStrategy
             blockHeight = yMax - yMin;
         }
 
-        return new Rect(startPointX, startPointY, blockWidth, blockHeight);
+        return new Rectangle2(startPointX, startPointY, blockWidth, blockHeight);
     }
 
     /**
@@ -484,10 +484,10 @@ public class DefaultSimpleExtractor implements TextExtractionStrategy
                     }
 
                     // Transform rectangle, by mirroring on x Axis
-                    Rect bound = block.getBound();
-                    Rect newBound = (Rect) bound.clone();
+                    Rectangle2 bound    = block.getBound();
+                    Rectangle2 newBound = bound.clone();
 
-                    newBound.y = -bound.y - bound.height + pdfHeight;
+                    newBound.setY(-bound.getY() - bound.getHeight() + pdfHeight);
                     block.setBound(newBound);
                 }
             }
@@ -517,20 +517,20 @@ public class DefaultSimpleExtractor implements TextExtractionStrategy
                     }
 
                     // Rotate 90°
-                    Rect bound = block.getBound();
-                    Rect newBound = (Rect) bound.clone();
+                    Rectangle2 bound    = block.getBound();
+                    Rectangle2 newBound = (Rectangle2) bound.clone();
 
                     // Swap x and y
                     //noinspection SuspiciousNameCombination
-                    newBound.x = bound.y;
+                    newBound.setX(bound.getY());
                     //noinspection SuspiciousNameCombination
-                    newBound.y = bound.x;
+                    newBound.setY(bound.getX());
 
                     // Swap width and height
                     //noinspection SuspiciousNameCombination
-                    newBound.width = bound.height;
+                    newBound.setWidth(bound.getHeight());
                     //noinspection SuspiciousNameCombination
-                    newBound.height = bound.width;
+                    newBound.setHeight(bound.getWidth());
 
                     block.setBound(newBound);
                 }
@@ -557,20 +557,20 @@ public class DefaultSimpleExtractor implements TextExtractionStrategy
                     }
 
                     // Rotate 90° + mirror on x
-                    Rect bound = block.getBound();
-                    Rect newBound = (Rect) bound.clone();
+                    Rectangle2 bound    = block.getBound();
+                    Rectangle2 newBound = (Rectangle2) bound.clone();
 
                     // Swap x and y and apply inversion
                     //noinspection SuspiciousNameCombination
-                    newBound.x = -bound.y + pdfHeight - bound.height;
+                    newBound.setX(-bound.getY() + pdfHeight - bound.getHeight());
                     //noinspection SuspiciousNameCombination
-                    newBound.y = -bound.x + pdfWidth - bound.width;
+                    newBound.setY(-bound.getX() + pdfWidth - bound.getWidth());
 
                     // Swap width and height
                     //noinspection SuspiciousNameCombination
-                    newBound.width = bound.height;
+                    newBound.setWidth(bound.getHeight());
                     //noinspection SuspiciousNameCombination
-                    newBound.height = bound.width;
+                    newBound.setHeight(bound.getWidth());
 
                     block.setBound(newBound);
                 }

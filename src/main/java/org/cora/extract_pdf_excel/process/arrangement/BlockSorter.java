@@ -1,6 +1,6 @@
 package org.cora.extract_pdf_excel.process.arrangement;
 
-import org.cora.extract_pdf_excel.data.MyPair;
+import org.cora.extract_pdf_excel.data.utils.MyPair;
 import org.cora.extract_pdf_excel.data.block.Block;
 import org.cora.extract_pdf_excel.data.block.Direction;
 import org.cora.extract_pdf_excel.data.lane.Lane;

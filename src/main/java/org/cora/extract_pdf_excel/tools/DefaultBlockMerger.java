@@ -1,7 +1,7 @@
 package org.cora.extract_pdf_excel.tools;
 
 import org.cora.extract_pdf_excel.data.block.Block;
-import org.cora.extract_pdf_excel.data.lane.MyUnique;
+import org.cora.extract_pdf_excel.data.utils.MyUnique;
 import org.cora.extract_pdf_excel.models.BlockMerger;
 
 import java.util.Collection;
@@ -37,6 +37,11 @@ public class DefaultBlockMerger extends BlockMerger
         this.threshold_dist_factor = threshold_dist_factor;
         this.threshold_align_factor = threshold_align_factor;
         this.max_align_threshold = max_align_threshold;
+    }
+
+    public DefaultBlockMerger()
+    {
+        this(2.0, 0.1, 40.0);
     }
 
     /**

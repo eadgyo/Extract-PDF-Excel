@@ -2,8 +2,8 @@ package org.cora.extract_pdf_excel.process.arrangement;
 
 import org.cora.extract_pdf_excel.data.block.Block;
 import org.cora.extract_pdf_excel.data.block.CollisionState;
+import org.cora.extract_pdf_excel.data.geom.Rectangle2;
 import org.cora.extract_pdf_excel.data.lane.Lane;
-import org.cora.extract_pdf_excel.data.lane.Rect;
 
 import java.util.Map;
 
@@ -38,7 +38,7 @@ class CollisionTools
      *
      * @return true if they are colliding, false if they aren't
      */
-    private static boolean areRectColliding(int oneAxis, Rect rect1, Rect rect2)
+    private static boolean areRectColliding(int oneAxis, Rectangle2 rect1, Rectangle2 rect2)
     {
         return rect1.getPos(oneAxis) < rect2.getPos(oneAxis) + rect2.getLength(oneAxis) &&
                 rect1.getPos(oneAxis) + rect1.getLength(oneAxis) > rect2.getPos(oneAxis);
@@ -101,7 +101,7 @@ class CollisionTools
      *
      * @return 2 rectangles collision state
      */
-    private static CollisionState getStateColliding(int oneAxis, Rect rect1, Rect rect2)
+    private static CollisionState getStateColliding(int oneAxis, Rectangle2 rect1, Rectangle2 rect2)
     {
         // If rect1 is before rect2
         if (rect1.getPos(oneAxis) + rect1.getLength(oneAxis) <= rect2.getPos(oneAxis))
