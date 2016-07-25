@@ -26,18 +26,25 @@ public class Lane
         this.rectangle.set(rectangle);
     }
 
-    public double getPos(int i) { return this.rectangle.getPos(i); }
+    public double getPos(int axis) { return this.rectangle.getPos(axis); }
 
-    public double getLength(int i) { return this.rectangle.getLength(i); }
+    /**
+     * Get the coordinate of the end of the lane along one axis.
+     * @param axis used axis
+     * @return end coordinate of the lane along one axis.
+     */
+    public double getEndPos(int axis) { return this.rectangle.getEndPos(axis); }
 
-    public void setPos(int i, double value)
+    public double getLength(int axis) { return this.rectangle.getLength(axis); }
+
+    public void setPos(int axis, double value)
     {
-        this.rectangle.setPos(i, value);
+        this.rectangle.setPos(axis, value);
     }
 
-    public void setLength(int i, double value)
+    public void setLength(int axis, double value)
     {
-        this.rectangle.setLength(i, value);
+        this.rectangle.setLength(axis, value);
     }
 
     public TreeMap<Double, Block> getBlocks()

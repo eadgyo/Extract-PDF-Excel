@@ -2,10 +2,7 @@ package org.cora.extract_pdf_excel;
 
 import com.itextpdf.text.pdf.PdfReader;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.cora.extract_pdf_excel.data.ExtractedData;
-import org.cora.extract_pdf_excel.data.ExtractedPage;
-import org.cora.extract_pdf_excel.data.SortedData;
-import org.cora.extract_pdf_excel.data.SortedPage;
+import org.cora.extract_pdf_excel.data.*;
 import org.cora.extract_pdf_excel.data.array.My2DArray;
 import org.cora.extract_pdf_excel.data.block.Block;
 import org.cora.extract_pdf_excel.data.lane.Lanes;
@@ -173,8 +170,13 @@ public class PdfConverter
             {
                 // Create 2D array containing blocks using sorted lines and columns from sortedData
                 My2DArray<Block> arrayOfBlocks = sortedPage.create2DArrayOfBlocks();
-                HSSFSheet        excelPage     = createExcelPage(arrayOfBlocks);
-                excelSheets.add(excelPage);
+                ArrayList<Double> linesSize = sortedPage.getLinesBounds();
+                ArrayList<Double> columnsSize = sortedPage.getColumnsStart();
+
+                XclPage xclPage = new XclPage(arrayOfBlocks, linesSize, columnsSize);
+
+                HSSFSheet        excelSheet     = createExcelPage(xclPage);
+                excelSheets.add(excelSheet);
             }
         }
         // return created Excel page using 2D array
@@ -185,10 +187,10 @@ public class PdfConverter
     /**
      * Create excel page from 2D array of blocks, filling box with formatted text.
      *
-     * @param array2DBlocks 2D array of blocks
+     * @param xclPage excel page information. Containing cells and dimensions of columns and lines.
      * @return created excel page using array2OfBlocks
      */
-    public static HSSFSheet createExcelPage(My2DArray<Block> array2DBlocks)
+    public static HSSFSheet createExcelPage(XclPage xclPage)
     {
         // Fill Excel Sheet with 2D array
             // Insert text using formatted text

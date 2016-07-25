@@ -4,6 +4,8 @@ import org.cora.extract_pdf_excel.data.array.My2DArray;
 import org.cora.extract_pdf_excel.data.block.Block;
 import org.cora.extract_pdf_excel.data.lane.Lanes;
 
+import java.util.ArrayList;
+
 /**
  * Created by eadgyo on 18/07/16.
  * <p/>
@@ -11,6 +13,14 @@ import org.cora.extract_pdf_excel.data.lane.Lanes;
  */
 public class SortedPage
 {
+    public final static int X_AXIS = 0;
+    public final static int Y_AXIS = 1;
+
+    public final static int DEFAULT_COLUMN_AXIS          = Y_AXIS;
+    public final static int DEFAULT_OPPOSITE_COLUMN_AXIS = X_AXIS;
+    public final static int DEFAULT_LINE_AXIS            = X_AXIS;
+    public final static int DEFAULT_OPPOSITE_LINE_AXIS   = Y_AXIS;
+
     private Lanes columns;
     private Lanes lines;
 
@@ -32,16 +42,6 @@ public class SortedPage
     }
 
     /**
-     * Link to corresponding extractedPage data can be added
-     *
-     * @param extractedPage corresponding extractedPage
-     */
-    public void setLinkExtractedPage(ExtractedPage extractedPage)
-    {
-        linkExtractedPage = extractedPage;
-    }
-
-    /**
      * Get linked extracted page
      *
      * @return linked extracted page or null if link has not been set.
@@ -49,6 +49,16 @@ public class SortedPage
     public ExtractedPage getLinkExtractedPage()
     {
         return linkExtractedPage;
+    }
+
+    /**
+     * Link to corresponding extractedPage data can be added
+     *
+     * @param extractedPage corresponding extractedPage
+     */
+    public void setLinkExtractedPage(ExtractedPage extractedPage)
+    {
+        linkExtractedPage = extractedPage;
     }
 
     public Lanes getColumns()
@@ -69,6 +79,16 @@ public class SortedPage
     public void setLines(Lanes lines)
     {
         this.lines = lines;
+    }
+
+    public int columnsSize()
+    {
+        return columns.size();
+    }
+
+    public int linesSize()
+    {
+        return lines.size();
     }
 
     /**
@@ -102,5 +122,27 @@ public class SortedPage
             my2DArray.set*/
         }
         return null;
+    }
+
+    /**
+     * Get the bounds of each line along the opposite axis of the lane.
+     *
+     * @return bounds of each line lane. The first key is the start of the first lane, the second the end of the first
+     * and the start of the second lane etc...
+     */
+    public ArrayList<Double> getLinesBounds()
+    {
+        return lines.getLanesBounds(DEFAULT_OPPOSITE_LINE_AXIS);
+    }
+
+    /**
+     * Get the end of each column along the opposite axis of the lane.
+     *
+     * @return End of each column lane. The first key is the start of the first lane, the second the end of the first
+     * and the start of the second lane etc...
+     */
+    public ArrayList<Double> getColumnsStart()
+    {
+        return columns.getLanesBounds(DEFAULT_OPPOSITE_COLUMN_AXIS);
     }
 }

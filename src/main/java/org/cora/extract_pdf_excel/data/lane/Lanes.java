@@ -2,9 +2,7 @@ package org.cora.extract_pdf_excel.data.lane;
 
 import org.cora.extract_pdf_excel.data.block.Block;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * Created by eadgyo on 12/07/16.
@@ -21,22 +19,10 @@ public class Lanes
     }
 
     /**
-     * Insert a lane using one key
-     *
-     * @param key used key for insertion
-     * @param lane inserted
-     */
-    public void insertLane(double key, Lane lane)
-    {
-        lanes.put(key, lane);
-    }
-
-
-    /**
      * Insert lane using lower bound of opposite axis of lane direction
      *
      * @param oppositeAxis index of opposite axis
-     * @param lane inserted ane
+     * @param lane         inserted ane
      */
     public void insertLane(int oppositeAxis, Lane lane)
     {
@@ -46,19 +32,9 @@ public class Lanes
     /**
      * Remove lane using lower bound as key
      *
-     * @param key lower bound in opposite direction of lane
-     * @return removed lane or null if key does not correspond to a lane
-     */
-    public Lane removeLane(Double key)
-    {
-        return lanes.remove(key);
-    }
-
-    /**
-     * Remove lane using lower bound as key
-     *
      * @param oppositeAxis index of opposite direction
-     * @param lane to be removed
+     * @param lane         to be removed
+     *
      * @return removed lane or null if lane's key does not correspond to a lane
      */
     public Lane removeLane(int oppositeAxis, Lane lane)
@@ -70,17 +46,7 @@ public class Lanes
      * Get lane lower than key
      *
      * @param key to be checked
-     * @return lower lane and his value in map
-     */
-    public Map.Entry<Double, Lane> getLowerLaneEntry(double key)
-    {
-        return lanes.lowerEntry(key);
-    }
-
-    /**
-     * Get lane lower than key
      *
-     * @param key to be checked
      * @return lower lane
      */
     public Lane getLowerLane(double key)
@@ -91,59 +57,23 @@ public class Lanes
     }
 
     /**
-     * Get ceiling lower than key
+     * Get lane lower than key
      *
      * @param key to be checked
-     * @return ceiling lane and his value in map
-     */
-    public Map.Entry<Double, Lane> getCeilingLaneEntry(double key)
-    {
-        return lanes.ceilingEntry(key);
-    }
-
-    /**
-     * Get ceiling lower than key
      *
-     * @param key to be checked
-     * @return ceiling lane
+     * @return lower lane and his value in map
      */
-    public Lane getCeilingLane(double key)
+    public Map.Entry<Double, Lane> getLowerLaneEntry(double key)
     {
-        Map.Entry<Double, Lane> ceilingLaneEntry = getCeilingLaneEntry(key);
-
-        return (ceilingLaneEntry != null) ? ceilingLaneEntry.getValue() : null;
-    }
-
-    /**
-     * Get lane higher than key
-     *
-     * @param key to be checked
-     * @return higher lane and his value in map
-     */
-    public Map.Entry<Double, Lane> getHigherLaneEntry(double key)
-    {
-        return lanes.higherEntry(key);
-    }
-
-    /**
-     * Get lane higher than key
-     *
-     * @param key to be checked
-     * @return higher lane
-     */
-    public Lane getHigherLane(double key)
-    {
-        Map.Entry<Double, Lane> higherLaneEntry = getHigherLaneEntry(key);
-
-        return (higherLaneEntry != null) ? higherLaneEntry.getValue() : null;
+        return lanes.lowerEntry(key);
     }
 
     /**
      * Replace key of one lane
      *
      * @param oppositeAxis opposite lane axis
-     * @param oldKey old key in map
-     * @param lane linked lane to key
+     * @param oldKey       old key in map
+     * @param lane         linked lane to key
      */
     public void replaceKey(int oppositeAxis, double oldKey, Lane lane)
     {
@@ -157,6 +87,18 @@ public class Lanes
 
             lanes.put(newKey, lane);
         }
+    }
+
+    /**
+     * Remove lane using lower bound as key
+     *
+     * @param key lower bound in opposite direction of lane
+     *
+     * @return removed lane or null if key does not correspond to a lane
+     */
+    public Lane removeLane(Double key)
+    {
+        return lanes.remove(key);
     }
 
     /**
@@ -182,10 +124,47 @@ public class Lanes
     }
 
     /**
+     * Insert a lane using one key
+     *
+     * @param key  used key for insertion
+     * @param lane inserted
+     */
+    public void insertLane(double key, Lane lane)
+    {
+        lanes.put(key, lane);
+    }
+
+    /**
+     * Get lane higher than key
+     *
+     * @param key to be checked
+     *
+     * @return higher lane
+     */
+    public Lane getHigherLane(double key)
+    {
+        Map.Entry<Double, Lane> higherLaneEntry = getHigherLaneEntry(key);
+
+        return (higherLaneEntry != null) ? higherLaneEntry.getValue() : null;
+    }
+
+    /**
+     * Get lane higher than key
+     *
+     * @param key to be checked
+     *
+     * @return higher lane and his value in map
+     */
+    public Map.Entry<Double, Lane> getHigherLaneEntry(double key)
+    {
+        return lanes.higherEntry(key);
+    }
+
+    /**
      * Get the index of block in lanes
      *
      * @param oppositeAxis opposite lane axis
-     * @param block check block
+     * @param block        check block
      *
      * @return lane index containing block or -1 if block is not present or block's rectangle has no link.
      */
@@ -197,6 +176,20 @@ public class Lanes
 
         // Get the index of the block lane
         return getLaneIndex(blockLane);
+    }
+
+    /**
+     * Get ceiling lower than key
+     *
+     * @param key to be checked
+     *
+     * @return ceiling lane
+     */
+    public Lane getCeilingLane(double key)
+    {
+        Map.Entry<Double, Lane> ceilingLaneEntry = getCeilingLaneEntry(key);
+
+        return (ceilingLaneEntry != null) ? ceilingLaneEntry.getValue() : null;
     }
 
     /**
@@ -215,9 +208,9 @@ public class Lanes
         if (firstEntry.getValue() == lane)
             return 0;
 
-        Map.Entry<Double, Lane> lastEntry = lanes.lastEntry();
-        Map.Entry<Double, Lane> actualEntry = firstEntry;
-        int actualLaneIndex = 0;
+        Map.Entry<Double, Lane> lastEntry       = lanes.lastEntry();
+        Map.Entry<Double, Lane> actualEntry     = firstEntry;
+        int                     actualLaneIndex = 0;
 
         // Parse the rest until we got the last
         while (actualEntry != lastEntry)
@@ -237,6 +230,18 @@ public class Lanes
     }
 
     /**
+     * Get ceiling lower than key
+     *
+     * @param key to be checked
+     *
+     * @return ceiling lane and his value in map
+     */
+    public Map.Entry<Double, Lane> getCeilingLaneEntry(double key)
+    {
+        return lanes.ceilingEntry(key);
+    }
+
+    /**
      * @return number of lanes
      */
     public int size()
@@ -250,5 +255,32 @@ public class Lanes
     public Collection<Lane> getLanes()
     {
         return lanes.values();
+    }
+
+    /**
+     * Get the bounds of each lane along the opposite axis of the lane.
+     *
+     * @param oppositeAxis Opposite lane axis.
+     *
+     * @return bounds of each lane. The end of one lane and the start of the next is considered as the same. The first
+     * key is the start of the first lane, the second the end of the first and the start of the second lane etc...
+     */
+    public ArrayList<Double> getLanesBounds(int oppositeAxis)
+    {
+        ArrayList<Double> lanesBounds = new ArrayList<>();
+
+        // Get the start of each lane from the sorted lane
+        NavigableSet<Double> lanesStart = lanes.navigableKeySet();
+
+        // The set is already ascendant sorted, just need to add one by one each start.
+        for (Double startOfLane : lanesStart)
+        {
+            lanesBounds.add(startOfLane);
+        }
+
+        // Add the end of the last lane
+        lanesBounds.add(lanes.lastEntry().getValue().getPos(oppositeAxis));
+
+        return lanesBounds;
     }
 }
