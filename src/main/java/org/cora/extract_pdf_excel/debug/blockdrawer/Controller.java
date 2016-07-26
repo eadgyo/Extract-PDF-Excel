@@ -21,8 +21,10 @@ public class Controller
 {
     private View         view;
     private Model        model;
+
     private DeleteAction deleteAction;
     private ModifyAction modifyAction;
+    private CreateAction createAction;
 
     public Controller()
     {
@@ -33,7 +35,7 @@ public class Controller
         // Create actions
         GenerateAction generateAction = new GenerateAction();
         ClearAction    clearAction    = new ClearAction();
-        CreateAction createAction = new CreateAction();
+        createAction = new CreateAction();
         deleteAction = new DeleteAction();
         modifyAction = new ModifyAction();
 
@@ -85,6 +87,9 @@ public class Controller
         public void mousePressed(MouseEvent mouseEvent)
         {
             Vector2 vector2 = new Vector2(mouseEvent.getX(), mouseEvent.getY());
+
+            // Save coordinates for possible block creation
+            createAction.setSavedXandY(mouseEvent.getX(), mouseEvent.getY());
 
             // If press right click
             if (mouseEvent.getButton() == MouseEvent.BUTTON3)
@@ -252,6 +257,7 @@ public class Controller
 
             // Update delete possibility
             deleteAction.setEnabled(model.getSelected() != null);
+
             // Update modify possibility
             modifyAction.setEnabled(model.getSelected() != null);
         }
@@ -273,6 +279,8 @@ public class Controller
 
     private class CreateAction extends AbstractAction
     {
+        private int savedX, savedY;
+
         public CreateAction()
         {
             super("Create");
@@ -287,9 +295,31 @@ public class Controller
 
             if (originalText != null)
             {
-                Block block = new Block(originalText, new Rectangle2(10, 10, 50, 50));
+                Block block = new Block(originalText, new Rectangle2(savedX, savedY, 50, 50));
                 model.addBlock(block);
             }
+        }
+
+        public void setSavedX(int savedX)
+        {
+            this.savedX = savedX;
+        }
+
+        public void setSavedY(int savedY)
+        {
+            this.savedY = savedY;
+        }
+
+        public void clearXandY()
+        {
+            savedX = 10;
+            savedY = 10;
+        }
+
+        public void setSavedXandY(int x, int y)
+        {
+            savedX = x;
+            savedY = y;
         }
     }
 }
