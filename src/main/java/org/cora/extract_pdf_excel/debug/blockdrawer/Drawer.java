@@ -1,8 +1,8 @@
 package org.cora.extract_pdf_excel.debug.blockdrawer;
 
 import org.cora.extract_pdf_excel.data.block.Block;
-import org.cora.extract_pdf_excel.data.geom.Rectangle2;
 import org.cora.extract_pdf_excel.data.geom.Vector2;
+import org.cora.extract_pdf_excel.debug.display.DisplayTools;
 
 import javax.swing.*;
 import java.awt.*;
@@ -32,11 +32,11 @@ public class Drawer extends JPanel
         ArrayList<Block> blocks = model.getBlocks();
 
         // Draw all rect
-        graphics.setColor(Color.GRAY);
+        graphics.setColor(Color.DARK_GRAY);
         for (Block block : blocks)
         {
-            Rectangle2 rect = block.getBound();
-            graphics2D.drawRect((int) rect.getX(), (int) rect.getY(), (int) rect.getWidth(), (int) rect.getHeight());
+            DisplayTools.drawBlock(graphics2D, block);
+            DisplayTools.drawBlockText(graphics2D, block);
         }
 
         // Draw selected block
@@ -44,16 +44,15 @@ public class Drawer extends JPanel
         if (actualBlock != null)
         {
             graphics.setColor(Color.RED);
-            Rectangle2 rect = actualBlock.getBound();
-            graphics2D.drawRect((int) rect.getX(), (int) rect.getY(), (int) rect.getWidth(), (int) rect.getHeight());
+            DisplayTools.drawBlock(graphics2D, actualBlock);
 
             // If one point is selected
             if (model.getSelectedPoint() != -1)
             {
                 // Draw point as a circle
                 int index = model.getSelectedPoint();
-                Vector2 selectedPoint = rect.getPoint(index);
-                graphics.fillOval((int) selectedPoint.getX() - 3, (int) selectedPoint.getY() - 3, 6, 6);
+                Vector2 selectedPoint = actualBlock.getBound().getPoint(index);
+                graphics.fillOval((int) selectedPoint.getX() - 5, (int) selectedPoint.getY() - 5, 10, 10);
             }
         }
     }

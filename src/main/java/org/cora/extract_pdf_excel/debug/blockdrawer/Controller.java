@@ -22,6 +22,7 @@ public class Controller
     private View         view;
     private Model        model;
     private DeleteAction deleteAction;
+    private ModifyAction modifyAction;
 
     public Controller()
     {
@@ -29,15 +30,23 @@ public class Controller
         view = new View();
         view.drawer.setModel(model);
 
+        // Create actions
         GenerateAction generateAction = new GenerateAction();
         ClearAction    clearAction    = new ClearAction();
-        deleteAction = new DeleteAction();
         CreateAction createAction = new CreateAction();
+        deleteAction = new DeleteAction();
+        modifyAction = new ModifyAction();
 
+        // Init bottom action buttons
         view.generate.setAction(generateAction);
         view.clear.setAction(clearAction);
         view.delete.setAction(deleteAction);
         view.createNewBlock.setAction(createAction);
+
+        // Init right clicks action buttons
+        view.createNewBlockMenu.setAction(createAction);
+        view.deleteMenu.setAction(deleteAction);
+        view.modifyMenu.setAction(modifyAction);
 
         UpdateText updateText = new UpdateText();
         model.addObserver(updateText);
@@ -59,6 +68,7 @@ public class Controller
         @Override
         public void mouseClicked(MouseEvent mouseEvent)
         {
+            // If double click
             if (mouseEvent.getClickCount() == 2)
             {
                 Vector2 vector2     = new Vector2(mouseEvent.getX(), mouseEvent.getY());
@@ -66,7 +76,7 @@ public class Controller
                 if (actualBlock != null)
                 {
                     // Update the selected point
-                    model.setSelectedPoint(vector2);
+                    model.setSelectedPointAndResetIfSame(vector2);
                 }
             }
         }
@@ -74,18 +84,51 @@ public class Controller
         @Override
         public void mousePressed(MouseEvent mouseEvent)
         {
-            Vector2 vector2     = new Vector2(mouseEvent.getX(), mouseEvent.getY());
-            Block   actualBlock = model.getSelected();
+            Vector2 vector2 = new Vector2(mouseEvent.getX(), mouseEvent.getY());
 
-            // Update selected
-            if (model.getSelected() == null)
+            // If press right click
+            if (mouseEvent.getButton() == MouseEvent.BUTTON3)
             {
-                model.setSelectedPoint(vector2);
+                // Update selected block
+                model.setSelected(vector2);
 
-                if (model.getSelectedPoint() == -1)
-                    model.setSelected(vector2);
+                // Show popup menu
+                view.popupMenu.show(view, mouseEvent.getX(), mouseEvent.getY());
             }
-            lastMousePos = vector2;
+            else if (mouseEvent.getButton() == MouseEvent.BUTTON1) // Press left click
+            {
+                // If there was a selected block
+                if (model.getSelected() != null)
+                {
+                    // If one point is already selected
+                    if (model.getSelectedPoint() != -1)
+                    {
+                        // Update the selected point
+                        model.setSelectedPoint(vector2);
+
+                        // If no points are selected
+                        if (model.getSelectedPoint() == -1)
+                        {
+                            // It may not be this block
+                            // Update selected block
+                            model.setSelected(vector2);
+                        }
+                    }
+                    else
+                    {
+                        // No point selected
+                        // Update the selected block
+                        model.setSelected(vector2);
+                    }
+                }
+                else
+                {
+                    // There were no blocks selected
+                    // Update the selected block
+                    model.setSelected(vector2);
+                }
+                lastMousePos = vector2;
+            }
         }
 
         @Override
@@ -110,6 +153,8 @@ public class Controller
         public void mouseDragged(MouseEvent mouseEvent)
         {
             Block actualBlock = model.getSelected();
+
+            // If there are no bocks selected
             if (actualBlock != null)
             {
                 Vector2 vector2 = new Vector2(mouseEvent.getX(), mouseEvent.getY());
@@ -167,6 +212,33 @@ public class Controller
         }
     }
 
+    private class ModifyAction extends AbstractAction
+    {
+        public ModifyAction()
+        {
+            super("Modify");
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent actionEvent)
+        {
+            // If one block is selected
+            Block selected = model.getSelected();
+
+            // Change his text
+            String originalText = JOptionPane.showInputDialog(view,
+                                                              "Text du block",
+                                                              selected.getOriginalText());
+
+            // If originalText has changed
+            if (originalText != null)
+            {
+                // Update block content
+                model.changeSelectedText(originalText);
+            }
+        }
+    }
+
     private class UpdateText implements Observer
     {
         @Override
@@ -180,6 +252,8 @@ public class Controller
 
             // Update delete possibility
             deleteAction.setEnabled(model.getSelected() != null);
+            // Update modify possibility
+            modifyAction.setEnabled(model.getSelected() != null);
         }
     }
 

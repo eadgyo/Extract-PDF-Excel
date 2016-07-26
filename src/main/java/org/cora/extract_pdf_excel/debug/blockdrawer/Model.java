@@ -106,7 +106,7 @@ public class Model extends Observable
         return selectedPoint;
     }
 
-    public void setSelectedPoint(Vector2 point)
+    public void setSelectedPointAndResetIfSame(Vector2 point)
     {
         if (actualBlock == null)
             return;
@@ -117,6 +117,17 @@ public class Model extends Observable
             this.selectedPoint = -1;
         else
             this.selectedPoint = selectedPoint;
+
+        setChanged();
+        notifyObservers();
+    }
+
+    public void setSelectedPoint(Vector2 point)
+    {
+        if (actualBlock == null)
+            return;
+
+        this.selectedPoint = getSelectedPoint(point);
 
         setChanged();
         notifyObservers();
@@ -135,7 +146,7 @@ public class Model extends Observable
         {
             Vector2 rectPoint = rect.getPoint(i);
             double dist = rectPoint.getSqMagnitude(point);
-            if (dist < sqDist && dist < 100)
+            if (dist < sqDist && dist < 150)
             {
                 selectedPoint = i;
                 sqDist = dist;
@@ -187,6 +198,18 @@ public class Model extends Observable
             return;
 
         actualBlock.getBound().translate(vector2);
+
+        setChanged();
+        notifyObservers();
+    }
+
+    public void changeSelectedText(String originalText)
+    {
+        if (actualBlock == null)
+            return;
+
+        actualBlock.setOriginalText(originalText);
+        actualBlock.setFormattedText(originalText);
 
         setChanged();
         notifyObservers();
