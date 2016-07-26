@@ -23,6 +23,44 @@ public class Block
     private Line   line;
     private Column column;
 
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Block block = (Block) o;
+
+        if (formattedText != null ? !formattedText.equals(block.formattedText) : block.formattedText != null)
+            return false;
+        if (originalText != null ? !originalText.equals(block.originalText) : block.originalText != null) return false;
+        if (line != null ? !line.equals(block.line) : block.line != null) return false;
+        if (column != null ? !column.equals(block.column) : block.column != null) return false;
+        if (bound != null ? !bound.equals(block.bound) : block.bound != null) return false;
+        if (textOrientation != block.textOrientation) return false;
+        if (blockOrientation != block.blockOrientation) return false;
+        if (fontColors != null ? !fontColors.equals(block.fontColors) : block.fontColors != null) return false;
+        if (backColors != null ? !backColors.equals(block.backColors) : block.backColors != null) return false;
+        return fonts != null ? fonts.equals(block.fonts) : block.fonts == null;
+
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int result = formattedText != null ? formattedText.hashCode() : 0;
+        result = 31 * result + (originalText != null ? originalText.hashCode() : 0);
+        result = 31 * result + (line != null ? line.hashCode() : 0);
+        result = 31 * result + (column != null ? column.hashCode() : 0);
+        result = 31 * result + (bound != null ? bound.hashCode() : 0);
+        result = 31 * result + (textOrientation != null ? textOrientation.hashCode() : 0);
+        result = 31 * result + (blockOrientation != null ? blockOrientation.hashCode() : 0);
+        result = 31 * result + (fontColors != null ? fontColors.hashCode() : 0);
+        result = 31 * result + (backColors != null ? backColors.hashCode() : 0);
+        result = 31 * result + (fonts != null ? fonts.hashCode() : 0);
+        return result;
+    }
+
     private Rectangle2 bound;
 
     private Direction textOrientation;

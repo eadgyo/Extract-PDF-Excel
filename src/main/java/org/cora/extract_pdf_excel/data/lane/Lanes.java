@@ -258,29 +258,56 @@ public class Lanes
     }
 
     /**
-     * Get the bounds of each lane along the opposite axis of the lane.
+     * Get the size of each lane along the opposite axis of the lane.
+     *
+     * Use the start of the next lane as the end of the previous lane.
      *
      * @param oppositeAxis Opposite lane axis.
      *
-     * @return bounds of each lane. The end of one lane and the start of the next is considered as the same. The first
-     * key is the start of the first lane, the second the end of the first and the start of the second lane etc...
+     * @return size of each lane.
      */
-    public ArrayList<Double> getLanesBounds(int oppositeAxis)
+    public ArrayList<Double> getLanesLength(int oppositeAxis)
     {
         ArrayList<Double> lanesBounds = new ArrayList<>();
 
         // Get the start of each lane from the sorted lane
         NavigableSet<Double> lanesStart = lanes.navigableKeySet();
 
-        // The set is already ascendant sorted, just need to add one by one each start.
-        for (Double startOfLane : lanesStart)
+        // Get the start
+        Iterator<Double> iterator = lanesStart.iterator();
+
+        // If the list of lanes is not empty
+        if (iterator.hasNext())
         {
-            lanesBounds.add(startOfLane);
+            Double endOfLane   = iterator.next();
+            Double startOfLane;
+
+            // The set is already ascendant sorted
+            // Add each start - end size.
+            while (iterator.hasNext())
+            {
+                startOfLane = endOfLane;
+                endOfLane = iterator.next();
+
+                lanesBounds.add(endOfLane - startOfLane);
+            }
+
+            // Add the end of the last lane
+            startOfLane = endOfLane;
+            endOfLane = lanes.lastEntry().getValue().getPos(oppositeAxis);
+
+            lanesBounds.add(endOfLane - startOfLane);
         }
-
-        // Add the end of the last lane
-        lanesBounds.add(lanes.lastEntry().getValue().getPos(oppositeAxis));
-
         return lanesBounds;
+    }
+
+    /**
+     * Get contained lanes keeping sorted order
+     *
+     * @return set lane keeping sorted order
+     */
+    public Set<Map.Entry<Double, Lane>> getSortedLanes()
+    {
+        return lanes.entrySet();
     }
 }

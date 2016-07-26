@@ -13,28 +13,36 @@ import java.util.ArrayList;
 public class XclPage
 {
     private My2DArray<Block>  cells;
-    private ArrayList<Double> colsSize;
-    private ArrayList<Double> linesSize;
+    private ArrayList<Double> columnsWidth;
+    private ArrayList<Double> linesHeight;
 
-    public XclPage(My2DArray<Block> cells, ArrayList<Double> colsSize, ArrayList<Double> linesSize)
+    /**
+     * @param cells Array of cells, containing blocks
+     * @param columnsWidth width of each column
+     * @param linesHeight height of each line
+     */
+    public XclPage(My2DArray<Block> cells, ArrayList<Double> columnsWidth, ArrayList<Double> linesHeight)
     {
         this.cells = cells;
-        this.colsSize = colsSize;
-        this.linesSize = linesSize;
+        this.columnsWidth = columnsWidth;
+        this.linesHeight = linesHeight;
     }
 
+    /**
+     * @param cells Array of cells, containing blocks
+     */
     public XclPage(My2DArray<Block> cells)
     {
         this.cells = cells;
-        this.colsSize = new ArrayList<>();
-        this.linesSize = new ArrayList<>();
+        this.columnsWidth = new ArrayList<>();
+        this.linesHeight = new ArrayList<>();
     }
 
     public XclPage()
     {
         this.cells = new My2DArray<>();
-        this.colsSize = new ArrayList<>();
-        this.linesSize = new ArrayList<>();
+        this.columnsWidth = new ArrayList<>();
+        this.linesHeight = new ArrayList<>();
     }
 
     public My2DArray<Block> getCells()
@@ -47,25 +55,76 @@ public class XclPage
         this.cells = cells;
     }
 
-    public ArrayList<Double> getColsSize()
+    public ArrayList<Double> getColumnWidth()
     {
-        return colsSize;
+        return columnsWidth;
     }
 
-    public void setColsSize(ArrayList<Double> colsSize)
+    public void setColumnsWidth(ArrayList<Double> columnsWidth)
     {
-        this.colsSize = colsSize;
+        this.columnsWidth = columnsWidth;
     }
 
-    public ArrayList<Double> getLinesSize()
+    public ArrayList<Double> getLinesHeight()
     {
-        return linesSize;
+        return linesHeight;
     }
 
-    public void setLinesSize(ArrayList<Double> linesSize)
+    public void setLinesHeight(ArrayList<Double> linesHeight)
     {
-        this.linesSize = linesSize;
+        this.linesHeight = linesHeight;
     }
 
+    /**
+     *
+     * @return number of columns of the array cells
+     */
+    public int numberOfColumns()
+    {
+        return cells.numberOfColumns();
+    }
 
+    /**
+     *
+     * @return number of lines of the array cells
+     */
+    public int numberOfLines()
+    {
+        return cells.numberOfLines();
+    }
+
+    /**
+     * Get a block at a given position
+     * @param col column index
+     * @param line line index
+     * @return block or null if there is no block at this place.
+     */
+    public Block getBlockAt(int col, int line)
+    {
+        return cells.get(col, line);
+    }
+
+    /**
+     * Get the height size of a line
+     * @param line line index
+     * @return height of the line
+     */
+    public double getLineHeight(int line)
+    {
+        assert (line >= 0 && line <= numberOfLines());
+
+        return linesHeight.get(line);
+    }
+
+    /**
+     * Get the width size of a column
+     * @param column column index
+     * @return width of the column
+     */
+    public double getColumnWidth(int column)
+    {
+        assert (column >= 0 && column <= numberOfColumns());
+
+        return columnsWidth.get(column);
+    }
 }

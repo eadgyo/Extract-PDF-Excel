@@ -2,17 +2,16 @@ package org.cora.extract_pdf_excel.debug.display;
 
 import org.cora.extract_pdf_excel.data.ExtractedPage;
 import org.cora.extract_pdf_excel.data.block.Block;
-import org.cora.extract_pdf_excel.data.geom.Rectangle2;
 
 import java.awt.*;
-import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * Created by eadgyo on 22/07/16.
  *
  * Panel to render extracted page content
  */
-public class JPanelPage extends JPanelResized
+public class JPanelPage extends JResizedPanelPdf
 {
     private ExtractedPage extractedPage = null;
 
@@ -32,24 +31,14 @@ public class JPanelPage extends JPanelResized
 
         g.setFont(new Font("TimesNewRoman", Font.ROMAN_BASELINE, 10));
 
-        ArrayList<Block> blocks = extractedPage.getBlocks();
+        Collection<Block> blocks = extractedPage.getBlocks();
 
         // Display all blocks
         for (Block block : blocks)
         {
-            g.setColor(Color.gray);
-
-            // Draw bounds
-            Rectangle2 bound = block.getBound();
-            super.drawRect(g, bound);
-
-            // Get the formatted text
-            String formattedText = block.getFormattedText();
-            // If the text is too long, shortcut the text
-            if (formattedText.length() > 10)
-                formattedText = formattedText.substring(0, 10);
-            // Draw th formatted text
-            g2d.drawString(formattedText, (int) bound.getX(), (int) bound.getY());
+            g.setColor(Color.GRAY);
+            DisplayTools.drawBlock(g2d, block);
+            DisplayTools.drawBlockText(g2d, block);
         }
     }
 }

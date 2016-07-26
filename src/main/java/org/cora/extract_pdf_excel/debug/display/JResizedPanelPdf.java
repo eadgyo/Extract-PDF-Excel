@@ -1,7 +1,5 @@
 package org.cora.extract_pdf_excel.debug.display;
 
-import org.cora.extract_pdf_excel.data.geom.Rectangle2;
-
 import javax.swing.*;
 import java.awt.*;
 
@@ -10,10 +8,11 @@ import java.awt.*;
  *
  * Base for resized panel
  */
-public class JPanelResized extends JPanel
+public class JResizedPanelPdf extends JPanel
 {
     private double pdfWidth  = 0;
     private double pdfHeight = 0;
+
 
     public void setPdfWidth(double pdfWidth)
     {
@@ -37,11 +36,6 @@ public class JPanelResized extends JPanel
     {
         g.setColor(Color.WHITE);
         g.clearRect(0, 0, getWidth(), getHeight());
-    }
-
-    public void drawRect(Graphics g2d, Rectangle2 rect)
-    {
-        g2d.drawRect((int) rect.getX(), (int) rect.getY(), (int) rect.getWidth(), (int) rect.getHeight());
     }
 
     @Override

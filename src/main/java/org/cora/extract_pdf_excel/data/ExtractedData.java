@@ -17,10 +17,24 @@ public class ExtractedData
      */
     private Map<Integer, ExtractedPage> extractedPages;
 
+    /**
+     * Name of the file.
+     */
+    private String fileName = "";
 
     public ExtractedData()
     {
         this.extractedPages = new HashMap<Integer, ExtractedPage>();
+    }
+
+    public void setFileName(String fileName)
+    {
+        this.fileName = fileName;
+    }
+
+    public String getFileName()
+    {
+        return fileName;
     }
 
     /**
@@ -51,7 +65,7 @@ public class ExtractedData
      *
      * @return all block in defined page, or null if page does not exist
      */
-    public ArrayList<Block> getBlocksInPage(int pageIndex)
+    public Collection<Block> getBlocksInPage(int pageIndex)
     {
         return extractedPages.get(pageIndex).getBlocks();
     }

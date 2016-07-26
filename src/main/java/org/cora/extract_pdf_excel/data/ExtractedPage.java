@@ -3,6 +3,7 @@ package org.cora.extract_pdf_excel.data;
 import org.cora.extract_pdf_excel.data.block.Block;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * Created by eadgyo on 16/07/16.
@@ -20,9 +21,9 @@ public class ExtractedPage
     /**
      * Data in page
      */
-    private ArrayList<Block> blocks;
+    private Collection<Block> blocks;
 
-    public ExtractedPage(float width, float height, ArrayList<Block> blocks)
+    public ExtractedPage(float width, float height, Collection<Block> blocks)
     {
         this.width = width;
         this.height = height;
@@ -58,7 +59,7 @@ public class ExtractedPage
         this.height = height;
     }
 
-    public ArrayList<Block> getBlocks()
+    public Collection<Block> getBlocks()
     {
         return blocks;
     }

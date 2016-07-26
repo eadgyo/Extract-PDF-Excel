@@ -67,6 +67,12 @@ public class Vector2
         coordinates[i] = v;
     }
 
+    public void addX(double v) { coordinates[X] += v; }
+
+    public void addY(double v) { coordinates[Y] += v; }
+
+    public void add(int i, double v) { coordinates[i] += v; }
+
     public double getMagnitude()
     {
         return getMagnitude(this);

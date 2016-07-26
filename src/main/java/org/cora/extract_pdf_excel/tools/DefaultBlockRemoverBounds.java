@@ -12,7 +12,7 @@ import java.util.Iterator;
  * <p/>
  * Remove block if it already exists
  */
-public class DefaultBlockRemover extends BlockRemover
+public class DefaultBlockRemoverBounds extends BlockRemover
 {
     /**
      * Bounds of the extracted pdf
@@ -22,7 +22,7 @@ public class DefaultBlockRemover extends BlockRemover
     /**
      * @param bounds bound delimiting valid blocks.
      */
-    public DefaultBlockRemover(Rectangle2 bounds)
+    public DefaultBlockRemoverBounds(Rectangle2 bounds)
     {
         this.bounds = bounds;
     }

@@ -52,6 +52,11 @@ public class Lane
         return blocks;
     }
 
+    public Collection<Block> getBlocksCollection()
+    {
+        return blocks.values();
+    }
+
     public void setBlocks(TreeMap<Double, Block> blocks)
     {
         this.blocks = blocks;

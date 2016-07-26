@@ -1,7 +1,10 @@
 package org.cora.extract_pdf_excel;
 
 import com.itextpdf.text.pdf.PdfReader;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.cora.extract_pdf_excel.data.*;
 import org.cora.extract_pdf_excel.data.array.My2DArray;
 import org.cora.extract_pdf_excel.data.block.Block;
@@ -15,6 +18,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * Created by eadgyo on 12/07/16.
@@ -22,10 +26,11 @@ import java.util.ArrayList;
  * Extract data from pdf and convert it to excel page
  *
  * <p>
- * Full conversion process is divided in 3 operations <br/>
- * 1-Extract transformedData from PDF <br/>
- * 2-Arrange transformedData in colums and lines <br/>
- * 3-Create Excel page from Arranged Data <br/>
+ * Full conversion process is divided in 4 operations <br/>
+ * 1-Extract extractedData from PDF <br/>
+ * 2-Sort extractedData in columns and lines <br/>
+ * 3-Create Excel page from Sorted Data <br/>
+ * 4-Add xcl Page to your excel workBook.
  * </p>
  *
  * <p>
@@ -100,7 +105,7 @@ public class PdfConverter
      * </p>
      *
      * @param extractedData extracted extractedData from extractFromFile process
-     * @param axisIndex axis of lane, 0 for Line and 1 for Column
+     * @param axisIndex     axis of lane, 0 for Line and 1 for Column
      * @param oppositeIndex opposite axis of lane, 1 for Line and 0 for Column
      *
      * @return Sorted Data from extracted pages. Data in extractedData are sorted in the right column and line. It
@@ -109,9 +114,6 @@ public class PdfConverter
      */
     public static SortedData sortTransformedData(ExtractedData extractedData, int axisIndex, int oppositeIndex)
     {
-        int xAxis = 0;
-        int yAxis = 1;
-
         // Grouping all sortedPage
         SortedData sortedData = new SortedData();
 
@@ -125,17 +127,26 @@ public class PdfConverter
             if (extractedPage != null)
             {
                 // Start creating sortedPage data
-                Lanes columns = new Lanes();
-                Lanes lines   = new Lanes();
+                Lanes      columns    = new Lanes();
+                Lanes      lines      = new Lanes();
                 SortedPage sortedPage = new SortedPage(columns, lines);
 
-                ArrayList<Block> blocks = extractedPage.getBlocks();
+                Collection<Block> blocks = extractedPage.getBlocks();
 
                 // Sort each block
                 for (Block block : blocks)
                 {
-                    BlockSorter.insertInLanes(xAxis, yAxis, block, lines);
-                    BlockSorter.insertInLanes(yAxis, xAxis, block, columns);
+                    // Insert in the correct line or create new one
+                    BlockSorter.insertInLanes(SortedPage.DEFAULT_LINE_AXIS,
+                                              SortedPage.DEFAULT_OPPOSITE_LINE_AXIS,
+                                              block,
+                                              lines);
+
+                    // Insert in the correct column or create new one
+                    BlockSorter.insertInLanes(SortedPage.DEFAULT_COLUMN_AXIS,
+                                              SortedPage.DEFAULT_OPPOSITE_COLUMN_AXIS,
+                                              block,
+                                              columns);
                 }
 
                 // Link sortedPage to his extractedPage
@@ -154,11 +165,11 @@ public class PdfConverter
      *
      * @param sortedData data sorted in column and line
      *
-     * @return excel list of sheets
+     * @return list of excel pages.
      */
-    public static ArrayList<HSSFSheet> createExcelPages(SortedData sortedData)
+    public static ArrayList<XclPage> createExcelPages(SortedData sortedData)
     {
-        ArrayList<HSSFSheet> excelSheets = new ArrayList<>();
+        ArrayList<XclPage> xclPages = new ArrayList<>();
 
         for (int pageIndex = 0; pageIndex < sortedData.numberOfPages(); pageIndex++)
         {
@@ -169,31 +180,56 @@ public class PdfConverter
             if (sortedPage != null)
             {
                 // Create 2D array containing blocks using sorted lines and columns from sortedData
-                My2DArray<Block> arrayOfBlocks = sortedPage.create2DArrayOfBlocks();
-                ArrayList<Double> linesSize = sortedPage.getLinesBounds();
-                ArrayList<Double> columnsSize = sortedPage.getColumnsStart();
+                My2DArray<Block>  arrayOfBlocks = sortedPage.create2DArrayOfBlocks();
+                ArrayList<Double> linesSize     = sortedPage.getLinesHeight();
+                ArrayList<Double> columnsSize   = sortedPage.getColumnsWidth();
 
-                XclPage xclPage = new XclPage(arrayOfBlocks, linesSize, columnsSize);
-
-                HSSFSheet        excelSheet     = createExcelPage(xclPage);
-                excelSheets.add(excelSheet);
+                xclPages.add(new XclPage(arrayOfBlocks, linesSize, columnsSize));
             }
         }
-        // return created Excel page using 2D array
 
-        return excelSheets;
+        // return created Excel page
+        return xclPages;
     }
 
     /**
-     * Create excel page from 2D array of blocks, filling box with formatted text.
+     * Create excel sheet using workbook and xclPage, filling box with formatted text.
      *
-     * @param xclPage excel page information. Containing cells and dimensions of columns and lines.
-     * @return created excel page using array2OfBlocks
+     * @param sheetName name of the created excel sheet.
+     * @param wb        used excel workBook to insert page
+     * @param xclPage   excel page information. Containing cells and dimensions of columns and lines.
+     *
+     * @return created excel sheet.
      */
-    public static HSSFSheet createExcelPage(XclPage xclPage)
+    public static HSSFSheet createExcelSheet(String sheetName, HSSFWorkbook wb, XclPage xclPage)
     {
-        // Fill Excel Sheet with 2D array
-            // Insert text using formatted text
+        // Create excel sheet
+        HSSFSheet sheet = wb.createSheet(sheetName);
+
+        // Parse columns and lines
+        for (int line = 0; line < xclPage.numberOfLines(); line++)
+        {
+            HSSFRow createdLine = sheet.createRow(line);
+            createdLine.setHeight((short) xclPage.getLineHeight(line));
+            for (int col = 0; col < xclPage.numberOfColumns(); col++)
+            {
+                Block block = xclPage.getBlockAt(col, line);
+
+                // If there is a block a the given position
+                if (block != null)
+                {
+                    // Create a new cell and add the block content in this new cell
+                    HSSFCell createdCell = createdLine.createCell(col);
+                    createdCell.setCellValue(block.getFormattedText());
+                }
+            }
+        }
+
+        // Set the width of each lane
+        for (int col = 0; col < xclPage.numberOfColumns(); col++)
+        {
+            sheet.setColumnWidth(col, (int) xclPage.getColumnWidth(col));
+        }
 
         return null;
     }

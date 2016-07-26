@@ -11,7 +11,7 @@ import java.util.Collection;
  *
  * Display lanes bounds
  */
-public class JPanelLane  extends JPanelResized
+public class JPanelLane  extends JResizedPanelPdf
 {
     private Lanes lanes = null;
 
@@ -36,7 +36,7 @@ public class JPanelLane  extends JPanelResized
         // Draw each lane
         for (Lane lane : lanes)
         {
-            super.drawRect(g2d, lane.getBound());
+            DisplayTools.drawRect(g2d, lane.getBound());
         }
     }
 }

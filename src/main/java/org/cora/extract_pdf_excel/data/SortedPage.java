@@ -2,9 +2,11 @@ package org.cora.extract_pdf_excel.data;
 
 import org.cora.extract_pdf_excel.data.array.My2DArray;
 import org.cora.extract_pdf_excel.data.block.Block;
+import org.cora.extract_pdf_excel.data.lane.Lane;
 import org.cora.extract_pdf_excel.data.lane.Lanes;
+import org.cora.extract_pdf_excel.exception.NoCorrespondingLane;
 
-import java.util.ArrayList;
+import java.util.*;
 
 /**
  * Created by eadgyo on 18/07/16.
@@ -111,17 +113,39 @@ public class SortedPage
             my2DArray.addLine();
         }
 
-        // Fill the array
-        for (int col = 0; col < columns.size(); col++)
+        // Get sorted columns
+        Set<Map.Entry<Double, Lane>> sortedColumns = columns.getSortedLanes();
+
+        // For each column, get all block, get the corresponding line. Insert the block at line and column location.
+        int col = 0;
+        for (Iterator<Map.Entry<Double, Lane>> iterator = sortedColumns.iterator(); iterator.hasNext(); )
         {
-            /*for (int )
+            Map.Entry<Double, Lane> sortedColumn = iterator.next();
+            Lane                    column       = sortedColumn.getValue();
 
-            // Get his line index
-            int line = col
+            // Get blocks in the column
+            Collection<Block> blocks = column.getBlocksCollection();
+            for (Block block : blocks)
+            {
+                // Search his line index
+                int line = lines.getLaneIndexOfBlock(DEFAULT_LINE_AXIS, block);
 
-            my2DArray.set*/
+                try
+                {
+                    if (line == -1)
+                        throw new NoCorrespondingLane();
+
+                    // Set at the position, the block
+                    my2DArray.set(col, line, block);
+                }
+                catch (NoCorrespondingLane noCorrespondingLane)
+                {
+                    noCorrespondingLane.printStackTrace();
+                }
+            }
         }
-        return null;
+
+        return my2DArray;
     }
 
     /**
@@ -130,9 +154,9 @@ public class SortedPage
      * @return bounds of each line lane. The first key is the start of the first lane, the second the end of the first
      * and the start of the second lane etc...
      */
-    public ArrayList<Double> getLinesBounds()
+    public ArrayList<Double> getLinesHeight()
     {
-        return lines.getLanesBounds(DEFAULT_OPPOSITE_LINE_AXIS);
+        return lines.getLanesLength(DEFAULT_OPPOSITE_LINE_AXIS);
     }
 
     /**
@@ -141,8 +165,8 @@ public class SortedPage
      * @return End of each column lane. The first key is the start of the first lane, the second the end of the first
      * and the start of the second lane etc...
      */
-    public ArrayList<Double> getColumnsStart()
+    public ArrayList<Double> getColumnsWidth()
     {
-        return columns.getLanesBounds(DEFAULT_OPPOSITE_COLUMN_AXIS);
+        return columns.getLanesLength(DEFAULT_OPPOSITE_COLUMN_AXIS);
     }
 }
