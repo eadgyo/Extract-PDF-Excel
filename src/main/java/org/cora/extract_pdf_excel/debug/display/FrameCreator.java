@@ -2,6 +2,7 @@ package org.cora.extract_pdf_excel.debug.display;
 
 import org.cora.extract_pdf_excel.data.ExtractedPage;
 import org.cora.extract_pdf_excel.data.SortedPage;
+import org.cora.extract_pdf_excel.data.XclPage;
 import org.cora.extract_pdf_excel.data.block.Block;
 import org.cora.extract_pdf_excel.data.geom.Rectangle2;
 import org.cora.extract_pdf_excel.data.lane.Lanes;
@@ -90,6 +91,20 @@ public class FrameCreator
         frame.setVisible(true);
     }
 
+    public static void displayXclPage(String frameName, int width, int height, XclPage xclPage)
+    {
+        JFrame frame = createFrameGrid(frameName, 1, 1);
+
+        JPanelXcl xclPanel = new JPanelXcl(width, height);
+        xclPanel.setXclPage(xclPage);
+
+        Container contentPane = frame.getContentPane();
+
+        contentPane.add(xclPanel);
+        frame.setSize(800, 600);
+        frame.setVisible(true);
+    }
+
     public static void displaySortedPage(String frameName, SortedPage sortedPage)
     {
         JFrame frame = createFrameGrid(frameName, 2, 2);
@@ -126,7 +141,7 @@ public class FrameCreator
      *
      * @return created frame with grid
      */
-    public static JFrame createFrameGrid( String frameName, int nLines, int nCols)
+    public static JFrame createFrameGrid(String frameName, int nLines, int nCols)
     {
         JFrame frame = new JFrame(frameName);
 

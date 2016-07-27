@@ -128,7 +128,7 @@ public class SortedPage
             for (Block block : blocks)
             {
                 // Search his line index
-                int line = lines.getLaneIndexOfBlock(DEFAULT_LINE_AXIS, block);
+                int line = lines.getLaneIndexOfBlock(DEFAULT_OPPOSITE_LINE_AXIS, block);
 
                 try
                 {

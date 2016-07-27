@@ -188,7 +188,7 @@ public class PdfConverter
     }
 
     /**
-     * Create excel page from sorted data, using 2D array created,
+     * Create excel pages from sorted data, using 2D array created,
      *
      * @param sortedData data sorted in column and line
      *
@@ -206,17 +206,30 @@ public class PdfConverter
             // If page exists (has been loaded)
             if (sortedPage != null)
             {
-                // Create 2D array containing blocks using sorted lines and columns from sortedData
-                My2DArray<Block>  arrayOfBlocks = sortedPage.create2DArrayOfBlocks();
-                ArrayList<Double> linesSize     = sortedPage.getLinesHeight();
-                ArrayList<Double> columnsSize   = sortedPage.getColumnsWidth();
-
-                xclPages.add(new XclPage(arrayOfBlocks, linesSize, columnsSize));
+                xclPages.add(createExcelPage(sortedPage));
             }
         }
 
         // return created Excel page
         return xclPages;
+    }
+
+    /**
+     * Create excel page from sorted data, using 2D array created,
+     *
+     * @param sortedPage data sorted in column and line
+     *
+     * @return list of excel pages.
+     */
+    public static XclPage createExcelPage(SortedPage sortedPage)
+    {
+        // Create 2D array containing blocks using sorted lines and columns from sortedData
+        My2DArray<Block>  arrayOfBlocks = sortedPage.create2DArrayOfBlocks();
+        ArrayList<Double> linesSize     = sortedPage.getLinesHeight();
+        ArrayList<Double> columnsSize   = sortedPage.getColumnsWidth();
+
+        // return created Excel page
+        return new XclPage(arrayOfBlocks, linesSize, columnsSize);
     }
 
     /**
