@@ -30,7 +30,7 @@ class LaneTools
      */
     static MyPair<Lane, Lane> getFirstCollidingAndHigher(int oppositeAxis, Block block, Lanes lanes)
     {
-        // Take higher coordinate of lane to getPos
+        // Take lower coordinate of lane to getPos
         Double key = block.getBound().getPos(oppositeAxis);
 
         // Take lower lane which is maybe colliding with block
@@ -56,7 +56,7 @@ class LaneTools
         else
         {
             // Lower lane doesn't exist, search for one higher lane that may be colliding
-            Map.Entry<Double, Lane> higherLaneEntry = lanes.getLowerLaneEntry(key);
+            Map.Entry<Double, Lane> higherLaneEntry = lanes.getHigherLaneEntry(key);
 
             // If lane exists and if the start of block is before the end of the lane
             if (higherLaneEntry != null && isKeyLowerThanEndOfLane(oppositeAxis, key, higherLaneEntry.getValue()))

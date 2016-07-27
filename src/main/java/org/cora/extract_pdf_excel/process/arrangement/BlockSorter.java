@@ -63,22 +63,20 @@ public class BlockSorter
 
                     // Update higherLane
                     higherLane = lanes.getHigherLane(lowerLane.getPos(oppositeAxis));
-
-                    // Update new inserted lane end bounds
-                    if (higherLane != null)
-                        lowerLane.fitToHigherLane(oppositeAxis, higherLane);
                 }
+
+                // Update lanes' bounds
+                updateLowerAndKnownHigher(oppositeAxis, lanes, lowerLane, higherLane);
 
                 // Update collidingBlock
                 collidingBlock = CollisionTools.getBlockCollidingInLane(axis, block, lowerLane);
             }
 
             // Insert block in lowerLane
-            lowerLane.addBlockAndFitLane(axis, oppositeAxis, block);
+            addBlockFitAndUpdateKey(axis, oppositeAxis, lanes, lowerLane, block);
 
-            // Make sure lowerLane is not colliding with his higherLane
-            if (higherLane != null)
-                lowerLane.fitToHigherLane(oppositeAxis, higherLane);
+            // Update lanes' bounds
+            updateLowerAndKnownHigher(oppositeAxis, lanes, lowerLane, higherLane);
 
             // Reinsert all removed blocks
             for (Block removedBlock : savedCollidingBlock)
@@ -102,6 +100,84 @@ public class BlockSorter
             // Insert block in created lane
             lanes.insertLaneAndFitToHigher(oppositeAxis, lane);
         }
+    }
+
+    /**
+     * Insert block in one lane and update lane key in lanes.
+     * @param axis lane axis
+     * @param oppositeAxis opposite lane axis
+     * @param lanes collection of sorted lanes
+     * @param addingLane lane in which we add block
+     * @param block added block
+     */
+    private static void addBlockFitAndUpdateKey(int axis, int oppositeAxis, Lanes lanes, Lane addingLane, Block block)
+    {
+        // Save key to update lane key
+        double savedKey = addingLane.getPos(oppositeAxis);
+
+        // Add block and update lane bounds
+        addingLane.addBlockAndFitLane(axis, oppositeAxis, block);
+
+        // Update key
+        lanes.replaceKey(oppositeAxis, savedKey, addingLane);
+    }
+
+    /**
+     * Get lower lane from lanes and update bounds of lower and middle lanes.
+     * @param oppositeAxis opposite lane axis
+     * @param lanes collection of sorted lanes
+     * @param middle middle lane
+     * @param higherLane higher lane
+     */
+    private static void updateLowerAndKnownHigher(int oppositeAxis, Lanes lanes, Lane middle, Lane higherLane)
+    {
+        // Get lowerLane before changing middle key
+        Lane lowerLane = lanes.getLowerLane(oppositeAxis, middle);
+
+        // Update middle lane using higher bounds
+        if (higherLane != null)
+        {
+            assert (middle != higherLane);
+
+            // Save middle key
+            double savedMiddleKey = middle.getPos(oppositeAxis);
+
+            // Fit middle to higher lane
+            middle.fitToHigherLane(oppositeAxis, higherLane);
+
+            // Update middle key
+            lanes.replaceKey(oppositeAxis, savedMiddleKey, middle);
+        }
+
+        // Update lower lane using middle bounds
+        if (lowerLane != null)
+        {
+            assert (middle != lowerLane);
+            assert (lowerLane != higherLane);
+
+            // Save lower key
+            double savedLowerKey  = lowerLane.getPos(oppositeAxis);
+
+            // Fit lower to middle lane
+            lowerLane.fitToHigherLane(oppositeAxis, middle);
+
+            // Update lower key
+            lanes.replaceKey(oppositeAxis, savedLowerKey, lowerLane);
+        }
+    }
+
+    /**
+     * Get lower lane from lanes and update bounds of lower and middle lanes.
+     * @param oppositeAxis opposite lane axis
+     * @param lanes collection of sorted lanes
+     * @param middle middle lane
+     */
+    private static void updateLowerAndHigher(int oppositeAxis, Lanes lanes, Lane middle)
+    {
+        // Update middle lane using higher bounds
+        Lane higherLane = lanes.getHigherLane(oppositeAxis, middle);
+
+        updateLowerAndKnownHigher(oppositeAxis, lanes, middle, higherLane);
     }
 
     /**
@@ -179,6 +255,7 @@ public class BlockSorter
             {
                 // Can't add collidingBlock in higherLane because higherLane is after collidingBlock along
                 // oppositeAxis.
+
                 // Create a new lane to insert collidingBlock
                 Lane createdLane = splitLowerLaneAndReorderBlocks(axis,
                                                            oppositeAxis,
@@ -190,6 +267,9 @@ public class BlockSorter
                 // Insert created higherLane
                 lanes.insertLaneAndFitToHigher(oppositeAxis, createdLane);
             }
+
+            // Update lower key
+            lanes.replaceKey(oppositeAxis, oldLowerKey, lowerLane);
 
             // Use lowerLane to insert inserted block
             return lowerLane;
@@ -204,6 +284,9 @@ public class BlockSorter
             // If higher lane does not exist or is not colliding with higherBlock
             if (higherLane == null || !CollisionTools.isCollidingWithBlock(oppositeAxis, higherBlock, higherLane))
             {
+                // Save lowerLane to update his key in lanes
+                double oldLowerKey = lowerLane.getPos(oppositeAxis);
+
                 // Split lower lane and reorder lower lane's blocks
                 higherLane = splitLowerLaneAndReorderBlocks(axis,
                                                             oppositeAxis,
@@ -214,6 +297,9 @@ public class BlockSorter
 
                 // Insert created higherLane
                 lanes.insertLaneAndFitToHigher(oppositeAxis, higherLane);
+
+                // Update lower key
+                lanes.replaceKey(oppositeAxis, oldLowerKey, lowerLane);
             }
 
             // Use higherLane to insert inserted block
@@ -246,6 +332,7 @@ public class BlockSorter
 
         // Init higher lane bound
         higherLane.setRectangle(higherBlock.getBound());
+
 
         // If the end of lower lane is after start of higher lane, lower and higher lane are colliding
         if (lowerLane.getEndPos(oppositeAxis) > higherLane.getPos(oppositeAxis))

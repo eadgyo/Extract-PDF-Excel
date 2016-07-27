@@ -57,6 +57,36 @@ public class Lanes
     }
 
     /**
+     * Get lane lower than lane
+     *
+     * @param oppositeAxis index of opposite direction
+     * @param lane         used lane
+     *
+     * @return lower lane
+     */
+    public Lane getLowerLane(int oppositeAxis, Lane lane)
+    {
+        Map.Entry<Double, Lane> lowerLaneEntry = getLowerLaneEntry(lane.getPos(oppositeAxis));
+
+        return (lowerLaneEntry != null) ? lowerLaneEntry.getValue() : null;
+    }
+
+    /**
+     * Get lane lower than lane
+     *
+     * @param oppositeAxis index of opposite direction
+     * @param lane         used lane
+     *
+     * @return higher lane
+     */
+    public Lane getHigherLane(int oppositeAxis, Lane lane)
+    {
+        Map.Entry<Double, Lane> higherLaneEntry = getHigherLaneEntry(lane.getPos(oppositeAxis));
+
+        return (higherLaneEntry != null) ? higherLaneEntry.getValue() : null;
+    }
+
+    /**
      * Get lane lower than key
      *
      * @param key to be checked
@@ -309,5 +339,20 @@ public class Lanes
     public Set<Map.Entry<Double, Lane>> getSortedLanes()
     {
         return lanes.entrySet();
+    }
+
+    /**
+     * Check lane rectangle pos corresponds to his key
+     * @param oppositeAxis opposite lane axis
+     */
+    public void checkLaneAndAssociatedKey(int oppositeAxis)
+    {
+        for (Map.Entry<Double, Lane> doubleLaneEntry : lanes.entrySet())
+        {
+            Double key = doubleLaneEntry.getKey();
+            double expected = doubleLaneEntry.getValue().getPos(oppositeAxis);
+
+            assert (key == expected);
+        }
     }
 }

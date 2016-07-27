@@ -295,4 +295,10 @@ public class Block
         result = 31 * result + (fonts != null ? fonts.hashCode() : 0);
         return result;
     }
+
+    @Override
+    public String toString()
+    {
+        return (formattedText != null) ? formattedText : originalText;
+    }
 }

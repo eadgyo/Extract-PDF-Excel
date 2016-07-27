@@ -5,7 +5,6 @@ import org.cora.extract_pdf_excel.data.ExtractedPage;
 import org.cora.extract_pdf_excel.data.SortedPage;
 import org.cora.extract_pdf_excel.data.block.Block;
 import org.cora.extract_pdf_excel.data.geom.Rectangle2;
-import org.cora.extract_pdf_excel.data.lane.Lane;
 import org.cora.extract_pdf_excel.data.lane.Lanes;
 import org.cora.extract_pdf_excel.debug.display.FrameCreator;
 import org.cora.extract_pdf_excel.process.arrangement.BlockSorter;
@@ -13,7 +12,6 @@ import org.cora.extract_pdf_excel.process.arrangement.BlockSorter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Map;
 
 /**
  * Created by eadgyo on 27/07/16.
@@ -44,42 +42,14 @@ public class TestSorter
                                       SortedPage.DEFAULT_OPPOSITE_COLUMN_AXIS,
                                       block,
                                       columns);
+
+            columns.checkLaneAndAssociatedKey(SortedPage.DEFAULT_OPPOSITE_COLUMN_AXIS);
         }
 
         FrameCreator.displayBlocks("Blocks", 800, 600, blocks);
         FrameCreator.displayLanes("Lanes", 800, 600, columns);
 
-        if (columns.size() != 2)
-            return false;
-
-        Map.Entry<Double, Lane> higherLaneEntry = columns.getHigherLaneEntry(0);
-
-        Lane lane0 = higherLaneEntry.getValue();
-        Lane lane1 = columns.getHigherLane(higherLaneEntry.getKey());
-
-        if (lane0.size() == 0 || lane1.size() == 0)
-            return false;
-
-        Collection<Block> blocks0 = lane0.getBlocksCollection();
-
-        for (Block block : blocks0)
-        {
-            if (!block.getFormattedText().equals("Nom") &&
-                    !block.getFormattedText().equals("Prenom") &&
-                    !block.getFormattedText().contains("Fiche"))
-                return false;
-        }
-
-        Collection<Block> blocks1 = lane1.getBlocksCollection();
-
-        for (Block block : blocks1)
-        {
-            if (!block.getFormattedText().equals("Elvis") &&
-                    !block.getFormattedText().equals("NoName"))
-                return false;
-        }
-
-        return true;
+        return columns.size() == 2;
     }
 
     public static ExtractedPage createExtractedPage2()
@@ -88,13 +58,13 @@ public class TestSorter
 
         ArrayList<Block> blocks = new ArrayList<>();
 
-        blocks.add(new Block("Fiche presentation spectateur", new Rectangle2(29.0, 15.0, 717.0, 19.0)));
-
         blocks.add(new Block("Nom", new Rectangle2(44.0, 90.0, 56.0, 15.0)));
-        blocks.add(new Block("Prenom", new Rectangle2(50.0, 110.0, 50.0, 17.0)));
-
         blocks.add(new Block("Elvis", new Rectangle2(122.0, 87.0, 63.0, 12.0)));
-        blocks.add(new Block("NoName", new Rectangle2(121.0, 109.0, 100.0, 17.0)));
+        blocks.add(new Block("Fiche presentation spectateur", new Rectangle2(29.0, 15.0, 717.0, 19.0)));
+        blocks.add(new Block("Test", new Rectangle2(47.0, 229.0, 57.0, 19.0)));
+        blocks.add(new Block("Habilitations", new Rectangle2(117.0, 232.0, 57.0, 13.0)));
+        blocks.add(new Block("Agriculteur", new Rectangle2(116.0, 282.0, 52.0, 18.0)));
+        blocks.add(new Block("#2", new Rectangle2(52.0, 285.0, 50.0, 17.0)));
 
         extractedPage.addAllBlocks(blocks);
 
@@ -148,6 +118,7 @@ public class TestSorter
         blocks.add(new Block("Faire la table", new Rectangle2(304.0, 341.0, 112.0, 18.0)));
         blocks.add(new Block("Ranger les couverts", new Rectangle2(305.0, 371.0, 124.0, 13.0)));
         blocks.add(new Block("Je sais 2", new Rectangle2(147.0, 369.0, 143.0, 17.0)));
+
 
         extractedPage.addAllBlocks(blocks);
 
