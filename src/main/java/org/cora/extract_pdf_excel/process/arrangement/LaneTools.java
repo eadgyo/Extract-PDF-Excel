@@ -1,11 +1,11 @@
 package org.cora.extract_pdf_excel.process.arrangement;
 
-import org.cora.extract_pdf_excel.data.geom.Rectangle2;
-import org.cora.extract_pdf_excel.data.utils.MyPair;
 import org.cora.extract_pdf_excel.data.block.Block;
 import org.cora.extract_pdf_excel.data.block.Direction;
+import org.cora.extract_pdf_excel.data.geom.Rectangle2;
 import org.cora.extract_pdf_excel.data.lane.Lane;
 import org.cora.extract_pdf_excel.data.lane.Lanes;
+import org.cora.extract_pdf_excel.data.utils.MyPair;
 
 import java.util.Map;
 import java.util.Set;
@@ -18,34 +18,116 @@ import java.util.Set;
 class LaneTools
 {
     /**
-     * Get lowerLane from block.
+     * Get first colliding lane from block, and higher lane if exists.
      * Lane are sorted along their opposite axis.
      *
      * @param oppositeAxis opposite axis of lane
      * @param block        used to getPos lower lane
      * @param lanes        group of sorted lanes
      *
-     * @return lowerLane or null if there is no lower lane
+     * @return couple of first colliding lane and his higher lane. If there is no first colliding lane, return couples
+     * of null.
      */
-    static MyPair<Lane, Lane> getLowerAndHigherLane(int oppositeAxis, Block block, Lanes lanes)
+    static MyPair<Lane, Lane> getFirstCollidingAndHigher(int oppositeAxis, Block block, Lanes lanes)
     {
         // Take higher coordinate of lane to getPos
         Double key = block.getBound().getPos(oppositeAxis);
 
-        // Take higher lane which is not colliding
-        Map.Entry<Double, Lane> higherLaneEntry = lanes.getHigherLaneEntry(key);
+        // Take lower lane which is maybe colliding with block
+        Map.Entry<Double, Lane> lowerLaneEntry = lanes.getLowerLaneEntry(key);
 
-        // If higher lane exists
-        if (higherLaneEntry != null)
+        // If lower lane exists
+        if (lowerLaneEntry != null)
         {
-            // Then take lower lane that may be colliding with block from higher lane
-            return new MyPair<Lane, Lane>(lanes.getLowerLane(higherLaneEntry.getKey()), higherLaneEntry.getValue());
+            // Get the first lane that is colliding
+            Map.Entry<Double, Lane> firstColliding = getFirstLaneEndAfterKey(oppositeAxis, lanes, key, lowerLaneEntry);
+            if (firstColliding != null)
+            {
+                Lane higherThanCollidingLane = lanes.getHigherLane(firstColliding.getKey());
+
+                // Then take lower lane that may be colliding with block from higher lane
+                return new MyPair<Lane, Lane>(firstColliding.getValue(), higherThanCollidingLane);
+            }
+            else
+            {
+                return new MyPair<Lane, Lane>(null, null);
+            }
         }
         else
         {
-            // Higher lane doesn't exist, there is maybe one lower lane colliding
-            return new MyPair<Lane, Lane>(lanes.getLowerLane(key), null);
+            // Lower lane doesn't exist, search for one higher lane that may be colliding
+            Map.Entry<Double, Lane> higherLaneEntry = lanes.getLowerLaneEntry(key);
+
+            // If lane exists and if the start of block is before the end of the lane
+            if (higherLaneEntry != null && isKeyLowerThanEndOfLane(oppositeAxis, key, higherLaneEntry.getValue()))
+            {
+                // Take this lane as the lower lane and get his higherLane
+                Lane higherThanHigherLane = lanes.getHigherLane(higherLaneEntry.getKey());
+                return new MyPair<Lane, Lane>(higherLaneEntry.getValue(), higherThanHigherLane);
+            }
+            else
+            {
+                // No first colliding lane
+                return new MyPair<Lane, Lane>(null, null);
+            }
         }
+    }
+
+    /**
+     * @param oppositeAxis   opposite lane axis
+     * @param lanes          collection of lanes
+     * @param key            used key to check higher end of lane
+     * @param startLaneEntry start lane to start parsing and associated key.
+     *
+     * @return startLane if startLane has the end after the key, or the higher one having the end after the key. If no
+     * lanes have end after the key, return null.
+     */
+    private static Map.Entry<Double, Lane> getFirstLaneEndAfterKey(int oppositeAxis,
+                                                                   Lanes lanes,
+                                                                   Double key,
+                                                                   Map.Entry<Double, Lane> startLaneEntry)
+    {
+
+        // If the key is before the end of the start lane
+        if (isKeyLowerThanEndOfLane(oppositeAxis, key, startLaneEntry.getValue()))
+        {
+            // We found our first lane with end after the key
+            return startLaneEntry;
+        }
+
+        // Search for higher lane
+        Map.Entry<Double, Lane> actualLane = lanes.getHigherLaneEntry(startLaneEntry.getKey());
+
+        // While higher lane exists AND first colliding lane has not been found AND
+        while (actualLane != null &&
+                !isKeyLowerThanEndOfLane(oppositeAxis, key, actualLane.getValue()))
+        {
+            // Get the higher lane
+            actualLane = lanes.getHigherLaneEntry(actualLane.getKey());
+        }
+
+        // If we have found first lane with end of rect after the pos
+        if (actualLane != null)
+        {
+            return actualLane;
+        }
+        else
+        {
+            // No corresponding lane found
+            return null;
+        }
+    }
+
+    /**
+     * @param oppositeAxis opposite lanes axis
+     * @param key          checked key
+     * @param lane         used lane
+     *
+     * @return true if the key is before the end of the lane, false otherwise.
+     */
+    private static boolean isKeyLowerThanEndOfLane(int oppositeAxis, Double key, Lane lane)
+    {
+        return key < lane.getEndPos(oppositeAxis);
     }
 
     /**

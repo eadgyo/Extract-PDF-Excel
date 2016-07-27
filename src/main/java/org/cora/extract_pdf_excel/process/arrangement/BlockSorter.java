@@ -1,10 +1,10 @@
 package org.cora.extract_pdf_excel.process.arrangement;
 
-import org.cora.extract_pdf_excel.data.utils.MyPair;
 import org.cora.extract_pdf_excel.data.block.Block;
 import org.cora.extract_pdf_excel.data.block.Direction;
 import org.cora.extract_pdf_excel.data.lane.Lane;
 import org.cora.extract_pdf_excel.data.lane.Lanes;
+import org.cora.extract_pdf_excel.data.utils.MyPair;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -30,9 +30,10 @@ public class BlockSorter
     public static void insertInLanes(int axis, int oppositeAxis, Block block, Lanes lanes)
     {
         // Get lowerLane and higherLane from block
-        MyPair<Lane, Lane> lowerAndHigherLane = LaneTools.getLowerAndHigherLane(oppositeAxis, block, lanes);
-        Lane               lowerLane          = lowerAndHigherLane.getLeft();
-        Lane               higherLane         = lowerAndHigherLane.getRight();
+        MyPair<Lane, Lane> lowerAndHigherLane = LaneTools.getFirstCollidingAndHigher(oppositeAxis, block, lanes);
+
+        Lane lowerLane  = lowerAndHigherLane.getLeft();
+        Lane higherLane = lowerAndHigherLane.getRight();
 
         // If lowerLane exists AND lowerLane is colliding
         if (lowerLane != null && CollisionTools.isCollidingWithBlock(oppositeAxis, block, lowerLane))
@@ -62,6 +63,10 @@ public class BlockSorter
 
                     // Update higherLane
                     higherLane = lanes.getHigherLane(lowerLane.getPos(oppositeAxis));
+
+                    // Update new inserted lane end bounds
+                    if (higherLane != null)
+                        lowerLane.fitToHigherLane(oppositeAxis, higherLane);
                 }
 
                 // Update collidingBlock
@@ -70,8 +75,10 @@ public class BlockSorter
 
             // Insert block in lowerLane
             lowerLane.addBlockAndFitLane(axis, oppositeAxis, block);
+
             // Make sure lowerLane is not colliding with his higherLane
-            lowerLane.fitToHigherLane(oppositeAxis, higherLane);
+            if (higherLane != null)
+                lowerLane.fitToHigherLane(oppositeAxis, higherLane);
 
             // Reinsert all removed blocks
             for (Block removedBlock : savedCollidingBlock)
@@ -85,13 +92,16 @@ public class BlockSorter
 
             // Create a new lane with block rect as lane bound
             Lane lane = new Lane();
-            // Force use of block
+
+            // Init lane rectangle with block rectangle
             lane.setRectangle(block.getBound());
+
+            // Add block in lane
+            lane.addBlock(axis, block);
 
             // Insert block in created lane
             lanes.insertLaneAndFitToHigher(oppositeAxis, lane);
         }
-
     }
 
     /**
@@ -154,6 +164,7 @@ public class BlockSorter
 
                 // Update lowerLane size to update lane bounds after removing colliding block
                 lowerLane.resetAndFitLaneToInBlocks(axis, oppositeAxis);
+
                 // Prevent lane collision by fitting end of lowerLane to start of higherLane
                 lowerLane.fitToHigherLane(oppositeAxis, higherLane);
 
@@ -169,7 +180,15 @@ public class BlockSorter
                 // Can't add collidingBlock in higherLane because higherLane is after collidingBlock along
                 // oppositeAxis.
                 // Create a new lane to insert collidingBlock
-                splitLowerLaneAndReorderBlocks(axis, oppositeAxis, lowerBlock, higherBlock, lowerLane, true);
+                Lane createdLane = splitLowerLaneAndReorderBlocks(axis,
+                                                           oppositeAxis,
+                                                           lowerBlock,
+                                                           higherBlock,
+                                                           lowerLane,
+                                                           true);
+
+                // Insert created higherLane
+                lanes.insertLaneAndFitToHigher(oppositeAxis, createdLane);
             }
 
             // Use lowerLane to insert inserted block
@@ -192,6 +211,9 @@ public class BlockSorter
                                                             higherBlock,
                                                             lowerLane,
                                                             false);
+
+                // Insert created higherLane
+                lanes.insertLaneAndFitToHigher(oppositeAxis, higherLane);
             }
 
             // Use higherLane to insert inserted block
@@ -219,25 +241,31 @@ public class BlockSorter
                                                        boolean forceResizingLowerLane)
     {
         // HigherLane cannot be used to reinsert higherBlock
-        // Create a new lane and insert it in lanes
+        // Create a new lane and insert higher block in lanes
         Lane higherLane = new Lane();
-        higherLane.fitLane(axis, oppositeAxis, higherBlock);
 
-        // If the start of lower lane is before end of lowerLane, there are colliding
-        if (lowerLane.getPos(oppositeAxis) + lowerLane.getLength(oppositeAxis) > higherLane.getPos(oppositeAxis))
+        // Init higher lane bound
+        higherLane.setRectangle(higherBlock.getBound());
+
+        // If the end of lower lane is after start of higher lane, lower and higher lane are colliding
+        if (lowerLane.getEndPos(oppositeAxis) > higherLane.getPos(oppositeAxis))
         {
-            // Need to reinsert all blocks
+            // Need to fits lanes and reinsert all blocks
 
             // Save lower lane
             Set<Block> savedBlocks = lowerLane.copyBlocks();
 
             // Clear blocks in lane
             lowerLane.clearBlocks();
+
             // Reset lane bound to lowerBlock
             lowerLane.setRectangle(lowerBlock.getBound());
 
             // Reinsert all saved blocks in lowerLane or higherLane
             LaneTools.insertBlocksInRightLane(axis, oppositeAxis, savedBlocks, lowerLane, higherLane);
+
+            // Update end of lower lane to created higher lane
+            lowerLane.fitToHigherLane(oppositeAxis, higherLane);
         }
         else if (forceResizingLowerLane)
         {

@@ -1,8 +1,10 @@
 package org.cora.extract_pdf_excel.debug.display;
 
 import org.cora.extract_pdf_excel.data.ExtractedPage;
+import org.cora.extract_pdf_excel.data.SortedPage;
 import org.cora.extract_pdf_excel.data.block.Block;
 import org.cora.extract_pdf_excel.data.geom.Rectangle2;
+import org.cora.extract_pdf_excel.data.lane.Lanes;
 import org.cora.extract_pdf_excel.debug.tests.Constants;
 
 import javax.swing.*;
@@ -74,6 +76,46 @@ public class FrameCreator
         frame.setVisible(true);
     }
 
+    public static void displayLanes(String frameName, int width, int height, Lanes lanes)
+    {
+        JFrame frame = createFrameGrid(frameName, 1, 1);
+
+        JPanelLane lanesPanel = new JPanelLane(width, height);
+        lanesPanel.setLanes(lanes);
+
+        Container contentPane = frame.getContentPane();
+
+        contentPane.add(lanesPanel);
+        frame.setSize(800, 600);
+        frame.setVisible(true);
+    }
+
+    public static void displaySortedPage(String frameName, SortedPage sortedPage)
+    {
+        JFrame frame = createFrameGrid(frameName, 2, 2);
+
+        ExtractedPage extractedPage = sortedPage.getLinkExtractedPage();
+
+        JPanelLane lines = new JPanelLane(extractedPage.getWidth(), extractedPage.getHeight());
+        lines.setLanes(sortedPage.getLines());
+
+        JPanelLane columns = new JPanelLane(extractedPage.getWidth(), extractedPage.getHeight());
+        columns.setLanes(sortedPage.getColumns());
+
+        JPanelBlocks jPanelBlocks = new JPanelBlocks(extractedPage.getWidth(), extractedPage.getHeight());
+        jPanelBlocks.setBlocks(extractedPage.getBlocks());
+
+        Container contentPane = frame.getContentPane();
+
+        // Add page panel to the frame
+        contentPane.add(lines);
+        contentPane.add(columns);
+        contentPane.add(jPanelBlocks);
+
+        frame.setSize(800, 600);
+        frame.setVisible(true);
+    }
+
 
     /**
      * Create a frame containing a grid
@@ -99,5 +141,4 @@ public class FrameCreator
 
         return frame;
     }
-
 }

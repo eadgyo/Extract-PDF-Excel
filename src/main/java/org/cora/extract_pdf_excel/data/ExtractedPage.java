@@ -83,4 +83,9 @@ public class ExtractedPage
     {
         blocks.add(block);
     }
+
+    public void addAllBlocks(Collection<Block> blocks)
+    {
+        this.blocks.addAll(blocks);
+    }
 }

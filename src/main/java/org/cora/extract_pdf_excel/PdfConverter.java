@@ -104,7 +104,7 @@ public class PdfConverter
      * axisIndex and oppositeIndex are used to merge Line and Column process.
      * </p>
      *
-     * @param extractedData extracted extractedData from extractFromFile process
+     * @param extractedData extracted pages from one pdf file
      * @param axisIndex     axis of lane, 0 for Line and 1 for Column
      * @param oppositeIndex opposite axis of lane, 1 for Line and 0 for Column
      *
@@ -112,7 +112,7 @@ public class PdfConverter
      * keeps page separation. Columns and lines contained sorted blocks according to Y-axis for columns and X-axis
      * for lines.
      */
-    public static SortedData sortTransformedData(ExtractedData extractedData, int axisIndex, int oppositeIndex)
+    public static SortedData sortExtractedData(ExtractedData extractedData, int axisIndex, int oppositeIndex)
     {
         // Grouping all sortedPage
         SortedData sortedData = new SortedData();
@@ -126,31 +126,8 @@ public class PdfConverter
             // If page has been extracted
             if (extractedPage != null)
             {
-                // Start creating sortedPage data
-                Lanes      columns    = new Lanes();
-                Lanes      lines      = new Lanes();
-                SortedPage sortedPage = new SortedPage(columns, lines);
-
-                Collection<Block> blocks = extractedPage.getBlocks();
-
-                // Sort each block
-                for (Block block : blocks)
-                {
-                    // Insert in the correct line or create new one
-                    BlockSorter.insertInLanes(SortedPage.DEFAULT_LINE_AXIS,
-                                              SortedPage.DEFAULT_OPPOSITE_LINE_AXIS,
-                                              block,
-                                              lines);
-
-                    // Insert in the correct column or create new one
-                    BlockSorter.insertInLanes(SortedPage.DEFAULT_COLUMN_AXIS,
-                                              SortedPage.DEFAULT_OPPOSITE_COLUMN_AXIS,
-                                              block,
-                                              columns);
-                }
-
-                // Link sortedPage to his extractedPage
-                sortedPage.setLinkExtractedPage(extractedPage);
+                // Create sortedPage
+                SortedPage sortedPage = sortExtractedPage(extractedPage, axisIndex, oppositeIndex);
 
                 // Add sortedPage to sortedData
                 sortedData.insertPage(i, sortedPage);
@@ -158,6 +135,56 @@ public class PdfConverter
         }
 
         return sortedData;
+    }
+    /**
+     * Sort extractedPage in both columns and lines.
+     *
+     * <p>
+     * Each block in extractedPage are processed one by one. Block is first added to the right column, then in
+     * the right line.
+     * </p>
+     *
+     * <p>
+     * axisIndex and oppositeIndex are used to merge Line and Column process.
+     * </p>
+     *
+     * @param extractedPage extracted page from one pdf file
+     * @param axisIndex     axis of lane, 0 for Line and 1 for Column
+     * @param oppositeIndex opposite axis of lane, 1 for Line and 0 for Column
+     *
+     * @return Sorted Data from extracted pages. Data in extractedData are sorted in the right column and line. It
+     * keeps page separation. Columns and lines contained sorted blocks according to Y-axis for columns and X-axis
+     * for lines.
+     */
+    public static SortedPage sortExtractedPage(ExtractedPage extractedPage, int axisIndex, int oppositeIndex)
+    {
+        // Start creating sortedPage data
+        Lanes      columns    = new Lanes();
+        Lanes      lines      = new Lanes();
+        SortedPage sortedPage = new SortedPage(columns, lines);
+
+        Collection<Block> blocks = extractedPage.getBlocks();
+
+        // Sort each block
+        for (Block block : blocks)
+        {
+            // Insert in the correct line or create new one
+            BlockSorter.insertInLanes(SortedPage.DEFAULT_LINE_AXIS,
+                                      SortedPage.DEFAULT_OPPOSITE_LINE_AXIS,
+                                      block,
+                                      lines);
+
+            // Insert in the correct column or create new one
+            BlockSorter.insertInLanes(SortedPage.DEFAULT_COLUMN_AXIS,
+                                      SortedPage.DEFAULT_OPPOSITE_COLUMN_AXIS,
+                                      block,
+                                      columns);
+        }
+
+        // Link sortedPage to his extractedPage
+        sortedPage.setLinkExtractedPage(extractedPage);
+
+        return sortedPage;
     }
 
     /**
