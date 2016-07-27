@@ -1,12 +1,14 @@
 package org.cora.extract_pdf_excel.debug.display;
 
 import org.cora.extract_pdf_excel.data.ExtractedPage;
+import org.cora.extract_pdf_excel.data.block.Block;
 import org.cora.extract_pdf_excel.data.geom.Rectangle2;
 import org.cora.extract_pdf_excel.debug.tests.Constants;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * Created by eadgyo on 27/07/16.
@@ -15,7 +17,27 @@ import java.util.ArrayList;
  */
 public class FrameCreator
 {
-    public static void displayBlocks(String frameName, ExtractedPage extractedPage)
+    public static void displayBlocks(String frameName, int width, int height, Collection<Block> blocks)
+    {
+        if (!Constants.displayBlocks)
+            return;
+
+        JFrame frame = createFrameGrid(frameName, 1, 1);
+
+        JPanelBlocks jPanelBlocks = new JPanelBlocks(width, height);
+        jPanelBlocks.setBlocks(blocks);
+
+        Container contentPane = frame.getContentPane();
+
+        // Add page panel to the frame
+        contentPane.add(jPanelBlocks);
+
+        frame.setSize(800, 600);
+        frame.setVisible(true);
+    }
+
+
+    public static void displayExtractedPage(String frameName, ExtractedPage extractedPage)
     {
         if (!Constants.displayBlocks)
             return;
@@ -33,7 +55,6 @@ public class FrameCreator
         frame.setSize(800, 600);
         frame.setVisible(true);
     }
-
 
     public static void displayRect(String frameName, ArrayList<Rectangle2> rectangles)
     {

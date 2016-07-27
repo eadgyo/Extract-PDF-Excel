@@ -14,19 +14,14 @@ import java.util.Map;
 /**
  * Created by eadgyo on 21/07/16.
  *
- * Unit test for tools
+ * Test Default block merger
  */
-public class TestTools
+public class TestDefaultBlockMerger
 {
     public static void main(String[] args) throws IOException
     {
         boolean resultBlockMerger          = testDefaultBlockMerger();
-        boolean resultBlockRemoved         = testDefaultBlockRemover();
-        boolean resultBlockStringFormatter = testDefaultStringFormatter();
-
         System.out.println(Result.transformResult(resultBlockMerger) + " Block merger");
-        System.out.println(Result.transformResult(resultBlockRemoved) + " Block remover");
-        System.out.println(Result.transformResult(resultBlockStringFormatter) + " Block string formatter");
     }
 
     public static boolean testDefaultBlockMerger()
@@ -36,6 +31,44 @@ public class TestTools
         Map<String, Block> linkedNames = new HashMap<>();
         ArrayList<Block> blocks = new ArrayList<>();
 
+        createBlocks(linkedNames, blocks);
+
+        // Merge blocks
+        blockMerger.mergeIfNecessaryBlocks(blocks);
+
+        // Test Distance
+        if (wereMerged(linkedNames, "Distance0", "Distance1"))
+            return false;
+
+        if (!wereMerged(linkedNames, "Near0", "Near1"))
+            return false;
+
+        // Test Alignements
+        if (wereMerged(linkedNames, "NotAlign0", "NotAlign1") || wasMerged(linkedNames, "NotAlign2"))
+            return false;
+
+        if (!wereMerged(linkedNames, "Align0", "Align1") && !wereMerged(linkedNames, "Align2", "Align3"))
+            return false;
+
+        // Test matching types
+        if (wereMerged(linkedNames, "DiffBackC0", "DiffBackC1"))
+            return false;
+
+        if (!wereMerged(linkedNames, "MatchTypes0", "MatchTypes1"))
+            return false;
+
+        // Test orientation
+        if (wereMerged(linkedNames, "DiffAxisOr0", "DiffAxisOr1"))
+            return false;
+
+        if (wereMerged(linkedNames, "DiffTextOr0", "DiffTextOr1"))
+            return false;
+
+        return true;
+    }
+
+    private static void createBlocks(Map<String, Block> linkedNames, ArrayList<Block> blocks)
+    {
         linkedNames.put("Distance0", new Block("Distance0",new Rectangle2(36.0, 14.0, 99.0, 22.0)));
         blocks.add(linkedNames.get("Distance0"));
         linkedNames.put("Distance1", new Block("Distance1",new Rectangle2(35.0, 47.0, 98.0, 21.0)));
@@ -88,38 +121,6 @@ public class TestTools
         linkedNames.put("MatchTypes1", new Block("MatchTypes1",new Rectangle2(491.0, 246.0, 128.0, 19.0)));
         blocks.add(linkedNames.get("MatchTypes1"));
 
-        // Create blocks
-        blockMerger.mergeIfNecessaryBlocks(blocks);
-
-        // Test Distance
-        if (wereMerged(linkedNames, "Distance0", "Distance1"))
-            return false;
-
-        if (!wereMerged(linkedNames, "Near0", "Near1"))
-            return false;
-
-        // Test Alignements
-        if (wereMerged(linkedNames, "NotAlign0", "NotAlign1") || wasMerged(linkedNames, "NotAlign2"))
-            return false;
-
-        if (!wereMerged(linkedNames, "Align0", "Align1") && !wereMerged(linkedNames, "Align2", "Align3"))
-            return false;
-
-        // Test matching types
-        if (wereMerged(linkedNames, "DiffBackC0", "DiffBackC1"))
-            return false;
-
-        if (!wereMerged(linkedNames, "MatchTypes0", "MatchTypes1"))
-            return false;
-
-        // Test orientation
-        if (wereMerged(linkedNames, "DiffAxisOr0", "DiffAxisOr1"))
-            return false;
-
-        if (wereMerged(linkedNames, "DiffTextOr0", "DiffTextOr1"))
-            return false;
-
-        return true;
     }
 
     private static boolean wasMerged(Map<String, Block> linkedNames, String block)
@@ -130,15 +131,5 @@ public class TestTools
     private static boolean wereMerged(Map<String, Block> linkedNames, String block0, String block1)
     {
         return wasMerged(linkedNames, block0) || wasMerged(linkedNames, block1);
-    }
-
-    public static boolean testDefaultBlockRemover()
-    {
-        return true;
-    }
-
-    public static boolean testDefaultStringFormatter()
-    {
-        return true;
     }
 }

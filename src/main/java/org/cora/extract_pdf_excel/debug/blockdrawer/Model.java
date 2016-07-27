@@ -61,19 +61,15 @@ public class Model extends Observable
     {
         StringBuilder builder = new StringBuilder();
 
-        builder.append("Map<String, Block> linkedNames = new HashMap<>();\n");
         builder.append("ArrayList<Block> blocks = new ArrayList<>();\n");
 
         for (int i = 0; i < blocks.size(); i++)
         {
             Block block =  blocks.get(i);
-            builder.append("linkedNames.put(\"")
-                   .append(block.getOriginalText())
-                   .append("\", ")
+            builder.append("blocks.add(")
                    .append(Tools.textGeneratingBlockFast(block, i))
                    .append(");")
                    .append("\n");
-            builder.append("blocks.add(linkedNames.get(\"").append(block.getOriginalText()).append("\"));\n");
         }
         return builder.toString();
     }

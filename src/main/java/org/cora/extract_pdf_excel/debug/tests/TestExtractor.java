@@ -44,7 +44,7 @@ public class TestExtractor
             // Display extracted pages
             for (ExtractedPage page : pages)
             {
-                FrameCreator.displayBlocks("Test extracted blocks", page);
+                FrameCreator.displayExtractedPage("Test extracted blocks", page);
             }
         }
         catch (FileNotFoundException | IncorrectFileTypeException e)
