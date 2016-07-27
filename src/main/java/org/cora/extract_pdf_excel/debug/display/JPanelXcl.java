@@ -19,6 +19,11 @@ public class JPanelXcl extends JResizedPanelPdf
     private static final int X_AXIS = 0;
     private static final int Y_AXIS = 1;
 
+    public JPanelXcl(double pdfWidth, double pdfHeight)
+    {
+        super(pdfWidth, pdfHeight);
+    }
+
     public void setXclPage(XclPage xclPage)
     {
         this.xclPage = xclPage;

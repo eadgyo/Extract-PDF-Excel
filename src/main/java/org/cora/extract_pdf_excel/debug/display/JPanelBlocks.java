@@ -1,6 +1,5 @@
 package org.cora.extract_pdf_excel.debug.display;
 
-import org.cora.extract_pdf_excel.data.ExtractedPage;
 import org.cora.extract_pdf_excel.data.block.Block;
 
 import java.awt.*;
@@ -11,13 +10,18 @@ import java.util.Collection;
  *
  * Panel to render extracted page content
  */
-public class JPanelPage extends JResizedPanelPdf
+public class JPanelBlocks extends JResizedPanelPdf
 {
-    private ExtractedPage extractedPage = null;
+    private Collection<Block> blocks = null;
 
-    public void setExtractedPage(ExtractedPage extractedPage)
+    public JPanelBlocks(double pdfWidth, double pdfHeight)
     {
-        this.extractedPage = extractedPage;
+        super(pdfWidth, pdfHeight);
+    }
+
+    public void setBlocks(Collection<Block> blocks)
+    {
+        this.blocks = blocks;
     }
 
     @Override
@@ -25,13 +29,11 @@ public class JPanelPage extends JResizedPanelPdf
     {
         super.paintComponent(g);
 
-        assert (extractedPage != null);
+        assert (blocks != null);
 
         Graphics2D g2d = (Graphics2D) g;
 
         g.setFont(new Font("TimesNewRoman", Font.ROMAN_BASELINE, 10));
-
-        Collection<Block> blocks = extractedPage.getBlocks();
 
         // Display all blocks
         for (Block block : blocks)

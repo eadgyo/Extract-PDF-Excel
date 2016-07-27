@@ -7,7 +7,7 @@ import java.util.Arrays;
  * <p/>
  * Rectangle2 with getter using indexes.
  */
-public class Rectangle2
+public class Rectangle2 implements Cloneable
 {
     public static final int X = 0;
     public static final int Y = 1;
@@ -43,7 +43,14 @@ public class Rectangle2
     {
         try
         {
-            return (Rectangle2) super.clone();
+            Rectangle2 rect = (Rectangle2) super.clone();
+
+            rect.coordinates = new double[2];
+            rect.length = new double[2];
+
+            rect.set(getX(), getY(), getWidth(), getHeight());
+
+            return rect;
         }
         catch (CloneNotSupportedException e)
         {

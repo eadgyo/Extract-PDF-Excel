@@ -15,6 +15,11 @@ public class JPanelLane  extends JResizedPanelPdf
 {
     private Lanes lanes = null;
 
+    public JPanelLane(double pdfWidth, double pdfHeight)
+    {
+        super(pdfWidth, pdfHeight);
+    }
+
     public void setLanes(Lanes lanes)
     {
         this.lanes = lanes;

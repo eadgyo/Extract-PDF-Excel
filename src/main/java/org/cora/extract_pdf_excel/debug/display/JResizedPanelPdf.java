@@ -13,6 +13,11 @@ public class JResizedPanelPdf extends JPanel
     private double pdfWidth  = 0;
     private double pdfHeight = 0;
 
+    public JResizedPanelPdf(double pdfWidth, double pdfHeight)
+    {
+        this.pdfWidth = pdfWidth;
+        this.pdfHeight = pdfHeight;
+    }
 
     public void setPdfWidth(double pdfWidth)
     {
@@ -49,6 +54,5 @@ public class JResizedPanelPdf extends JPanel
 
         clearScreen(g);
         autoScale(g2d);
-
     }
 }

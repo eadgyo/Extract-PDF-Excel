@@ -132,4 +132,9 @@ public class ExtractedData
         ExtractedPage extractedPage = getPageWithException(pageIndex);
         return (extractedPage != null) ? extractedPage.getHeight() : 0;
     }
+
+    public Collection<ExtractedPage> getPagesCollection()
+    {
+        return extractedPages.values();
+    }
 }

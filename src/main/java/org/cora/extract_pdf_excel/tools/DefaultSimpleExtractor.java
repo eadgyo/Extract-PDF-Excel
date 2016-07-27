@@ -198,6 +198,7 @@ public class DefaultSimpleExtractor implements TextExtractionStrategy
 
         // Start a new block
         isFirstRender = true;
+
         // Clear stored info
         blockTextInfos.clear();
     }
@@ -206,9 +207,10 @@ public class DefaultSimpleExtractor implements TextExtractionStrategy
     {
         // Determine direction from line of block
         // lastAscent and lastDescent are last character rect top center side point and bottom center point
-        Direction direction = determineBlockDirection(startLine, endLine, lastAscent, lastDescent);
+        Direction blockDirection = determineBlockDirection(startLine, endLine, lastAscent, lastDescent);
+        Direction textDirection = determineTextDirection(lastAscent, lastDescent);
 
-        Rectangle2 blockRectangle = createBlockRectangle(xMin, xMax, yMin, yMax, direction);
+        Rectangle2 blockRectangle = createBlockRectangle(xMin, xMax, yMin, yMax, blockDirection);
 
         // Add color and font info
         Set<BaseColor>    fontColors = new HashSet<>();
@@ -222,10 +224,37 @@ public class DefaultSimpleExtractor implements TextExtractionStrategy
         }
 
         // Save block direction
-        registerBlockDirection(direction);
+        registerBlockDirection(blockDirection);
 
         // Create and return block with direction, rectangle and info
-        return new Block(result.toString(), blockRectangle, direction, fontColors, backColors, fonts);
+        return new Block(result.toString(), blockRectangle, blockDirection, textDirection, fontColors, backColors, fonts);
+    }
+
+    /**
+     * Determine the text direction from one upper and lower rect position of one letter.
+     * @param lastAscent upper rect position.
+     * @param lastDescent lower rect position.
+     * @return text direction.
+     */
+    private Direction determineTextDirection(Vector lastAscent, Vector lastDescent)
+    {
+        // If text is on Y axis
+        if (isAlongY(lastAscent.get(1), lastDescent.get(1)))
+        {
+            // If the text is not inverted along Y axis
+            if (lastAscent.get(1) < lastDescent.get(1))
+                return Direction.TOP;
+            else
+                return Direction.BOTTOM;
+        }
+        else
+        {
+            // If the text is not inverted along X axis
+            if (lastAscent.get(0) < lastDescent.get(0))
+                return Direction.LEFT;
+            else
+                return Direction.RIGHT;
+        }
     }
 
     /**
@@ -266,7 +295,7 @@ public class DefaultSimpleExtractor implements TextExtractionStrategy
                                               Vector lastAscent,
                                               Vector lastDescent)
     {
-        if (isBlockAlongY(startLine.get(1), lastEnd.get(1)))
+        if (isAlongY(startLine.get(1), lastEnd.get(1)))
         {
             // If Up point is before Down point along y axis
             if (lastAscent.get(1) < lastDescent.get(1))
@@ -284,7 +313,7 @@ public class DefaultSimpleExtractor implements TextExtractionStrategy
         }
     }
 
-    private boolean isBlockAlongY(double y0, double y1)
+    private boolean isAlongY(double y0, double y1)
     {
         return Math.abs(y0 - y1) < textBlockIdentifier.thresholdAlongY;
     }
@@ -483,11 +512,11 @@ public class DefaultSimpleExtractor implements TextExtractionStrategy
                             break;
                     }
 
-                    // Transform rectangle, by mirroring on x Axis
                     Rectangle2 bound    = block.getBound();
-                    Rectangle2 newBound = bound.clone();
 
-                    newBound.setY(-bound.getY() - bound.getHeight() + pdfHeight);
+                    // Transform rectangle, by mirroring on x Axis
+                    Rectangle2 newBound = transformBottomTop(bound, pdfHeight);
+
                     block.setBound(newBound);
                 }
             }
@@ -516,21 +545,11 @@ public class DefaultSimpleExtractor implements TextExtractionStrategy
                             break;
                     }
 
-                    // Rotate 90°
+
                     Rectangle2 bound    = block.getBound();
-                    Rectangle2 newBound = (Rectangle2) bound.clone();
 
-                    // Swap x and y
-                    //noinspection SuspiciousNameCombination
-                    newBound.setX(bound.getY());
-                    //noinspection SuspiciousNameCombination
-                    newBound.setY(bound.getX());
-
-                    // Swap width and height
-                    //noinspection SuspiciousNameCombination
-                    newBound.setWidth(bound.getHeight());
-                    //noinspection SuspiciousNameCombination
-                    newBound.setHeight(bound.getWidth());
+                    // Rotate 90°
+                    Rectangle2 newBound = transformLeftTop(bound);
 
                     block.setBound(newBound);
                 }
@@ -556,25 +575,62 @@ public class DefaultSimpleExtractor implements TextExtractionStrategy
                             break;
                     }
 
-                    // Rotate 90° + mirror on x
                     Rectangle2 bound    = block.getBound();
-                    Rectangle2 newBound = (Rectangle2) bound.clone();
 
-                    // Swap x and y and apply inversion
-                    //noinspection SuspiciousNameCombination
-                    newBound.setX(-bound.getY() + pdfHeight - bound.getHeight());
-                    //noinspection SuspiciousNameCombination
-                    newBound.setY(-bound.getX() + pdfWidth - bound.getWidth());
-
-                    // Swap width and height
-                    //noinspection SuspiciousNameCombination
-                    newBound.setWidth(bound.getHeight());
-                    //noinspection SuspiciousNameCombination
-                    newBound.setHeight(bound.getWidth());
+                    // Rotate 90° + mirror on x
+                    Rectangle2 newBound = transformRightTop(bound, pdfWidth, pdfHeight);
 
                     block.setBound(newBound);
                 }
             }
         }
+    }
+
+    private static Rectangle2 transformBottomTop(Rectangle2 rect, double pdfHeight)
+    {
+        Rectangle2 newBound = rect.clone();
+
+        // Mirror on X axis, and adding pdfHeight to make page in positives coordinates
+        newBound.setY(-rect.getY() - rect.getHeight() + pdfHeight);
+
+        return newBound;
+    }
+
+    private static Rectangle2 transformLeftTop(Rectangle2 rect)
+    {
+        Rectangle2 newBound = (Rectangle2) rect.clone();
+
+        // Rotate 90°
+        //noinspection SuspiciousNameCombination
+        newBound.setX(rect.getY());
+        //noinspection SuspiciousNameCombination
+        newBound.setY(rect.getX());
+
+        // Swap width and height
+        //noinspection SuspiciousNameCombination
+        newBound.setWidth(rect.getHeight());
+        //noinspection SuspiciousNameCombination
+        newBound.setHeight(rect.getWidth());
+
+        return newBound;
+    }
+
+    private static Rectangle2 transformRightTop(Rectangle2 rect, double pdfWidth, double pdfHeight)
+    {
+        Rectangle2 newBound = (Rectangle2) rect.clone();
+
+        // Swap x and y and apply inversion
+        //noinspection SuspiciousNameCombination
+        newBound.setX(-rect.getY() + pdfHeight - rect.getHeight());
+        //noinspection SuspiciousNameCombination
+        newBound.setY(-rect.getX() + pdfWidth - rect.getWidth());
+
+        // Swap width and height
+        //noinspection SuspiciousNameCombination
+        newBound.setWidth(rect.getHeight());
+        //noinspection SuspiciousNameCombination
+        newBound.setHeight(rect.getWidth());
+
+        return newBound;
     }
 }
