@@ -1,4 +1,4 @@
-package org.cora.extract_pdf_excel.debug.unit.testing;
+package org.cora.extract_pdf_excel.debug.tests;
 
 /**
  * Created by eadgyo on 27/07/16.

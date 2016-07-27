@@ -1,4 +1,4 @@
-package org.cora.extract_pdf_excel.debug.unit.testing;
+package org.cora.extract_pdf_excel.debug.tests;
 
 import org.cora.extract_pdf_excel.PdfConverter;
 import org.cora.extract_pdf_excel.data.ExtractedData;
@@ -22,7 +22,7 @@ public class TestExtractor
     {
         boolean result = testExtractor();
 
-        System.out.println("[ " + transformResult(result) + " ] Test extractor");
+        System.out.println(Result.transformResult(result) + " Test extractor");
     }
 
     /**
@@ -54,14 +54,6 @@ public class TestExtractor
         }
 
         return true;
-    }
-
-    private static String transformResult(boolean result)
-    {
-        if (result)
-            return "Ok";
-        else
-            return "Failed";
     }
 
         /*

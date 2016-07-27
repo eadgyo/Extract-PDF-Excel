@@ -1,6 +1,7 @@
 package org.cora.extract_pdf_excel.tools;
 
 import org.cora.extract_pdf_excel.data.block.Block;
+import org.cora.extract_pdf_excel.data.block.Direction;
 import org.cora.extract_pdf_excel.data.utils.MyUnique;
 import org.cora.extract_pdf_excel.models.BlockMerger;
 
@@ -41,7 +42,7 @@ public class DefaultBlockMerger extends BlockMerger
 
     public DefaultBlockMerger()
     {
-        this(2.0, 0.1, 40.0);
+        this(0.5, 0.1, 40.0);
     }
 
     /**
@@ -180,33 +181,17 @@ public class DefaultBlockMerger extends BlockMerger
     private static int getSameOrientationAxis(Block first, Block second)
     {
         // If they have the same text orientation
-        if (first.getTextOrientation() == second.getTextOrientation())
+        if (first.getTextOrientation() != second.getTextOrientation() || first.getTextOrientation() == null)
             return -1;
 
-        // Get first block direction
-        boolean firstDirection          = first.getLength(0) > first.getLength(1);
-        boolean firstFacingOrientationX = first.getLength(0) > 0;
-        boolean firstFacingOrientationY = first.getLength(1) > 0;
+        if (first.getBlockOrientation() != second.getBlockOrientation() || first.getBlockOrientation() == null)
+            return -1;
 
-        // Get second block direction
-        boolean secondDirection          = second.getLength(0) > second.getLength(1);
-        boolean secondFacingOrientationX = second.getLength(0) > 0;
-        boolean secondFacingOrientationY = second.getLength(1) > 0;
-
-        // Test if they have the same orientation
-        if (firstDirection == secondDirection &&
-                firstFacingOrientationX == secondFacingOrientationX &&
-                firstFacingOrientationY == secondFacingOrientationY)
-        {
-            if (firstDirection)
-                return 0;
-            else
-                return 1;
-        }
+        // Return the x or y orientation
+        if (first.getBlockOrientation() == Direction.TOP || first.getBlockOrientation() == Direction.BOTTOM)
+            return 0;
         else
-        {
-            return -1;
-        }
+            return 1;
     }
 
     private static int getOppositeAxis(int axis)
@@ -276,9 +261,9 @@ public class DefaultBlockMerger extends BlockMerger
      */
     private static boolean areNear(int axis, double threshold_near_factor, Block lowerBlock, Block higherBlock)
     {
-        return Math.abs(lowerBlock.getPos(axis) + lowerBlock.getLength(axis) - higherBlock.getPos(axis)) <
-                threshold_near_factor *
-                        Math.min(lowerBlock.getLength(axis), higherBlock.getLength(axis));
+        double dist = Math.abs(lowerBlock.getPos(axis) + lowerBlock.getLength(axis) - higherBlock.getPos(axis));
+
+        return dist < threshold_near_factor * Math.min(lowerBlock.getLength(axis), higherBlock.getLength(axis));
     }
 
     /**
@@ -329,6 +314,9 @@ public class DefaultBlockMerger extends BlockMerger
      */
     private static boolean containSameOnce(Collection c1, Collection c2)
     {
+        if (c1.size() == 0)
+            return (c2.size() == 0);
+
         for (Object element : c1)
         {
             if (c2.contains(element))

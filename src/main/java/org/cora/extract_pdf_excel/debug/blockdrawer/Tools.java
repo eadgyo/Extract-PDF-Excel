@@ -18,4 +18,11 @@ public class Tools
         String createBlock = "Block block" + i + " = new Block(\"" + block.getOriginalText() + "\", rect" + i + ");";
         return createRect + "\n" + createBlock + "\n";
     }
+
+    public static String textGeneratingBlockFast(Block block, int i)
+    {
+        Rectangle2 rect = block.getBound();
+        return "new Block(\"" + block.getOriginalText() + "\"," + "new Rectangle2(" + rect.getPos(0) + ", " + rect.getPos(1) + ", " + rect.getLength(0)
+                + ", " + rect.getLength(1) + "))";
+    }
 }

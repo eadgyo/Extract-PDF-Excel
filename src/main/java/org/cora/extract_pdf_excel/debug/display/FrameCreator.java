@@ -2,7 +2,7 @@ package org.cora.extract_pdf_excel.debug.display;
 
 import org.cora.extract_pdf_excel.data.ExtractedPage;
 import org.cora.extract_pdf_excel.data.geom.Rectangle2;
-import org.cora.extract_pdf_excel.debug.unit.testing.Constants;
+import org.cora.extract_pdf_excel.debug.tests.Constants;
 
 import javax.swing.*;
 import java.awt.*;

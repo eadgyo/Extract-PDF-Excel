@@ -44,8 +44,8 @@ public class Block
         this.line = null;
         this.column = null;
 
-        this.blockOrientation = null;
-        this.textOrientation = null;
+        this.blockOrientation = Direction.TOP;
+        this.textOrientation = Direction.TOP;
 
         this.backColors = new HashSet<>();
         this.fontColors = new HashSet<>();
@@ -216,6 +216,21 @@ public class Block
     public void insertEndOriginal(String originalText)
     {
         this.originalText += originalText;
+    }
+
+    public void addBackColor(BaseColor backColor)
+    {
+        this.backColors.add(backColor);
+    }
+
+    public void addFontColor(BaseColor fontColor)
+    {
+        this.fontColors.add(fontColor);
+    }
+
+    public void addFont(DocumentFont font)
+    {
+        this.fonts.add(font);
     }
 
     public void addAllBackColors(Collection<BaseColor> backColors)
