@@ -107,12 +107,15 @@ public class PdfConverter
      * @param extractedData extracted pages from one pdf file
      * @param axisIndex     axis of lane, 0 for Line and 1 for Column
      * @param oppositeIndex opposite axis of lane, 1 for Line and 0 for Column
+     * @param reinsertBlockMoreCollidingHigherLane if true, at the end of insert process, move block to higher lane,
+     *                                             if colliding percent between block and higher lane is higher than
+     *                                             block and actual block lane.
      *
      * @return Sorted Data from extracted pages. Data in extractedData are sorted in the right column and line. It
      * keeps page separation. Columns and lines contained sorted blocks according to Y-axis for columns and X-axis
      * for lines.
      */
-    public static SortedData sortExtractedData(ExtractedData extractedData, int axisIndex, int oppositeIndex)
+    public static SortedData sortExtractedData(ExtractedData extractedData,int axisIndex, int oppositeIndex, boolean reinsertBlockMoreCollidingHigherLane)
     {
         // Grouping all sortedPage
         SortedData sortedData = new SortedData();
@@ -127,7 +130,7 @@ public class PdfConverter
             if (extractedPage != null)
             {
                 // Create sortedPage
-                SortedPage sortedPage = sortExtractedPage(extractedPage, axisIndex, oppositeIndex);
+                SortedPage sortedPage = sortExtractedPage(extractedPage, axisIndex, oppositeIndex, reinsertBlockMoreCollidingHigherLane);
 
                 // Add sortedPage to sortedData
                 sortedData.insertPage(i, sortedPage);
@@ -136,6 +139,7 @@ public class PdfConverter
 
         return sortedData;
     }
+
     /**
      * Sort extractedPage in both columns and lines.
      *
@@ -148,15 +152,21 @@ public class PdfConverter
      * axisIndex and oppositeIndex are used to merge Line and Column process.
      * </p>
      *
-     * @param extractedPage extracted page from one pdf file
-     * @param axisIndex     axis of lane, 0 for Line and 1 for Column
-     * @param oppositeIndex opposite axis of lane, 1 for Line and 0 for Column
+     * @param extractedPage              extracted page from one pdf file
+     * @param axisIndex                  axis of lane, 0 for Line and 1 for Column
+     * @param oppositeIndex              opposite axis of lane, 1 for Line and 0 for Column
+     * @param reinsertBlockMoreCollidingHigherLane if true, at the end of insert process, move block to higher lane,
+     *                                             if colliding percent between block and higher lane is higher than
+     *                                             block and actual block lane.
      *
      * @return Sorted Data from extracted pages. Data in extractedData are sorted in the right column and line. It
      * keeps page separation. Columns and lines contained sorted blocks according to Y-axis for columns and X-axis
      * for lines.
      */
-    public static SortedPage sortExtractedPage(ExtractedPage extractedPage, int axisIndex, int oppositeIndex)
+    public static SortedPage sortExtractedPage(ExtractedPage extractedPage,
+                                               int axisIndex,
+                                               int oppositeIndex,
+                                               boolean reinsertBlockMoreCollidingHigherLane)
     {
         // Start creating sortedPage data
         Lanes      columns    = new Lanes();
@@ -178,6 +188,17 @@ public class PdfConverter
             BlockSorter.insertInLanes(SortedPage.DEFAULT_COLUMN_AXIS,
                                       SortedPage.DEFAULT_OPPOSITE_COLUMN_AXIS,
                                       block,
+                                      columns);
+        }
+
+        // If end reinserting block option is activated
+        if (reinsertBlockMoreCollidingHigherLane)
+        {
+            BlockSorter.reinsertBlockMoreCollidingHigherLane(SortedPage.DEFAULT_LINE_AXIS,
+                                                   SortedPage.DEFAULT_OPPOSITE_LINE_AXIS,
+                                                   lines);
+            BlockSorter.reinsertBlockMoreCollidingHigherLane(SortedPage.DEFAULT_COLUMN_AXIS,
+                                      SortedPage.DEFAULT_OPPOSITE_COLUMN_AXIS,
                                       columns);
         }
 

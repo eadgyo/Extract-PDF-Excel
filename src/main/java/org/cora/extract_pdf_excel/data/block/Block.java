@@ -3,8 +3,6 @@ package org.cora.extract_pdf_excel.data.block;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.pdf.DocumentFont;
 import org.cora.extract_pdf_excel.data.geom.Rectangle2;
-import org.cora.extract_pdf_excel.data.lane.Column;
-import org.cora.extract_pdf_excel.data.lane.Line;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -19,9 +17,6 @@ public class Block
 {
     private String formattedText;
     private String originalText;
-
-    private Line   line;
-    private Column column;
 
     private Rectangle2 bound;
 
@@ -40,9 +35,6 @@ public class Block
         this.bound = bound;
 
         this.blockOrientation = null;
-
-        this.line = null;
-        this.column = null;
 
         this.blockOrientation = Direction.TOP;
         this.textOrientation = Direction.TOP;
@@ -70,9 +62,6 @@ public class Block
 
         this.fontColors = fontColors;
         this.backColors = backColors;
-
-        this.line = null;
-        this.column = null;
 
         this.fonts = fonts;
     }
@@ -108,26 +97,6 @@ public class Block
     public void setOriginalText(String originalText)
     {
         this.originalText = originalText;
-    }
-
-    public Line getLine()
-    {
-        return line;
-    }
-
-    public void setLine(Line line)
-    {
-        this.line = line;
-    }
-
-    public Column getColumn()
-    {
-        return column;
-    }
-
-    public void setColumn(Column column)
-    {
-        this.column = column;
     }
 
     public Rectangle2 getBound()
@@ -269,8 +238,6 @@ public class Block
         if (formattedText != null ? !formattedText.equals(block.formattedText) : block.formattedText != null)
             return false;
         if (originalText != null ? !originalText.equals(block.originalText) : block.originalText != null) return false;
-        if (line != null ? !line.equals(block.line) : block.line != null) return false;
-        if (column != null ? !column.equals(block.column) : block.column != null) return false;
         if (bound != null ? !bound.equals(block.bound) : block.bound != null) return false;
         if (textOrientation != block.textOrientation) return false;
         if (blockOrientation != block.blockOrientation) return false;
@@ -285,8 +252,6 @@ public class Block
     {
         int result = formattedText != null ? formattedText.hashCode() : 0;
         result = 31 * result + (originalText != null ? originalText.hashCode() : 0);
-        result = 31 * result + (line != null ? line.hashCode() : 0);
-        result = 31 * result + (column != null ? column.hashCode() : 0);
         result = 31 * result + (bound != null ? bound.hashCode() : 0);
         result = 31 * result + (textOrientation != null ? textOrientation.hashCode() : 0);
         result = 31 * result + (blockOrientation != null ? blockOrientation.hashCode() : 0);

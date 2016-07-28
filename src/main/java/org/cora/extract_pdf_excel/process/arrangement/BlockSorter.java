@@ -6,7 +6,9 @@ import org.cora.extract_pdf_excel.data.lane.Lane;
 import org.cora.extract_pdf_excel.data.lane.Lanes;
 import org.cora.extract_pdf_excel.data.utils.MyPair;
 
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 /**
@@ -226,6 +228,9 @@ public class BlockSorter
             // Make sure colliding block key pointed to himself in his lane
             assert (removed == higherBlock);
 
+            // Save colliding block for future reinsert, preventing collision with higherLane's blocks
+            savedCollidingBlocks.add(collidingBlock);
+
             // If higher lane exists and is colliding with higherBlock
             if (higherLane != null &&
                     CollisionTools.isCollidingWithBlock(oppositeAxis, higherBlock, higherLane))
@@ -234,9 +239,6 @@ public class BlockSorter
 
                 // Save higherLane to update his key in lanes
                 double oldHigherKey = higherLane.getPos(oppositeAxis);
-
-                // Save colliding block for future reinsert, preventing collision with higherLane's blocks
-                savedCollidingBlocks.add(collidingBlock);
 
                 // Update lowerLane size to update lane bounds after removing colliding block
                 lowerLane.resetAndFitLaneToInBlocks(axis, oppositeAxis);
@@ -362,5 +364,95 @@ public class BlockSorter
         }
 
         return higherLane;
+    }
+
+    /**
+     * Move block to higher lane, if colliding percent between block and higher lane is higher than block and actual
+     * block lane. Also check if it's not colliding with an higher block.
+     *
+     * @param axis lane axis
+     * @param oppositeAxis opposite lane axis
+     * @param lanes collection of sorted lanes
+     */
+    public static void reinsertBlockMoreCollidingHigherLane(int axis, int oppositeAxis, Lanes lanes)
+    {
+        Collection<Lane> laneCollection = lanes.getLanes();
+
+        // If there is less than two lanes
+        if (laneCollection.size() < 2)
+        {
+            // No higher lanes exist
+            return;
+        }
+
+        Iterator<Lane> iteratorLane = laneCollection.iterator();
+
+        Lane higherLane = iteratorLane.next();
+
+        while (iteratorLane.hasNext())
+        {
+            // Get actual lane and his higher lane
+            Lane actualLane = higherLane;
+            higherLane = iteratorLane.next();
+
+            // Parse blocks of actual lane
+            Collection<Block> blocksCollection = actualLane.getBlocksCollection();
+            for (Iterator<Block> iteratorBlocks = blocksCollection.iterator(); iteratorBlocks.hasNext(); )
+            {
+                Block block = iteratorBlocks.next();
+                // If the higher lane is more colliding than the actual lane
+                if (isHigherLaneMoreColliding(oppositeAxis, actualLane, higherLane, block))
+                {
+                    // Check if there are no blocks colliding
+                    Block collidingBlock = CollisionTools.getBlockCollidingInLane(axis, block, higherLane);
+                    if (collidingBlock == null)
+                    {
+                        // Remove block from lane.
+                        iteratorBlocks.remove();
+
+                        // Insert block in higher lane. Don't need to update higher lane lower bound.
+                        higherLane.addBlock(axis, block);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Check if a block is more colliding with higher or lowerLane
+     * @param oppositeAxis opposite lane axis
+     * @param lowerLane lower lane
+     * @param higherLane higher lane
+     * @param block checked block
+     * @return true if higher lane is more colliding with block than the lower lane, false otherwise.
+     */
+    public static boolean isHigherLaneMoreColliding(int oppositeAxis, Lane lowerLane, Lane higherLane, Block block)
+    {
+        // If the block is not in collision with the higher block
+        if (block.getEndPos(oppositeAxis) < higherLane.getPos(oppositeAxis))
+        {
+            // The colliding surface is 0.
+            // The lower lane is more colliding
+            return false;
+        }
+
+        // If the block is exceeding higher lane
+        if (block.getEndPos(oppositeAxis) >= higherLane.getEndPos(oppositeAxis))
+        {
+            // Block is exceeding limits
+            return false;
+        }
+
+        // Block must at least be in lower lane and not only in higher lane
+        assert (block.getPos(oppositeAxis) >= lowerLane.getPos(oppositeAxis));
+        assert (block.getPos(oppositeAxis) <= higherLane.getPos(oppositeAxis));
+
+        // Compute lower colliding surface
+        double lowerCollidingSurface = lowerLane.getEndPos(oppositeAxis) - block.getPos(oppositeAxis);
+
+        // Compute higher colliding surcace
+        double higherCollidingSurface = block.getEndPos(oppositeAxis) - higherLane.getPos(oppositeAxis);
+
+        return lowerCollidingSurface < higherCollidingSurface;
     }
 }

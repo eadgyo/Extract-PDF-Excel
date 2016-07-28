@@ -203,6 +203,13 @@ public class Lane
         return rectangle;
     }
 
+    public void remove(int axis, Block block)
+    {
+        Block removed = blocks.remove(block.getPos(axis));
+
+        assert (removed != null);
+    }
+
     public Block remove(Double key)
     {
         return blocks.remove(key);

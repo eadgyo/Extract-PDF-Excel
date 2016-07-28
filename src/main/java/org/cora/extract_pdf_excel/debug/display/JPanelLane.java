@@ -1,5 +1,6 @@
 package org.cora.extract_pdf_excel.debug.display;
 
+import org.cora.extract_pdf_excel.data.block.Block;
 import org.cora.extract_pdf_excel.data.lane.Lane;
 import org.cora.extract_pdf_excel.data.lane.Lanes;
 
@@ -42,6 +43,14 @@ public class JPanelLane  extends JResizedPanelPdf
         for (Lane lane : lanes)
         {
             DisplayTools.drawRect(g2d, lane.getBound());
+
+            // Display block text content
+            Collection<Block> blocksCollection = lane.getBlocksCollection();
+            for (Block block : blocksCollection)
+            {
+                DisplayTools.drawBlock(g2d, block);
+                DisplayTools.drawBlockText(g2d, block);
+            }
         }
     }
 }

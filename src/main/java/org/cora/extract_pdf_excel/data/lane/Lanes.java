@@ -1,6 +1,9 @@
 package org.cora.extract_pdf_excel.data.lane;
 
 import org.cora.extract_pdf_excel.data.block.Block;
+import org.cora.extract_pdf_excel.exception.DifferentKeyLaneException;
+import org.cora.extract_pdf_excel.exception.DuplicatedBlockException;
+import org.cora.extract_pdf_excel.exception.NoCorrespondingLane;
 
 import java.util.*;
 
@@ -370,14 +373,42 @@ public class Lanes
      * Check lane rectangle pos corresponds to his key
      * @param oppositeAxis opposite lane axis
      */
-    public void checkLaneAndAssociatedKey(int oppositeAxis)
+    public void checkLaneAndAssociatedKey(int oppositeAxis) throws DifferentKeyLaneException
     {
         for (Map.Entry<Double, Lane> doubleLaneEntry : lanes.entrySet())
         {
             Double key = doubleLaneEntry.getKey();
             double expected = doubleLaneEntry.getValue().getPos(oppositeAxis);
 
-            assert (key == expected);
+            if (key != expected)
+                throw new DifferentKeyLaneException();
         }
+    }
+
+    public void checkBlocksAllContains(Collection<Block> blocks) throws DuplicatedBlockException, NoCorrespondingLane
+    {
+        // Create a set to checked remove blocks
+        Set<Block> blocksSet = new HashSet<>(blocks);
+
+        // For each lane
+        for (Lane lane : lanes.values())
+        {
+            Collection<Block> blocksCollection = lane.getBlocksCollection();
+
+            for (Block block : blocksCollection)
+            {
+                // Remove block
+                boolean removed = blocksSet.remove(block);
+
+                // Check if the block was already deleted, means the block is also in another lane
+                if (!removed)
+                    throw new DuplicatedBlockException();
+
+            }
+        }
+
+        // If there are still blocks in set, there are blocks not contained
+        if (blocksSet.size() != 0)
+            throw new NoCorrespondingLane();
     }
 }
