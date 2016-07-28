@@ -118,7 +118,7 @@ public class SortedPage
 
         // For each column, get all block, get the corresponding line. Insert the block at line and column location.
         int col = 0;
-        for (Iterator<Map.Entry<Double, Lane>> iterator = sortedColumns.iterator(); iterator.hasNext(); )
+        for (Iterator<Map.Entry<Double, Lane>> iterator = sortedColumns.iterator(); iterator.hasNext(); col++)
         {
             Map.Entry<Double, Lane> sortedColumn = iterator.next();
             Lane                    column       = sortedColumn.getValue();

@@ -200,7 +200,7 @@ public class Lanes
      */
     public int getLaneIndexOfBlock(int oppositeAxis, Block block)
     {
-        Lane blockLane = getCeilingLane(block.getPos(oppositeAxis));
+        Lane blockLane = getFloorLane(block.getPos(oppositeAxis));
         if (blockLane == null)
             return -1;
 
@@ -209,7 +209,21 @@ public class Lanes
     }
 
     /**
-     * Get ceiling lower than key
+     * Get lane with key lower or equal to key
+     *
+     * @param key to be checked
+     *
+     * @return floor lane
+     */
+    public Lane getFloorLane(double key)
+    {
+        Map.Entry<Double, Lane> floorLaneEntry = getFloorLaneEntry(key);
+
+        return (floorLaneEntry != null) ? floorLaneEntry.getValue() : null;
+    }
+
+    /**
+     * Get lane with key higher or equal to key
      *
      * @param key to be checked
      *
@@ -260,7 +274,19 @@ public class Lanes
     }
 
     /**
-     * Get ceiling lower than key
+     * Get lane with key lower or equal to specified key
+     *
+     * @param key to be checked
+     *
+     * @return floor lane and his value in map
+     */
+    public Map.Entry<Double, Lane> getFloorLaneEntry(double key)
+    {
+        return lanes.floorEntry(key);
+    }
+
+    /**
+     *  Get lane with key higher or equal to specified key
      *
      * @param key to be checked
      *
@@ -322,11 +348,10 @@ public class Lanes
                 lanesBounds.add(endOfLane - startOfLane);
             }
 
-            // Add the end of the last lane
-            startOfLane = endOfLane;
-            endOfLane = lanes.lastEntry().getValue().getPos(oppositeAxis);
+            // Add the size of the last lane
+            double lastSize = lanes.lastEntry().getValue().getLength(oppositeAxis);
 
-            lanesBounds.add(endOfLane - startOfLane);
+            lanesBounds.add(lastSize);
         }
         return lanesBounds;
     }

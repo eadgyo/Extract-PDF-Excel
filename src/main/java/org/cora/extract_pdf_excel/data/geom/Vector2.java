@@ -101,8 +101,6 @@ public class Vector2
     @Override
     public String toString()
     {
-        return "Vector2{" +
-                "coordinates=" + Arrays.toString(coordinates) +
-                '}';
+        return "Vec2" + Arrays.toString(coordinates);
     }
 }

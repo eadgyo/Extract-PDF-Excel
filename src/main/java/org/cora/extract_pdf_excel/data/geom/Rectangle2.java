@@ -285,10 +285,9 @@ public class Rectangle2 implements Cloneable
     @Override
     public String toString()
     {
-        return "Rectangle2{" +
-                "coordinates=" + Arrays.toString(coordinates) +
+        return "Rect{ coor=" + Arrays.toString(coordinates) +
                 ", length=" + Arrays.toString(length) +
-                '}';
+                " }";
     }
 
     public void translate(Vector2 vector2)

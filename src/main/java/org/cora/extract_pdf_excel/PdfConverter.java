@@ -225,11 +225,11 @@ public class PdfConverter
     {
         // Create 2D array containing blocks using sorted lines and columns from sortedData
         My2DArray<Block>  arrayOfBlocks = sortedPage.create2DArrayOfBlocks();
-        ArrayList<Double> linesSize     = sortedPage.getLinesHeight();
         ArrayList<Double> columnsSize   = sortedPage.getColumnsWidth();
+        ArrayList<Double> linesSize     = sortedPage.getLinesHeight();
 
         // return created Excel page
-        return new XclPage(arrayOfBlocks, linesSize, columnsSize);
+        return new XclPage(arrayOfBlocks, columnsSize, linesSize);
     }
 
     /**

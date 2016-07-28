@@ -299,6 +299,7 @@ public class Block
     @Override
     public String toString()
     {
-        return (formattedText != null) ? formattedText : originalText;
+        String text = (formattedText != null) ? formattedText : originalText;
+        return "\"" + text + "\"  " + bound;
     }
 }

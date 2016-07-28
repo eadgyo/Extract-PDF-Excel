@@ -66,7 +66,6 @@ public class JPanelXcl extends JResizedPanelPdf
                 // Move the cursor along line opposite axis
                 cursorPosition.add(Y_AXIS, lineHeight);
 
-
                 // Get the cell content
                 Block block = xclPage.getBlockAt(col, line);
 
@@ -75,11 +74,8 @@ public class JPanelXcl extends JResizedPanelPdf
                 {
                     g2d.setColor(Color.DARK_GRAY);
 
-                    // Draw block rect
-                    DisplayTools.drawBlock(g2d, block);
-
-                    // Draw text content
-                    DisplayTools.drawBlockText(g2d, block);
+                    // Draw block text content
+                    DisplayTools.drawShortTextInBound(g2d, block.getFormattedText(), rectangle);
                 }
             }
 

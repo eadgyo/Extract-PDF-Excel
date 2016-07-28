@@ -27,11 +27,23 @@ public class DisplayTools
         // Get the formatted text
         String formattedText = block.getFormattedText();
 
-        // If the text is too long, shortcut the text
-        if (formattedText.length() > 10)
-            formattedText = formattedText.substring(0, 10);
+        // Draw text in his block bound and shorten the text if it's too long.
+        drawShortTextInBound(g, formattedText, bound);
+    }
 
-        g.drawString(formattedText, (int) bound.getX() + 5, (int) (bound.getY() + bound.getHeight()/2 + 5));
+    public static void drawShortTextInBound(Graphics2D g, String text, Rectangle2 bound)
+    {
+        // If the text is too long, shorten the text
+        if (text.length() > 10)
+            text = text.substring(0, 10);
+
+        // Draw text in specified bound
+        drawTextInBound(g, text, bound);
+    }
+
+    public static void drawTextInBound(Graphics2D g, String text, Rectangle2 bound)
+    {
+        g.drawString(text, (int) bound.getX() + 5, (int) (bound.getY() + bound.getHeight()/2 + 5));
     }
 
     static void drawRect(Graphics g, Rectangle2 rect)
