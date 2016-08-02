@@ -4,8 +4,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.cora.extract_pdf_excel</groupId>
-    <artifactId>extract_pdf_excel</artifactId>
+    <groupId>org.eadge</groupId>
+    <artifactId>extractpdfexcel</artifactId>
     <version>0.1</version>
 
     <properties>
@@ -15,7 +15,7 @@
 
     <packaging>jar</packaging>
 
-    <name>PDFToExcelExtractor</name>
+    <name>Extract-Pdf-Excel</name>
     <description>Extract data from pdf, and convert to excel.</description>
 
     <developers>
@@ -80,7 +80,7 @@
                     <arguments>
                         <argument>-classpath</argument>
                         <classpath/>
-                        <argument>org.cora.extract_pdf_excel</argument>
+                        <argument>org.eadge.extractpdfexcel</argument>
                     </arguments>
                 </configuration>
             </plugin>
@@ -116,7 +116,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>org.cora.extract_pdf_excel</mainClass>
+                            <mainClass>org.eadge.extractpdfexcel</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
