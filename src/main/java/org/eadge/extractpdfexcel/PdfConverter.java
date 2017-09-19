@@ -46,6 +46,27 @@ public class PdfConverter
      * Read pdf file from path location. If file exists and is in pdf format, extract all text from all pages in pdf
      * file. If file exists but is not a pdf throw <tt>IncorrectFileException</tt>. If file doesn't exist or is not
      * readable throw <tt> NoSuchFileException</tt>.
+     *
+     * Using the default text block identifier
+     * </p>
+     *
+     * @param path                pdf file location
+     *
+     * @return extractedData separate in blocks containing text and position for each page.
+     */
+    public static ExtractedData extractFromFile(String path) throws
+                                                                                         FileNotFoundException,
+                                                                                         IncorrectFileTypeException
+    {
+        return extractFromFile(path, new TextBlockIdentifier());
+    }
+
+    /**
+     * Extract transformedData from PDF
+     * <p>
+     * Read pdf file from path location. If file exists and is in pdf format, extract all text from all pages in pdf
+     * file. If file exists but is not a pdf throw <tt>IncorrectFileException</tt>. If file doesn't exist or is not
+     * readable throw <tt> NoSuchFileException</tt>.
      * </p>
      *
      * @param path                pdf file location
@@ -90,6 +111,33 @@ public class PdfConverter
         {
             throw new FileNotFoundException(path);
         }
+    }
+
+    /**
+     * Sort extractedData in both columns and lines.
+     *
+     * <p>
+     * Each block in extractedData are processed one by one. Block is first added to the right column, then in
+     * the right line.
+     * </p>
+     *
+     * <p>
+     * axisIndex and oppositeIndex are used to merge Line and Column process.
+     * </p>
+     *
+     * @param extractedData extracted pages from one pdf file
+     * @param reinsertBlockMoreCollidingHigherLane if true, at the end of insert process, move block to higher lane,
+     *                                             if colliding percent between block and higher lane is higher than
+     *                                             block and actual block lane.
+     *
+     * @return Sorted Data from extracted pages. Data in extractedData are sorted in the right column and line. It
+     * keeps page separation. Columns and lines contained sorted blocks according to Y-axis for columns and X-axis
+     * for lines.
+     */
+    public static SortedData sortExtractedData(ExtractedData extractedData, boolean reinsertBlockMoreCollidingHigherLane)
+    {
+        return sortExtractedData(extractedData, SortedPage.DEFAULT_LINE_AXIS, SortedPage.DEFAULT_COLUMN_AXIS,
+                                 reinsertBlockMoreCollidingHigherLane);
     }
 
     /**
@@ -179,14 +227,14 @@ public class PdfConverter
         for (Block block : blocks)
         {
             // Insert in the correct line or create new one
-            BlockSorter.insertInLanes(SortedPage.DEFAULT_LINE_AXIS,
-                                      SortedPage.DEFAULT_OPPOSITE_LINE_AXIS,
+            BlockSorter.insertInLanes(axisIndex,
+                                      oppositeIndex,
                                       block,
                                       lines);
 
             // Insert in the correct column or create new one
-            BlockSorter.insertInLanes(SortedPage.DEFAULT_COLUMN_AXIS,
-                                      SortedPage.DEFAULT_OPPOSITE_COLUMN_AXIS,
+            BlockSorter.insertInLanes(oppositeIndex,
+                                      axisIndex,
                                       block,
                                       columns);
         }
@@ -194,11 +242,10 @@ public class PdfConverter
         // If end reinserting block option is activated
         if (reinsertBlockMoreCollidingHigherLane)
         {
-            BlockSorter.reinsertBlockMoreCollidingHigherLane(SortedPage.DEFAULT_LINE_AXIS,
-                                                   SortedPage.DEFAULT_OPPOSITE_LINE_AXIS,
+            BlockSorter.reinsertBlockMoreCollidingHigherLane(axisIndex,
+                                                             oppositeIndex,
                                                    lines);
-            BlockSorter.reinsertBlockMoreCollidingHigherLane(SortedPage.DEFAULT_COLUMN_AXIS,
-                                      SortedPage.DEFAULT_OPPOSITE_COLUMN_AXIS,
+            BlockSorter.reinsertBlockMoreCollidingHigherLane(oppositeIndex, axisIndex,
                                       columns);
         }
 
