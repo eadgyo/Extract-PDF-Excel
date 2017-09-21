@@ -164,6 +164,9 @@ public class Lanes
      */
     public void insertLane(double key, Lane lane)
     {
+        boolean b = lanes.containsKey(key);
+        assert (!b);
+
         lanes.put(key, lane);
     }
 
@@ -221,6 +224,21 @@ public class Lanes
     public Lane getFloorLane(double key)
     {
         Map.Entry<Double, Lane> floorLaneEntry = getFloorLaneEntry(key);
+
+        return (floorLaneEntry != null) ? floorLaneEntry.getValue() : null;
+    }
+
+    /**
+     * Get lane floor than lane
+     *
+     * @param oppositeAxis index of opposite direction
+     * @param lane         used lane
+     *
+     * @return floor lane
+     */
+    public Lane getFloorLane(int oppositeAxis, Lane lane)
+    {
+        Map.Entry<Double, Lane> floorLaneEntry = getFloorLaneEntry(lane.getPos(oppositeAxis));
 
         return (floorLaneEntry != null) ? floorLaneEntry.getValue() : null;
     }

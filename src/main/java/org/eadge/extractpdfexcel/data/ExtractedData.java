@@ -137,4 +137,12 @@ public class ExtractedData
     {
         return extractedPages.values();
     }
+
+    public void cleanDuplicatedData()
+    {
+        for (ExtractedPage extractedPage : extractedPages.values())
+        {
+            extractedPage.cleanDuplicatedBlocks();
+        }
+    }
 }

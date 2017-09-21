@@ -34,13 +34,13 @@ class LaneTools
         Double key = block.getBound().getPos(oppositeAxis);
 
         // Take lower lane which is maybe colliding with block
-        Map.Entry<Double, Lane> lowerLaneEntry = lanes.getLowerLaneEntry(key);
+        Map.Entry<Double, Lane> floorLaneEntry = lanes.getFloorLaneEntry(key);
 
         // If lower lane exists
-        if (lowerLaneEntry != null)
+        if (floorLaneEntry != null)
         {
             // Get the first lane that is colliding
-            Map.Entry<Double, Lane> firstColliding = getFirstLaneEndAfterKey(oppositeAxis, lanes, key, lowerLaneEntry);
+            Map.Entry<Double, Lane> firstColliding = getFirstLaneEndAfterKey(oppositeAxis, lanes, key, floorLaneEntry);
             if (firstColliding != null)
             {
                 Lane higherThanCollidingLane = lanes.getHigherLane(firstColliding.getKey());
@@ -59,7 +59,7 @@ class LaneTools
             Map.Entry<Double, Lane> higherLaneEntry = lanes.getHigherLaneEntry(key);
 
             // If lane exists and if the start of block is before the end of the lane
-            if (higherLaneEntry != null && isKeyLowerThanEndOfLane(oppositeAxis, key, higherLaneEntry.getValue()))
+            if (higherLaneEntry != null && isKeyLowerOrEqualThanEndOfLane(oppositeAxis, key, higherLaneEntry.getValue()))
             {
                 // Take this lane as the lower lane and get his higherLane
                 Lane higherThanHigherLane = lanes.getHigherLane(higherLaneEntry.getKey());
@@ -89,7 +89,7 @@ class LaneTools
     {
 
         // If the key is before the end of the start lane
-        if (isKeyLowerThanEndOfLane(oppositeAxis, key, startLaneEntry.getValue()))
+        if (isKeyLowerOrEqualThanEndOfLane(oppositeAxis, key, startLaneEntry.getValue()))
         {
             // We found our first lane with end after the key
             return startLaneEntry;
@@ -100,7 +100,7 @@ class LaneTools
 
         // While higher lane exists AND first colliding lane has not been found AND
         while (actualLane != null &&
-                !isKeyLowerThanEndOfLane(oppositeAxis, key, actualLane.getValue()))
+                !isKeyLowerOrEqualThanEndOfLane(oppositeAxis, key, actualLane.getValue()))
         {
             // Get the higher lane
             actualLane = lanes.getHigherLaneEntry(actualLane.getKey());
@@ -125,9 +125,9 @@ class LaneTools
      *
      * @return true if the key is before the end of the lane, false otherwise.
      */
-    private static boolean isKeyLowerThanEndOfLane(int oppositeAxis, Double key, Lane lane)
+    private static boolean isKeyLowerOrEqualThanEndOfLane(int oppositeAxis, Double key, Lane lane)
     {
-        return key < lane.getEndPos(oppositeAxis);
+        return key <= lane.getEndPos(oppositeAxis);
     }
 
     /**

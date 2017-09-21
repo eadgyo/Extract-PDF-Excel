@@ -104,6 +104,9 @@ public class PdfConverter
             // Extract all data
             parser.readAllPage();
 
+            // Clean duplicated code
+            parser.cleanDuplicatedData();
+
             // return extractedData extracted with parser
             return parser.getExtractedData();
         }
@@ -266,7 +269,7 @@ public class PdfConverter
     {
         ArrayList<XclPage> xclPages = new ArrayList<>();
 
-        for (int pageIndex = 0; pageIndex < sortedData.numberOfPages(); pageIndex++)
+        for (int pageIndex = 1; pageIndex <= sortedData.numberOfPages(); pageIndex++)
         {
             // Get sortedPage
             SortedPage sortedPage = sortedData.getSortedPage(pageIndex);

@@ -15,10 +15,12 @@ import java.util.Collection;
 public class JPanelLane  extends JResizedPanelPdf
 {
     private Lanes lanes = null;
+    private boolean drawBlocks;
 
-    public JPanelLane(double pdfWidth, double pdfHeight)
+    public JPanelLane(double pdfWidth, double pdfHeight, boolean drawBlocks)
     {
         super(pdfWidth, pdfHeight);
+        this.drawBlocks = drawBlocks;
     }
 
     public void setLanes(Lanes lanes)
@@ -44,12 +46,15 @@ public class JPanelLane  extends JResizedPanelPdf
         {
             DisplayTools.drawRect(g2d, lane.getBound());
 
-            // Display block text content
-            Collection<Block> blocksCollection = lane.getBlocksCollection();
-            for (Block block : blocksCollection)
+            if (drawBlocks)
             {
-                DisplayTools.drawBlock(g2d, block);
-                DisplayTools.drawBlockText(g2d, block);
+                // Display block text content
+                Collection<Block> blocksCollection = lane.getBlocksCollection();
+                for (Block block : blocksCollection)
+                {
+                    DisplayTools.drawBlock(g2d, block);
+                    DisplayTools.drawBlockText(g2d, block);
+                }
             }
         }
     }

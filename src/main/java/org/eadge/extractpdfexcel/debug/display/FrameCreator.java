@@ -77,11 +77,11 @@ public class FrameCreator
         frame.setVisible(true);
     }
 
-    public static void displayLanes(String frameName, int width, int height, Lanes lanes)
+    public static void displayLanes(String frameName, int width, int height, Lanes lanes, boolean drawBlocks)
     {
         JFrame frame = createFrameGrid(frameName, 1, 1);
 
-        JPanelLane lanesPanel = new JPanelLane(width, height);
+        JPanelLane lanesPanel = new JPanelLane(width, height, drawBlocks);
         lanesPanel.setLanes(lanes);
 
         Container contentPane = frame.getContentPane();
@@ -105,16 +105,16 @@ public class FrameCreator
         frame.setVisible(true);
     }
 
-    public static void displaySortedPage(String frameName, SortedPage sortedPage)
+    public static void displaySortedPage(String frameName, SortedPage sortedPage, boolean drawBlocks)
     {
         JFrame frame = createFrameGrid(frameName, 2, 2);
 
         ExtractedPage extractedPage = sortedPage.getLinkExtractedPage();
 
-        JPanelLane lines = new JPanelLane(extractedPage.getWidth(), extractedPage.getHeight());
+        JPanelLane lines = new JPanelLane(extractedPage.getWidth(), extractedPage.getHeight(), drawBlocks);
         lines.setLanes(sortedPage.getLines());
 
-        JPanelLane columns = new JPanelLane(extractedPage.getWidth(), extractedPage.getHeight());
+        JPanelLane columns = new JPanelLane(extractedPage.getWidth(), extractedPage.getHeight(), drawBlocks);
         columns.setLanes(sortedPage.getColumns());
 
         JPanelBlocks jPanelBlocks = new JPanelBlocks(extractedPage.getWidth(), extractedPage.getHeight());

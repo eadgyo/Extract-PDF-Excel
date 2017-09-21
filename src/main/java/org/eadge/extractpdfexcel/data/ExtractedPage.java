@@ -2,8 +2,7 @@ package org.eadge.extractpdfexcel.data;
 
 import org.eadge.extractpdfexcel.data.block.Block;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.*;
 
 /**
  * Created by eadgyo on 16/07/16.
@@ -87,5 +86,59 @@ public class ExtractedPage
     public void addAllBlocks(Collection<Block> blocks)
     {
         this.blocks.addAll(blocks);
+    }
+
+    public void cleanDuplicatedBlocks()
+    {
+        Map<String, ArrayList<Block>> blocksMap = new HashMap<>();
+
+        // Start adding each block using contained text as key
+        for (Iterator<Block> iterator = blocks.iterator(); iterator.hasNext(); )
+        {
+            Block block = iterator.next();
+
+            // If the block is not an empty block
+            if (block.getOriginalText().equals(""))
+            {
+                iterator.remove();
+            }
+            else
+            {
+                String           key    = block.getOriginalText();
+                ArrayList<Block> blocks = blocksMap.get(key);
+
+                if (blocks == null)
+                {
+                    blocks = new ArrayList<>();
+                    blocksMap.put(key, blocks);
+                }
+
+                blocks.add(block);
+            }
+        }
+
+        // Compare and remove duplicated blocks
+        for (Iterator<Block> iterator = blocks.iterator(); iterator.hasNext(); )
+        {
+            Block block = iterator.next();
+
+            String key = block.getOriginalText();
+            ArrayList<Block> blocks = blocksMap.get(key);
+
+            // Try to find a duplicated block with the same key and same position
+            for (Block comparedBlock : blocks)
+            {
+                if (comparedBlock != block &&
+                        block.getPos(0) == comparedBlock.getPos(0) &&
+                        block.getPos(1) == comparedBlock.getPos(1))
+                {
+                    // The block is duplicated
+                    // Remove it from the map and the source collection
+                    blocks.remove(block);
+                    iterator.remove();
+                    break;
+                }
+            }
+        }
     }
 }

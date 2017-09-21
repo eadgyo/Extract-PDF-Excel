@@ -25,7 +25,7 @@ public class TestXcl
 
     public static boolean testXcl()
     {
-        SortedPage sortedPage = createSortedPage();
+        SortedPage sortedPage = createSortedPageEx();
 
         XclPage excelPage = PdfConverter.createExcelPage(sortedPage);
 
@@ -74,5 +74,10 @@ public class TestXcl
         extractedPage.addAllBlocks(blocks);
 
         return PdfConverter.sortExtractedPage(extractedPage, 0, 1, true);
+    }
+
+    public static SortedPage createSortedPageEx()
+    {
+        return PdfConverter.sortExtractedPage(TestSorter.createExtractedPageEx(), 0, 1, true);
     }
 }

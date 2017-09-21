@@ -1,6 +1,7 @@
 package org.eadge.extractpdfexcel.debug.tests;
 
 import org.eadge.extractpdfexcel.PdfConverter;
+import org.eadge.extractpdfexcel.data.ExtractedData;
 import org.eadge.extractpdfexcel.data.ExtractedPage;
 import org.eadge.extractpdfexcel.data.SortedPage;
 import org.eadge.extractpdfexcel.data.block.Block;
@@ -9,9 +10,12 @@ import org.eadge.extractpdfexcel.data.lane.Lanes;
 import org.eadge.extractpdfexcel.debug.display.FrameCreator;
 import org.eadge.extractpdfexcel.exception.DifferentKeyLaneException;
 import org.eadge.extractpdfexcel.exception.DuplicatedBlockException;
+import org.eadge.extractpdfexcel.exception.IncorrectFileTypeException;
 import org.eadge.extractpdfexcel.exception.NoCorrespondingLane;
+import org.eadge.extractpdfexcel.models.TextBlockIdentifier;
 import org.eadge.extractpdfexcel.process.arrangement.BlockSorter;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,23 +35,48 @@ public class TestSorter
         //System.out.println(Result.transformResult(resultSortExtractedPage) + " Sort extracted page");
     }
 
+    public static ExtractedPage createExtractedPageEx()
+    {
+        TextBlockIdentifier blockIdentifier = new TextBlockIdentifier();
+
+        ExtractedData extractedPdf = null;
+        try
+        {
+            extractedPdf = PdfConverter.extractFromFile("test/pdf/example.pdf", blockIdentifier);
+        }
+        catch (FileNotFoundException e)
+        {
+            e.printStackTrace();
+        }
+        catch (IncorrectFileTypeException e)
+        {
+            e.printStackTrace();
+        }
+
+        Collection<ExtractedPage> pages = extractedPdf.getPagesCollection();
+
+        return pages.iterator().next();
+    }
+
     public static boolean testBlockSorterExtractedPage()
     {
-        ExtractedPage extractedPage = createExtractedPage2();
+        ExtractedPage extractedPage = createExtractedPageEx();
 
         Collection<Block> blocks      = extractedPage.getBlocks();
         ArrayList<Block>  addedBlocks = new ArrayList<>();
 
         Lanes columns = new Lanes();
+        Lanes lines = new Lanes();
 
         for (Block block : blocks)
         {
+            addedBlocks.add(block);
+
             BlockSorter.insertInLanes(SortedPage.DEFAULT_COLUMN_AXIS,
                                       SortedPage.DEFAULT_OPPOSITE_COLUMN_AXIS,
                                       block,
                                       columns);
 
-            addedBlocks.add(block);
 
             try
             {
@@ -68,11 +97,36 @@ public class TestSorter
                 e.printStackTrace();
                 return false;
             }
+
+            BlockSorter.insertInLanes(SortedPage.DEFAULT_LINE_AXIS,
+                                      SortedPage.DEFAULT_OPPOSITE_LINE_AXIS,
+                                      block,
+                                      lines);
+            try
+            {
+                lines.checkLaneAndAssociatedKey(SortedPage.DEFAULT_OPPOSITE_LINE_AXIS);
+            }
+            catch (DifferentKeyLaneException e)
+            {
+                e.printStackTrace();
+                return false;
+            }
+
+            try
+            {
+                lines.checkBlocksAllContains(addedBlocks);
+            }
+            catch (DuplicatedBlockException | NoCorrespondingLane e)
+            {
+                e.printStackTrace();
+                return false;
+            }
+
         }
 
         FrameCreator.displayBlocks("Blocks", 800, 600, blocks);
-        FrameCreator.displayLanes("Cols", 800, 600, columns);
-
+        FrameCreator.displayLanes("Cols", 800, 600, columns, false);
+        FrameCreator.displayLanes("Lines", 800, 600, lines, false);
         return true;
     }
 
@@ -125,7 +179,7 @@ public class TestSorter
 
         SortedPage sortedPage = PdfConverter.sortExtractedPage(extractedPage, 0, 1, true);
 
-        FrameCreator.displaySortedPage("Sorted Page", sortedPage);
+        FrameCreator.displaySortedPage("Sorted Page", sortedPage,true);
 
         return true;
     }

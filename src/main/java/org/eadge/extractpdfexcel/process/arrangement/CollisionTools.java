@@ -60,7 +60,7 @@ class CollisionTools
         // If higher is not colliding, try to get lower blocks that may collide on axis lane
         if (mayCollidingBlockEntry == null)
         {
-            mayCollidingBlockEntry = lane.getLowerBlockEntry(block.getPos(axis));
+            mayCollidingBlockEntry = lane.getFloorBlockEntry(block.getPos(axis));
         }
 
         CollisionState lastCollisionState = CollisionState.NO_COLLISION_LEFT;

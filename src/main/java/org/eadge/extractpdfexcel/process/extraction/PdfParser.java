@@ -56,7 +56,7 @@ public class PdfParser
     public void readPage(int pageIndex)
     {
         // Set extractor
-        DefaultSimpleExtractor extractor = new DefaultSimpleExtractor(textBlockIdentifier);
+        DefaultSimpleExtractor         extractor = new DefaultSimpleExtractor(textBlockIdentifier);
         try
         {
             // Extract content with defined extractor
@@ -79,5 +79,10 @@ public class PdfParser
         // Create a new page to add extracted blocks
         extractedData.insertPage(pageIndex,
                                  extractedPage);
+    }
+
+    public void cleanDuplicatedData()
+    {
+        extractedData.cleanDuplicatedData();
     }
 }

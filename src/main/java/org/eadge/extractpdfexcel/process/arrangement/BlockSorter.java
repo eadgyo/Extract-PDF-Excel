@@ -32,10 +32,10 @@ public class BlockSorter
     public static void insertInLanes(int axis, int oppositeAxis, Block block, Lanes lanes)
     {
         // Get lowerLane and higherLane from block
-        MyPair<Lane, Lane> lowerAndHigherLane = LaneTools.getFirstCollidingAndHigher(oppositeAxis, block, lanes);
+        MyPair<Lane, Lane> floorAndHigherLane = LaneTools.getFirstCollidingAndHigher(oppositeAxis, block, lanes);
 
-        Lane lowerLane  = lowerAndHigherLane.getLeft();
-        Lane higherLane = lowerAndHigherLane.getRight();
+        Lane lowerLane  = floorAndHigherLane.getLeft();
+        Lane higherLane = floorAndHigherLane.getRight();
 
         // If lowerLane exists AND lowerLane is colliding
         if (lowerLane != null && CollisionTools.isCollidingWithBlock(oppositeAxis, block, lowerLane))

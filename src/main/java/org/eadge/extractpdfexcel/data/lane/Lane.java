@@ -87,6 +87,7 @@ public class Lane
      */
     public void addBlock(int axis, Block block)
     {
+        assert(!blocks.containsKey(block.getPos(axis)));
         blocks.put(block.getPos(axis), block);
     }
 
@@ -172,6 +173,30 @@ public class Lane
         Map.Entry<Double, Block> lowerBlockEntry = getLowerBlockEntry(key);
 
         return (lowerBlockEntry != null) ? lowerBlockEntry.getValue() : null;
+    }
+
+    /**
+     * Get block lower or equal than key
+     *
+     * @param key to be checked
+     * @return lower or equal block and his value in map
+     */
+    public Map.Entry<Double, Block> getFloorBlockEntry(double key)
+    {
+        return blocks.floorEntry(key);
+    }
+
+    /**
+     * Get block lower or equal than key
+     *
+     * @param key to be checked
+     * @return lower or equal block
+     */
+    public Block getFloorBlock(double key)
+    {
+        Map.Entry<Double, Block> floorBlockEntry = getFloorBlockEntry(key);
+
+        return (floorBlockEntry != null) ? floorBlockEntry.getValue() : null;
     }
 
     /**

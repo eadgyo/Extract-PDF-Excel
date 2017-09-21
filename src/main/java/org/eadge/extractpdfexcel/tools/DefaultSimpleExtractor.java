@@ -97,38 +97,46 @@ public class DefaultSimpleExtractor implements TextExtractionStrategy
         Vector end   = segment.getEndPoint();
 
         String text = textRenderInfo.getText();
+        isFirstRender = result.length() == 0;
 
         if (text.length() == 0 && text.trim().length() != 0)
+        {
+            startLine = start;
             return;
-
+        }
         boolean isNewBlock = false;
 
         if (!isFirstRender)
         {
+            Vector x1 = this.lastStart;
+            Vector x2 = this.endLine;
+
             // Compute distance between current and last text
-            float dist = endLine.subtract(endLine).cross(lastStart.subtract(start)).lengthSquared() /
-                    endLine.subtract(lastStart).lengthSquared();
+            float dist = x2.subtract(x1).cross(x1.subtract(start)).lengthSquared() /
+                    x2.subtract(x1).lengthSquared();
 
             if (dist > textBlockIdentifier.sameLineThreshold)
             {
                 // It's a new line. This text is not in the same block as the last one.
                 isNewBlock = true;
             }
-
-            float spaceCharacterWidth = textRenderInfo.getSingleSpaceWidth();
-            float spacing             = endLine.subtract(start).length();
-
-            // If letters are too far
-            if (spacing > spaceCharacterWidth * textBlockIdentifier.sameBlockFactorThreshold)
+            else
             {
-                // Letters are in two different blocks
-                isNewBlock = true;
-            }
-            // Else if letters are in the same block, but too far to be attached
-            else if (spacing > spaceCharacterWidth * textBlockIdentifier.spaceBlockFactorThreshold)
-            {
-                // Letters are separated with a space character
-                this.appendTextChunk(" ");
+                float spaceCharacterWidth = textRenderInfo.getSingleSpaceWidth();
+                float spacing             = endLine.subtract(start).length();
+
+                // If letters are too far
+                if (spacing > spaceCharacterWidth / textBlockIdentifier.sameBlockFactorThreshold)
+                {
+                    // Letters are in two different blocks
+                    isNewBlock = true;
+                }
+                // Else if letters are in the same block, but too far to be attached
+                else if (spacing > spaceCharacterWidth / textBlockIdentifier.spaceBlockFactorThreshold)
+                {
+                    // Letters are separated with a space character
+                    this.appendTextChunk(" ");
+                }
             }
         }
         else
@@ -148,6 +156,8 @@ public class DefaultSimpleExtractor implements TextExtractionStrategy
             startLine = start;
         }
 
+        result.append(text);
+
         // Store current top and low position
         this.lastAscent = textRenderInfo.getAscentLine().getStartPoint();
         this.lastDescent = textRenderInfo.getDescentLine().getEndPoint();
@@ -162,7 +172,7 @@ public class DefaultSimpleExtractor implements TextExtractionStrategy
 
     private void push()
     {
-        if (blockTextInfos.size() < 0)
+        if (blockTextInfos.size() <= 0)
             return;
 
         // Get xMin,Max yMin,Max
@@ -201,6 +211,7 @@ public class DefaultSimpleExtractor implements TextExtractionStrategy
 
         // Clear stored info
         blockTextInfos.clear();
+        result.setLength(0);
     }
 
     private Block createBlock(double xMin, double xMax, double yMin, double yMax)
@@ -227,7 +238,8 @@ public class DefaultSimpleExtractor implements TextExtractionStrategy
         registerBlockDirection(blockDirection);
 
         // Create and return block with direction, rectangle and info
-        return new Block(result.toString(), blockRectangle, blockDirection, textDirection, fontColors, backColors, fonts);
+        return new Block(result.toString().trim(), blockRectangle, blockDirection, textDirection, fontColors, backColors,
+                         fonts);
     }
 
     /**
@@ -334,6 +346,10 @@ public class DefaultSimpleExtractor implements TextExtractionStrategy
 
             startPointY = minMaxOfAllText[0];
             blockHeight = (minMaxOfAllText[1] - minMaxOfAllText[0]);
+
+            //double height = Math.abs(lastAscent.get(1) - lastDescent.get(1));
+            //return new Rectangle2(xMin, yMin - height*0.5f, xMax - xMin, height);
+
         }
         else
         {
@@ -342,9 +358,14 @@ public class DefaultSimpleExtractor implements TextExtractionStrategy
 
             startPointY = yMin;
             blockHeight = yMax - yMin;
+
+            //double width = Math.abs(lastAscent.get(0) - lastDescent.get(0));
+            //return new Rectangle2(xMin - width*0.5f, yMin,
+                           // width, yMax - yMin);
         }
 
         return new Rectangle2(startPointX, startPointY, blockWidth, blockHeight);
+
     }
 
     /**
