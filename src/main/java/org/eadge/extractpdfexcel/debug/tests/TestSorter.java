@@ -53,6 +53,8 @@ public class TestSorter
             e.printStackTrace();
         }
 
+        PdfConverter.cleanAndMergeData(extractedPdf);
+
         Collection<ExtractedPage> pages = extractedPdf.getPagesCollection();
 
         return pages.iterator().next();

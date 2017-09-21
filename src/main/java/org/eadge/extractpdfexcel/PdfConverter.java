@@ -104,10 +104,6 @@ public class PdfConverter
             // Extract all data
             parser.readAllPage();
 
-            // Clean duplicated code
-            parser.cleanDuplicatedData();
-            parser.mergeBlocks();
-
             // return extractedData extracted with parser
             return parser.getExtractedData();
         }
@@ -115,6 +111,35 @@ public class PdfConverter
         {
             throw new FileNotFoundException(path);
         }
+    }
+
+    /**
+     * Remove duplicated blocks
+     * @param extractedData modified collection of blocks
+     */
+    public static void removeDuplicatedData(ExtractedData extractedData)
+    {
+        extractedData.cleanDuplicatedData();
+    }
+
+    /**
+     * Merge near blocks following fonts and orientation rules
+     * @param extractedData modified colleciton of blocks
+     */
+    public static void mergeData(ExtractedData extractedData)
+    {
+        extractedData.mergeBlocks();
+    }
+
+    /**
+     * Remove duplicated data
+     * Merge near blocks following fonts and orientation rules
+     * @param extractedData modified colleciton of blocks
+     */
+    public static void cleanAndMergeData(ExtractedData extractedData)
+    {
+        extractedData.cleanDuplicatedData();
+        extractedData.mergeBlocks();
     }
 
     /**
