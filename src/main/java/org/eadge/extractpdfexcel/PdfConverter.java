@@ -9,6 +9,7 @@ import org.eadge.extractpdfexcel.data.*;
 import org.eadge.extractpdfexcel.data.array.My2DArray;
 import org.eadge.extractpdfexcel.data.block.Block;
 import org.eadge.extractpdfexcel.data.lane.Lanes;
+import org.eadge.extractpdfexcel.debug.display.FrameCreator;
 import org.eadge.extractpdfexcel.exception.IncorrectFileTypeException;
 import org.eadge.extractpdfexcel.models.TextBlockIdentifier;
 import org.eadge.extractpdfexcel.process.arrangement.BlockSorter;
@@ -16,6 +17,7 @@ import org.eadge.extractpdfexcel.process.extraction.PdfParser;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -335,10 +337,12 @@ public class PdfConverter
      * @param sheetName name of the created excel sheet.
      * @param wb        used excel workBook to insert page
      * @param xclPage   excel page information. Containing cells and dimensions of columns and lines.
-     *
+     * @param lineFactor line size factor
+     * @param columnFactor column size factor
      * @return created excel sheet.
      */
-    public static HSSFSheet createExcelSheet(String sheetName, HSSFWorkbook wb, XclPage xclPage)
+    public static HSSFSheet createExcelSheet(String sheetName, HSSFWorkbook wb, XclPage xclPage, int lineFactor, int
+            columnFactor)
     {
         // Create excel sheet
         HSSFSheet sheet = wb.createSheet(sheetName);
@@ -347,7 +351,8 @@ public class PdfConverter
         for (int line = 0; line < xclPage.numberOfLines(); line++)
         {
             HSSFRow createdLine = sheet.createRow(line);
-            createdLine.setHeight((short) xclPage.getLineHeight(line));
+            if (lineFactor != 0)
+                createdLine.setHeight((short) (xclPage.getLineHeight(line) * 50));
             for (int col = 0; col < xclPage.numberOfColumns(); col++)
             {
                 Block block = xclPage.getBlockAt(col, line);
@@ -363,11 +368,148 @@ public class PdfConverter
         }
 
         // Set the width of each lane
-        for (int col = 0; col < xclPage.numberOfColumns(); col++)
+        if (columnFactor != 0)
         {
-            sheet.setColumnWidth(col, (int) xclPage.getColumnWidth(col));
+            for (int col = 0; col < xclPage.numberOfColumns(); col++)
+            {
+                sheet.setColumnWidth(col, (int) xclPage.getColumnWidth(col) * 20);
+            }
         }
 
         return null;
+    }
+
+    /**
+     * Convert a pdf file into an excel sheets
+     * @param sourcePDFPath path for the used source pdf
+     * @param workbook used workBook for created sheets
+     * @param textBlockIdentifier defines parameter used to
+     * @param lineAxis 0 if the pdf is in portray mode
+     * @param columnAxis 1 if the pdf is in portray mode
+     * @param cleanBlocks remove duplicated blocks
+     * @param mergeBlocks try to merge near blocks
+     * @param lineFactor line size factor
+     * @param columnFactor column size factor
+     */
+    public static ArrayList<HSSFSheet> createExcelSheets(String sourcePDFPath,
+                                       HSSFWorkbook workbook,
+                                       TextBlockIdentifier textBlockIdentifier,
+                                        int lineAxis,
+                                        int columnAxis,
+                                        boolean cleanBlocks,
+                                        boolean mergeBlocks, int lineFactor,
+                                                         int columnFactor) throws FileNotFoundException,
+                                                                        IncorrectFileTypeException
+    {
+        ArrayList<HSSFSheet> sheets = new ArrayList<>();
+
+        // Extract data from the source pdf file
+        ExtractedData extractedData = PdfConverter.extractFromFile(sourcePDFPath, textBlockIdentifier);
+
+        // Clean and merge if needed
+        if (cleanBlocks)
+            extractedData.cleanDuplicatedData();
+        if (mergeBlocks)
+            extractedData.mergeBlocks();
+
+        // Sort Data
+        SortedData sortedData = PdfConverter.sortExtractedData(extractedData, lineAxis, columnAxis, true);
+
+        // Create 2D array pages containing information
+        ArrayList<XclPage> excelPages = PdfConverter.createExcelPages(sortedData);
+
+        // Create sheets for each pages
+        int page = 1;
+        for (XclPage excelPage : excelPages)
+        {
+            HSSFSheet excelSheet = PdfConverter.createExcelSheet("page " + page, workbook, excelPage, lineFactor, columnFactor);
+            sheets.add(excelSheet);
+            page++;
+        }
+
+        return sheets;
+    }
+
+    /**
+     * Convert a pdf file into an excel sheets
+     * @param sourcePDFPath path for the used source pdf
+     * @param workbook used workbook for creating sheets
+     */
+    public static ArrayList<HSSFSheet> createExcelSheets(String sourcePDFPath, HSSFWorkbook workbook) throws
+                                                                                           FileNotFoundException,
+                                                                                       IncorrectFileTypeException
+    {
+        return createExcelSheets(sourcePDFPath, workbook, new TextBlockIdentifier(), 0, 1, true, true, 0, 0);
+    }
+
+    /**
+     * Create Excel file from pdf source
+     * @param sourcePDFPath path for the used source pdf
+     * @param xclPath path for the created excel file
+     * @param textBlockIdentifier defines parameter used to
+     * @param lineAxis 0 if the pdf is in portray mode
+     * @param columnAxis 1 if the pdf is in portray mode
+     * @param cleanBlocks remove duplicated blocks
+     * @param mergeBlocks try to merge near blocks
+     * @param lineFactor line size factor
+     * @param columnFactor column size factor
+     */
+    public static void createExcelFile(String sourcePDFPath, String xclPath,
+                                       TextBlockIdentifier textBlockIdentifier,
+                                       int lineAxis,
+                                       int columnAxis,
+                                       boolean cleanBlocks,
+                                       boolean mergeBlocks,
+                                       int lineFactor,
+                                       int columnFactor) throws IOException
+    {
+        HSSFWorkbook workbook = new HSSFWorkbook();
+
+        ArrayList<HSSFSheet> excelSheets = createExcelSheets(sourcePDFPath,
+                                                             workbook,
+                                                             textBlockIdentifier,
+                                                             lineAxis,
+                                                             columnAxis,
+                                                             cleanBlocks,
+                                                             mergeBlocks,
+                                                             lineFactor,
+                                                             columnFactor);
+
+        FileOutputStream out = new FileOutputStream(xclPath);
+        workbook.write(out);
+        out.close();
+    }
+
+    /**
+     * Create Excel file from pdf source
+     * @param sourcePDFPath path for the used source pdf
+     * @param xclPath path for the created excel file
+     */
+    public static void createExcelFile(String sourcePDFPath, String xclPath) throws IOException
+    {
+        createExcelFile(sourcePDFPath, xclPath, new TextBlockIdentifier(),0, 1, true, true,0, 0);
+    }
+
+    /**
+     * Display the xclPage
+     * @param xclPage displayed xclPage
+     */
+    public static void displayXCLPage(XclPage xclPage)
+    {
+        FrameCreator.displayXclPage("Xcl", 800, 600, xclPage);
+    }
+
+    /**
+     * Display the xclPages
+     * @param xclPages displayed xclPages
+     */
+    public static void displayXCLPages(Collection<XclPage> xclPages)
+    {
+        int page = 1;
+        for (XclPage xclPage : xclPages)
+        {
+            FrameCreator.displayXclPage("" + page, 800, 600, xclPage);
+            page++;
+        }
     }
 }
