@@ -105,11 +105,11 @@ class CollisionTools
     {
         // If rect1 is before rect2
         if (rect1.getPos(oneAxis) + rect1.getLength(oneAxis) <= rect2.getPos(oneAxis))
-            return CollisionState.NO_COLLISION_LEFT;
+            return CollisionState.NO_COLLISION_RIGHT;
 
         // If rect1 is after rect2
         if (rect1.getPos(oneAxis) >= rect2.getPos(oneAxis) + rect2.getLength(oneAxis))
-            return CollisionState.NO_COLLISION_RIGHT;
+            return CollisionState.NO_COLLISION_LEFT;
 
         // Rect1 and rect2 are in collision
         return CollisionState.IN_COLLISION;

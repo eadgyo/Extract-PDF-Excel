@@ -217,8 +217,6 @@ public class ExtractedPage
 
     private void finaliseMerging()
     {
-        System.out.println("Finalise merging");
-
         // Remove block
         for (Iterator<Block> iterator = blocks.iterator(); iterator.hasNext(); )
         {

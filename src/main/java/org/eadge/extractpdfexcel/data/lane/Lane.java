@@ -211,6 +211,18 @@ public class Lane
     }
 
     /**
+     * Get block higher or equal than key
+     *
+     * @param key to be checked
+     * @return higher block and his value in map
+     */
+    public Map.Entry<Double, Block> getCeilingBlockEntry(double key)
+    {
+        return blocks.ceilingEntry(key);
+    }
+
+
+    /**
      * Get block higher than key
      *
      * @param key to be checked
