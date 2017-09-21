@@ -44,16 +44,17 @@ public class JPanelXcl extends JResizedPanelPdf
         // Parse the lines and cols
         // Display each block
         g.setColor(Color.GRAY);
+
         for (int col = 0; col < xclPage.numberOfColumns(); col++)
         {
-            double columnWidth = xclPage.getColumnWidth(col);
+            double columnWidth = (int) xclPage.getColumnWidth(col);
 
             // Reset cursorPosition to the first line
             cursorPosition.set(Y_AXIS, 0);
 
             for (int line = 0; line < xclPage.numberOfLines(); line++)
             {
-                double lineHeight = xclPage.getLineHeight(line);
+                double lineHeight = (int) xclPage.getLineHeight(line);
 
                 g2d.setColor(Color.GRAY);
 
