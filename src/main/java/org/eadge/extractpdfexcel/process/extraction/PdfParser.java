@@ -85,4 +85,9 @@ public class PdfParser
     {
         extractedData.cleanDuplicatedData();
     }
+
+    public void mergeBlocks()
+    {
+        extractedData.mergeBlocks();
+    }
 }

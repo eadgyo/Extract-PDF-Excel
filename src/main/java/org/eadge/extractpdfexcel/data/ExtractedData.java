@@ -145,4 +145,12 @@ public class ExtractedData
             extractedPage.cleanDuplicatedBlocks();
         }
     }
+
+    public void mergeBlocks()
+    {
+        for (ExtractedPage extractedPage : extractedPages.values())
+        {
+            extractedPage.mergeNearBlocks();
+        }
+    }
 }

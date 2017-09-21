@@ -444,8 +444,8 @@ public class BlockSorter
         }
 
         // Block must at least be in lower lane and not only in higher lane
-        assert (block.getPos(oppositeAxis) >= lowerLane.getPos(oppositeAxis));
-        assert (block.getPos(oppositeAxis) <= higherLane.getPos(oppositeAxis));
+        assert (lowerLane.getPos(oppositeAxis) - block.getPos(oppositeAxis) <= 0.0001f);
+        assert (block.getPos(oppositeAxis) - higherLane.getPos(oppositeAxis) <= 0.0001f);
 
         // Compute lower colliding surface
         double lowerCollidingSurface = lowerLane.getEndPos(oppositeAxis) - block.getPos(oppositeAxis);

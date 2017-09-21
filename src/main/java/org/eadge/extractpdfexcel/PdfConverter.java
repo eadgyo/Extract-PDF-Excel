@@ -106,6 +106,7 @@ public class PdfConverter
 
             // Clean duplicated code
             parser.cleanDuplicatedData();
+            parser.mergeBlocks();
 
             // return extractedData extracted with parser
             return parser.getExtractedData();

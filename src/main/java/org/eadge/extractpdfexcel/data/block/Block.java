@@ -27,6 +27,9 @@ public class Block
     private Set<BaseColor> backColors;
     private Set<DocumentFont> fonts;
 
+    private Block prev = null;
+    private Block next = null;
+
     public Block(String originalText, Rectangle2 bound)
     {
         this.originalText = originalText;
@@ -266,5 +269,25 @@ public class Block
     {
         String text = (formattedText != null) ? formattedText : originalText;
         return "\"" + text + "\"  " + bound;
+    }
+
+    public Block getPrev()
+    {
+        return prev;
+    }
+
+    public void setPrev(Block prev)
+    {
+        this.prev = prev;
+    }
+
+    public Block getNext()
+    {
+        return next;
+    }
+
+    public void setNext(Block next)
+    {
+        this.next = next;
     }
 }

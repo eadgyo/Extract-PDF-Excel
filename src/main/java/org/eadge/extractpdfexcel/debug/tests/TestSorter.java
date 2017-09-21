@@ -124,6 +124,14 @@ public class TestSorter
 
         }
 
+
+        BlockSorter.reinsertBlockMoreCollidingHigherLane(SortedPage.DEFAULT_LINE_AXIS,
+                                                         SortedPage.DEFAULT_OPPOSITE_LINE_AXIS,
+                                                         lines);
+        BlockSorter.reinsertBlockMoreCollidingHigherLane(SortedPage.DEFAULT_OPPOSITE_COLUMN_AXIS,
+                                                        SortedPage.DEFAULT_OPPOSITE_COLUMN_AXIS,
+                                                         columns);
+
         FrameCreator.displayBlocks("Blocks", 800, 600, blocks);
         FrameCreator.displayLanes("Cols", 800, 600, columns, false);
         FrameCreator.displayLanes("Lines", 800, 600, lines, false);
