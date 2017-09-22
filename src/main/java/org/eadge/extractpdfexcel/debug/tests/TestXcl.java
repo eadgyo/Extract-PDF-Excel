@@ -73,11 +73,11 @@ public class TestXcl
 
         extractedPage.addAllBlocks(blocks);
 
-        return PdfConverter.sortExtractedPage(extractedPage, 0, 1, true);
+        return PdfConverter.sortExtractedPage(extractedPage, 0, 1);
     }
 
     public static SortedPage createSortedPageEx()
     {
-        return PdfConverter.sortExtractedPage(TestSorter.createExtractedPageEx("test/pdf/test.pdf"), 0, 1, false);
+        return PdfConverter.sortExtractedPage(TestSorter.createExtractedPageEx("test/pdf/test.pdf"), 0, 1);
     }
 }

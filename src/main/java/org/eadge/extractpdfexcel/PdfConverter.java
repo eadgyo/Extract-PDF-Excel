@@ -163,7 +163,7 @@ public class PdfConverter
      * </p>
      *
      * @param extractedData extracted pages from one pdf file
-     * @param reinsertBlockMoreCollidingHigherLane if true, at the end of insert process, move block to higher lane,
+     * //@param reinsertBlockMoreCollidingHigherLane if true, at the end of insert process, move block to higher lane,
      *                                             if colliding percent between block and higher lane is higher than
      *                                             block and actual block lane.
      *
@@ -171,10 +171,9 @@ public class PdfConverter
      * keeps page separation. Columns and lines contained sorted blocks according to Y-axis for columns and X-axis
      * for lines.
      */
-    public static SortedData sortExtractedData(ExtractedData extractedData, boolean reinsertBlockMoreCollidingHigherLane)
+    public static SortedData sortExtractedData(ExtractedData extractedData)
     {
-        return sortExtractedData(extractedData, SortedPage.DEFAULT_LINE_AXIS, SortedPage.DEFAULT_COLUMN_AXIS,
-                                 reinsertBlockMoreCollidingHigherLane);
+        return sortExtractedData(extractedData, SortedPage.DEFAULT_LINE_AXIS, SortedPage.DEFAULT_COLUMN_AXIS);
     }
 
     /**
@@ -192,7 +191,7 @@ public class PdfConverter
      * @param extractedData extracted pages from one pdf file
      * @param axisIndex     axis of lane, 0 for Line and 1 for Column
      * @param oppositeIndex opposite axis of lane, 1 for Line and 0 for Column
-     * @param reinsertBlockMoreCollidingHigherLane if true, at the end of insert process, move block to higher lane,
+     * //@param reinsertBlockMoreCollidingHigherLane if true, at the end of insert process, move block to higher lane,
      *                                             if colliding percent between block and higher lane is higher than
      *                                             block and actual block lane.
      *
@@ -200,7 +199,7 @@ public class PdfConverter
      * keeps page separation. Columns and lines contained sorted blocks according to Y-axis for columns and X-axis
      * for lines.
      */
-    public static SortedData sortExtractedData(ExtractedData extractedData, int axisIndex, int oppositeIndex, boolean reinsertBlockMoreCollidingHigherLane)
+    public static SortedData sortExtractedData(ExtractedData extractedData, int axisIndex, int oppositeIndex)
     {
         // Grouping all sortedPage
         SortedData sortedData = new SortedData();
@@ -215,7 +214,7 @@ public class PdfConverter
             if (extractedPage != null)
             {
                 // Create sortedPage
-                SortedPage sortedPage = sortExtractedPage(extractedPage, axisIndex, oppositeIndex, reinsertBlockMoreCollidingHigherLane);
+                SortedPage sortedPage = sortExtractedPage(extractedPage, axisIndex, oppositeIndex);
 
                 // Add sortedPage to sortedData
                 sortedData.insertPage(i, sortedPage);
@@ -240,7 +239,7 @@ public class PdfConverter
      * @param extractedPage              extracted page from one pdf file
      * @param axisIndex                  axis of lane, 0 for Line and 1 for Column
      * @param oppositeIndex              opposite axis of lane, 1 for Line and 0 for Column
-     * @param reinsertBlockMoreCollidingHigherLane if true, at the end of insert process, move block to higher lane,
+     * //@param reinsertBlockMoreCollidingHigherLane if true, at the end of insert process, move block to higher lane,
      *                                             if colliding percent between block and higher lane is higher than
      *                                             block and actual block lane.
      *
@@ -250,8 +249,7 @@ public class PdfConverter
      */
     public static SortedPage sortExtractedPage(ExtractedPage extractedPage,
                                                int axisIndex,
-                                               int oppositeIndex,
-                                               boolean reinsertBlockMoreCollidingHigherLane)
+                                               int oppositeIndex)
     {
         // Start creating sortedPage data
         Lanes      columns    = new Lanes();
@@ -277,14 +275,14 @@ public class PdfConverter
         }
 
         // If end reinserting block option is activated
-        if (reinsertBlockMoreCollidingHigherLane)
+/*        if (reinsertBlockMoreCollidingHigherLane)
         {
             BlockSorter.reinsertBlockMoreCollidingHigherLane(axisIndex,
                                                              oppositeIndex,
                                                    lines);
             BlockSorter.reinsertBlockMoreCollidingHigherLane(oppositeIndex, axisIndex,
                                       columns);
-        }
+        }*/
 
         // Link sortedPage to his extractedPage
         sortedPage.setLinkExtractedPage(extractedPage);
@@ -412,14 +410,8 @@ public class PdfConverter
         // Extract data from the source pdf file
         ExtractedData extractedData = PdfConverter.extractFromFile(sourcePDFPath, textBlockIdentifier);
 
-        // Clean and merge if needed
-        if (cleanBlocks)
-            extractedData.cleanDuplicatedData();
-        if (mergeBlocks)
-            extractedData.mergeBlocks(1.5f);
-
         // Sort Data
-        SortedData sortedData = PdfConverter.sortExtractedData(extractedData, lineAxis, columnAxis, true);
+        SortedData sortedData = PdfConverter.sortExtractedData(extractedData, lineAxis, columnAxis);
 
         // Create 2D array pages containing information
         ArrayList<XclPage> excelPages = PdfConverter.createExcelPages(sortedData);
@@ -536,12 +528,8 @@ public class PdfConverter
         // Extract data from the source pdf file
         ExtractedData extractedData = PdfConverter.extractFromFile(sourcePdf, new TextBlockIdentifier());
 
-        // Clean and merge if needed
-        extractedData.cleanDuplicatedData();
-        extractedData.mergeBlocks(1.5f);
-
         // Sort Data
-        SortedData sortedData = PdfConverter.sortExtractedData(extractedData, 0, 1, true);
+        SortedData sortedData = PdfConverter.sortExtractedData(extractedData, 0, 1);
 
         // Create 2D array pages containing information
         return PdfConverter.createExcelPages(sortedData);

@@ -190,7 +190,7 @@ public class TestSorter
     {
         ExtractedPage extractedPage = createExtractedPage();
 
-        SortedPage sortedPage = PdfConverter.sortExtractedPage(extractedPage, 0, 1, true);
+        SortedPage sortedPage = PdfConverter.sortExtractedPage(extractedPage, 0, 1);
 
         FrameCreator.displaySortedPage("Sorted Page", sortedPage,true);
 

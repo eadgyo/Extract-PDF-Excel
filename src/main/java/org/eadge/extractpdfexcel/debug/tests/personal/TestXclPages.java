@@ -29,6 +29,6 @@ public class TestXclPages
 
     public static SortedData createSortedPageEx(String source)
     {
-        return PdfConverter.sortExtractedData(TestSorter.createExtractedDataEx(source), 0, 1, true);
+        return PdfConverter.sortExtractedData(TestSorter.createExtractedDataEx(source), 0, 1);
     }
 }
