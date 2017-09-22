@@ -146,12 +146,12 @@ class LaneTools
         if (rect1.getPos(oneAxis) <= rect2.getPos(oneAxis))
         {
             // rect1 is before rect2
-            return Direction.LEFT;
+            return Direction.TOP;
         }
         else
         {
             // rect1 is after rect2
-            return Direction.RIGHT;
+            return Direction.BOTTOM;
         }
     }
 

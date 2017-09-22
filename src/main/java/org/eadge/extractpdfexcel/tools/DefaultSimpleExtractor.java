@@ -176,7 +176,7 @@ public class DefaultSimpleExtractor implements TextExtractionStrategy
     {
         Direction blockDirection = determineBlockDirection(startLine, endLine, lastAscent, lastDescent);
 
-        int laneDirection = blockDirection.getLaneDirection();
+        int laneDirection = blockDirection.getLaneDirectionVector();
         boolean test = start.get(laneDirection) > startLine.get(laneDirection) && start.get(laneDirection) < endLine.get
                 (laneDirection);
 
@@ -264,22 +264,23 @@ public class DefaultSimpleExtractor implements TextExtractionStrategy
      */
     private Direction determineTextDirection(Vector lastAscent, Vector lastDescent)
     {
+        // X and Y axis are inverted
         // If text is on Y axis
         if (isAlongY(lastAscent.get(1), lastDescent.get(1)))
         {
             // If the text is not inverted along Y axis
             if (lastAscent.get(1) < lastDescent.get(1))
-                return Direction.TOP;
+                return Direction.LEFT;
             else
-                return Direction.BOTTOM;
+                return Direction.RIGHT;
         }
         else
         {
             // If the text is not inverted along X axis
             if (lastAscent.get(0) < lastDescent.get(0))
-                return Direction.LEFT;
+                return Direction.TOP;
             else
-                return Direction.RIGHT;
+                return Direction.BOTTOM;
         }
     }
 
@@ -291,16 +292,16 @@ public class DefaultSimpleExtractor implements TextExtractionStrategy
     {
         switch (direction)
         {
-            case TOP:
+            case LEFT:
                 nBlockFacingTop++;
                 break;
-            case BOTTOM:
+            case RIGHT:
                 nBlockFacingBottom++;
                 break;
-            case LEFT:
+            case TOP:
                 nBlockFacingLeft++;
                 break;
-            case RIGHT:
+            case BOTTOM:
                 nBlockFacingRight++;
                 break;
         }
@@ -321,21 +322,22 @@ public class DefaultSimpleExtractor implements TextExtractionStrategy
                                               Vector lastAscent,
                                               Vector lastDescent)
     {
+        // X and Y axis are inverted
         if (isAlongY(startLine.get(1), lastEnd.get(1)))
         {
             // If Up point is before Down point along y axis
             if (lastAscent.get(1) < lastDescent.get(1))
-                return Direction.TOP;
+                return Direction.LEFT;
             else
-                return Direction.BOTTOM;
+                return Direction.RIGHT;
         }
         else
         {
             // If Left point is before Right point along y axis
             if (startLine.get(1) < lastEnd.get(1))
-                return Direction.LEFT;
+                return Direction.TOP;
             else
-                return Direction.RIGHT;
+                return Direction.BOTTOM;
         }
     }
 
@@ -353,7 +355,7 @@ public class DefaultSimpleExtractor implements TextExtractionStrategy
         double blockHeight;
         double blockWidth;
 
-        if (direction.equals(Direction.TOP) || direction.equals(Direction.BOTTOM))
+        if (direction.equals(Direction.LEFT) || direction.equals(Direction.RIGHT))
         {
             startPointX = xMin;
             blockWidth = xMax - xMin;
@@ -396,25 +398,25 @@ public class DefaultSimpleExtractor implements TextExtractionStrategy
         // Get min and max for ascent and descent line
         switch (direction)
         {
-            case TOP:
+            case LEFT:
                 // Top point is before bottom point, on Y axis
                 minMax[0] = getMinAscent(1);
                 minMax[1] = getMaxDescent(1);
                 break;
 
-            case BOTTOM:
+            case RIGHT:
                 // Top point is after bottom point, on Y axis
                 minMax[0] = getMinDescent(1);
                 minMax[1] = getMaxAscent(1);
                 break;
 
-            case LEFT:
+            case TOP:
                 // Left point is before right point, on X axis
                 minMax[0] = getMinAscent(0);
                 minMax[1] = getMaxDescent(0);
                 break;
 
-            case RIGHT:
+            case BOTTOM:
                 // Left point is after right point, on X axis
                 minMax[0] = getMinDescent(0);
                 minMax[1] = getMaxAscent(0);
@@ -533,17 +535,17 @@ public class DefaultSimpleExtractor implements TextExtractionStrategy
                     // Transform to top orientation
                     switch (block.getBlockOrientation())
                     {
-                        case LEFT:
-                            block.setBlockOrientation(Direction.RIGHT);
-                            break;
-                        case RIGHT:
-                            block.setBlockOrientation(Direction.LEFT);
-                            break;
                         case TOP:
                             block.setBlockOrientation(Direction.BOTTOM);
                             break;
                         case BOTTOM:
                             block.setBlockOrientation(Direction.TOP);
+                            break;
+                        case LEFT:
+                            block.setBlockOrientation(Direction.RIGHT);
+                            break;
+                        case RIGHT:
+                            block.setBlockOrientation(Direction.LEFT);
                             break;
                     }
 
@@ -566,17 +568,17 @@ public class DefaultSimpleExtractor implements TextExtractionStrategy
                     // Transform direction
                     switch (block.getBlockOrientation())
                     {
-                        case LEFT:
-                            block.setBlockOrientation(Direction.TOP);
-                            break;
-                        case RIGHT:
-                            block.setBlockOrientation(Direction.BOTTOM);
-                            break;
                         case TOP:
-                            block.setBlockOrientation(Direction.RIGHT);
+                            block.setBlockOrientation(Direction.LEFT);
                             break;
                         case BOTTOM:
-                            block.setBlockOrientation(Direction.LEFT);
+                            block.setBlockOrientation(Direction.RIGHT);
+                            break;
+                        case LEFT:
+                            block.setBlockOrientation(Direction.BOTTOM);
+                            break;
+                        case RIGHT:
+                            block.setBlockOrientation(Direction.TOP);
                             break;
                     }
 
@@ -596,17 +598,17 @@ public class DefaultSimpleExtractor implements TextExtractionStrategy
                 {
                     switch (block.getBlockOrientation())
                     {
-                        case LEFT:
-                            block.setBlockOrientation(Direction.BOTTOM);
-                            break;
-                        case RIGHT:
-                            block.setBlockOrientation(Direction.TOP);
-                            break;
                         case TOP:
-                            block.setBlockOrientation(Direction.LEFT);
+                            block.setBlockOrientation(Direction.RIGHT);
                             break;
                         case BOTTOM:
-                            block.setBlockOrientation(Direction.RIGHT);
+                            block.setBlockOrientation(Direction.LEFT);
+                            break;
+                        case LEFT:
+                            block.setBlockOrientation(Direction.TOP);
+                            break;
+                        case RIGHT:
+                            block.setBlockOrientation(Direction.BOTTOM);
                             break;
                     }
 

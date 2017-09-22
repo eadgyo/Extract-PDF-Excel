@@ -214,7 +214,7 @@ public class BlockSorter
         Block lowerBlock, higherBlock;
 
         // If the inserted block is at the right of the colliding block
-        if (relativeDirection == Direction.LEFT)
+        if (relativeDirection == Direction.TOP)
         {
             lowerBlock = insertedBlock;
             higherBlock = collidingBlock;

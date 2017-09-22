@@ -39,8 +39,8 @@ public class Block
 
         this.blockOrientation = null;
 
-        this.blockOrientation = Direction.TOP;
-        this.textOrientation = Direction.TOP;
+        this.blockOrientation = Direction.LEFT;
+        this.textOrientation = Direction.LEFT;
 
         this.backColors = new HashSet<>();
         this.fontColors = new HashSet<>();

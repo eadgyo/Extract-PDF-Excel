@@ -162,8 +162,8 @@ public class ExtractedPage
             {
                 Rectangle2 aBound = a.getBound();
                 Rectangle2 bBound = b.getBound();
-                if (a.getBlockOrientation().equals(Direction.TOP) || a.getBlockOrientation()
-                                                                      .equals(Direction.BOTTOM))
+                if (a.getBlockOrientation().equals(Direction.LEFT) || a.getBlockOrientation()
+                                                                       .equals(Direction.RIGHT))
                 {
                     double dist = bBound.getY() - aBound.getY();
                     thresholdY = Math.min(aBound.getHeight(), bBound.getHeight()) * mergeFactor;

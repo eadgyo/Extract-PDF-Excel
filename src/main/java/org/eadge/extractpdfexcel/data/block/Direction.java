@@ -7,14 +7,14 @@ package org.eadge.extractpdfexcel.data.block;
  */
 public enum Direction
 {
-    TOP,
-    BOTTOM,
     LEFT,
-    RIGHT;
+    RIGHT,
+    TOP,
+    BOTTOM;
 
     public boolean isInPortrayMode()
     {
-        return this.equals(LEFT) || this.equals(RIGHT);
+        return this.equals(TOP) || this.equals(BOTTOM);
     }
 
     public int getLaneDirection()
@@ -25,5 +25,15 @@ public enum Direction
     public int getOppositeLaneDirection()
     {
         return isInPortrayMode() ? 1 : 0;
+    }
+
+    public int getLaneDirectionVector()
+    {
+        return isInPortrayMode() ? 1 : 0;
+    }
+
+    public int getOppositeLaneDirectionVector()
+    {
+        return isInPortrayMode() ? 0 : 1;
     }
 }

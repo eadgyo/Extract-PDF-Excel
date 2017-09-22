@@ -69,7 +69,7 @@ public class TextBlockIdentifier
         this.sameBlockFactorX = 3.0f;
         this.spaceBlockFactorX = 2.0f;
         this.thresholdAlongY = 0.00001f;
-        this.mergeFactor = 1.5f;
+        this.mergeFactor = 1.4f;
         this.cleanDuplicated = true;
     }
 }

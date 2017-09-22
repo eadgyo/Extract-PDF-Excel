@@ -92,13 +92,13 @@ public class TestDefaultBlockMerger
 
         linkedNames.put("DiffAxisOr0", new Block("DiffAxisOr0",new Rectangle2(39.0, 342.0, 123.0, 23.0)));
         blocks.add(linkedNames.get("DiffAxisOr0"));
-        linkedNames.get("DiffAxisOr0").setBlockOrientation(Direction.LEFT);
+        linkedNames.get("DiffAxisOr0").setBlockOrientation(Direction.TOP);
         linkedNames.put("DiffAxisOr1", new Block("DiffAxisOr1",new Rectangle2(39.0, 370.0, 121.0, 23.0)));
         blocks.add(linkedNames.get("DiffAxisOr1"));
 
         linkedNames.put("DiffTextOr0", new Block("DiffTextOr0",new Rectangle2(225.0, 16.0, 130.0, 18.0)));
         blocks.add(linkedNames.get("DiffTextOr0"));
-        linkedNames.get("DiffTextOr0").setTextOrientation(Direction.LEFT);
+        linkedNames.get("DiffTextOr0").setTextOrientation(Direction.TOP);
         linkedNames.put("DiffTextOr1", new Block("DiffTextOr1",new Rectangle2(225.0, 39.0, 130.0, 16.0)));
         blocks.add(linkedNames.get("DiffTextOr1"));
 

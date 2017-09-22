@@ -188,7 +188,7 @@ public class DefaultBlockMerger extends BlockMerger
             return -1;
 
         // Return the x or y orientation
-        if (first.getBlockOrientation() == Direction.TOP || first.getBlockOrientation() == Direction.BOTTOM)
+        if (first.getBlockOrientation() == Direction.LEFT || first.getBlockOrientation() == Direction.RIGHT)
             return 0;
         else
             return 1;
