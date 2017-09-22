@@ -19,6 +19,8 @@ public class JPanelXcl extends JResizedPanelPdf
     private static final int X_AXIS = 0;
     private static final int Y_AXIS = 1;
 
+    private static boolean noLength = true;
+
     public JPanelXcl(double pdfWidth, double pdfHeight)
     {
         super(pdfWidth, pdfHeight);
@@ -34,7 +36,8 @@ public class JPanelXcl extends JResizedPanelPdf
     {
         super.paintComponent(g);
 
-        assert (xclPage != null);
+        if (xclPage == null)
+            return;
 
         Graphics2D g2d = (Graphics2D) g;
 
@@ -47,14 +50,19 @@ public class JPanelXcl extends JResizedPanelPdf
 
         for (int col = 0; col < xclPage.numberOfColumns(); col++)
         {
-            double columnWidth = (int) xclPage.getColumnWidth(col);
+            double columnWidth = (int) (pdfWidth / xclPage.numberOfColumns());
+            if (!noLength)
+                columnWidth = (int) xclPage.getColumnWidth(col);
 
             // Reset cursorPosition to the first line
             cursorPosition.set(Y_AXIS, 0);
 
             for (int line = 0; line < xclPage.numberOfLines(); line++)
             {
-                double lineHeight = (int) xclPage.getLineHeight(line);
+
+                double lineHeight = (int) (pdfHeight / xclPage.numberOfLines());
+                if (!noLength)
+                    lineHeight = (int) xclPage.getLineHeight(line);
 
                 g2d.setColor(Color.GRAY);
 

@@ -146,11 +146,11 @@ public class ExtractedData
         }
     }
 
-    public void mergeBlocks()
+    public void mergeBlocks(double mergeFactor)
     {
         for (ExtractedPage extractedPage : extractedPages.values())
         {
-            extractedPage.mergeNearBlocks();
+            extractedPage.mergeNearBlocks(mergeFactor);
         }
     }
 }

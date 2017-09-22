@@ -1,4 +1,4 @@
-package org.eadge.extractpdfexcel.debug.tests;
+package org.eadge.extractpdfexcel.debug.tests.personal;
 
 import org.eadge.extractpdfexcel.PdfConverter;
 

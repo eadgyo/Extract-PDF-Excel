@@ -15,16 +15,6 @@ Text information is extracted in keeps in blocks.
 ExtractedData extractedData = PdfConverter.extractFromFile(sourcePDFPath, textBlockIdentifier);
 ```
 
-You can remove duplicate data.
-```
-extractedData.cleanDuplicatedData();
-```
-
-You can also try to merge near blocks.
-```
-extractedData.mergeBlocks();
-```
-
 
 ### Sort Data
 Blocks are sorted, lines and columns are created.

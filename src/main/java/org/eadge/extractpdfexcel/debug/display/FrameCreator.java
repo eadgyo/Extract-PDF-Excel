@@ -87,23 +87,51 @@ public class FrameCreator
         Container contentPane = frame.getContentPane();
 
         contentPane.add(lanesPanel);
-        frame.setSize(800, 600);
+        frame.setSize(width, height);
         frame.setVisible(true);
     }
 
-    public static void displayXclPage(String frameName, int width, int height, XclPage xclPage)
+    public static JFrame displayXclPage(String frameName, int width, int height, XclPage xclPage)
     {
-        JFrame frame = createFrameGrid(frameName, 1, 1);
+        final JFrame frame = createFrameGrid(frameName, 1, 1);
 
         JPanelXcl xclPanel = new JPanelXcl(width, height);
         xclPanel.setXclPage(xclPage);
 
-        Container contentPane = frame.getContentPane();
-
-        contentPane.add(xclPanel);
-        frame.setSize(800, 600);
+        frame.add(xclPanel);
+        frame.setSize(width, height);
         frame.setVisible(true);
+
+        return frame;
     }
+
+    public static JFrame displayXclPages(String frameName, int width, int height, Collection<XclPage> xclPages)
+    {
+        final JFrame frame = createFrameGrid(frameName, 1, 1);
+
+        JPanelXclPages xclPanel = new JPanelXclPages(width, height);
+        xclPanel.setXclPages(xclPages);
+
+        frame.add(xclPanel);
+        frame.setSize(width, height);
+        frame.setVisible(true);
+
+        return frame;
+    }
+
+    public static JFrame displayDirectory(String frameName, int width, int height,
+                                          ArrayList<String> xclFiles)
+    {
+        final JFrame frame = createFrameGrid(frameName, 1, 1);
+
+        frame.getContentPane().add(new JPanelXclFiles(width, height, xclFiles));
+
+        frame.setSize(width, height);
+        frame.setVisible(true);
+
+        return frame;
+    }
+
 
     public static void displaySortedPage(String frameName, SortedPage sortedPage, boolean drawBlocks)
     {

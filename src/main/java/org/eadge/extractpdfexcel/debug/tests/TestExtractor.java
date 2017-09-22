@@ -39,8 +39,6 @@ public class TestExtractor
         {
             ExtractedData extractedPdf = PdfConverter.extractFromFile("test/pdf/example.pdf", blockIdentifier);
 
-            PdfConverter.cleanAndMergeData(extractedPdf);
-
             Collection<ExtractedPage> pages = extractedPdf.getPagesCollection();
 
             // Display extracted pages

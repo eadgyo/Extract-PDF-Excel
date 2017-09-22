@@ -145,7 +145,7 @@ public class ExtractedPage
         }
     }
 
-    public void mergeNearBlocks()
+    public void mergeNearBlocks(double mergeFactor)
     {
         double thresholdY;
         for (int blockIndex = 0; blockIndex < blocks.size() - 1; blockIndex++)
@@ -165,7 +165,7 @@ public class ExtractedPage
                 if (a.getBlockOrientation().equals(Direction.TOP) || a.getBlockOrientation().equals(Direction.BOTTOM))
                 {
                     double dist = bBound.getY() - aBound.getY();
-                    thresholdY = Math.min(aBound.getHeight(), bBound.getHeight()) * 2;
+                    thresholdY = Math.min(aBound.getHeight(), bBound.getHeight()) * mergeFactor;
                     if (Math.abs(dist) < thresholdY)
                     {
                         /*

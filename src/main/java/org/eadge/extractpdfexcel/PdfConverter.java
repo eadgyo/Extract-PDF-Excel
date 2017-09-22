@@ -15,6 +15,7 @@ import org.eadge.extractpdfexcel.models.TextBlockIdentifier;
 import org.eadge.extractpdfexcel.process.arrangement.BlockSorter;
 import org.eadge.extractpdfexcel.process.extraction.PdfParser;
 
+import javax.swing.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -106,6 +107,11 @@ public class PdfConverter
             // Extract all data
             parser.readAllPage();
 
+            if (textBlockIdentifier.cleanDuplicated)
+                parser.cleanDuplicatedData();
+            if (textBlockIdentifier.mergeFactor > 1.0)
+                parser.mergeBlocks(textBlockIdentifier.mergeFactor);
+
             // return extractedData extracted with parser
             return parser.getExtractedData();
         }
@@ -128,9 +134,9 @@ public class PdfConverter
      * Merge near blocks following fonts and orientation rules
      * @param extractedData modified colleciton of blocks
      */
-    public static void mergeData(ExtractedData extractedData)
+    public static void mergeData(ExtractedData extractedData, double mergeFactor)
     {
-        extractedData.mergeBlocks();
+        extractedData.mergeBlocks(mergeFactor);
     }
 
     /**
@@ -138,10 +144,10 @@ public class PdfConverter
      * Merge near blocks following fonts and orientation rules
      * @param extractedData modified colleciton of blocks
      */
-    public static void cleanAndMergeData(ExtractedData extractedData)
+    public static void cleanAndMergeData(ExtractedData extractedData, double mergeFactor)
     {
         extractedData.cleanDuplicatedData();
-        extractedData.mergeBlocks();
+        extractedData.mergeBlocks(mergeFactor);
     }
 
     /**
@@ -410,7 +416,7 @@ public class PdfConverter
         if (cleanBlocks)
             extractedData.cleanDuplicatedData();
         if (mergeBlocks)
-            extractedData.mergeBlocks();
+            extractedData.mergeBlocks(1.5f);
 
         // Sort Data
         SortedData sortedData = PdfConverter.sortExtractedData(extractedData, lineAxis, columnAxis, true);
@@ -503,13 +509,41 @@ public class PdfConverter
      * Display the xclPages
      * @param xclPages displayed xclPages
      */
-    public static void displayXCLPages(Collection<XclPage> xclPages)
+    public static Collection<JFrame>  displayXCLPages(Collection<XclPage> xclPages)
     {
-        int page = 1;
-        for (XclPage xclPage : xclPages)
-        {
-            FrameCreator.displayXclPage("" + page, 800, 600, xclPage);
-            page++;
-        }
+        ArrayList<JFrame> frames = new ArrayList<>();
+
+        FrameCreator.displayXclPages("XCL", 800, 600, xclPages);
+
+        return frames;
+    }
+
+    /**
+     * Display the xclPage
+     * @param sourcePdf displayed pdf converted to xcl
+     */
+    public static Collection<JFrame> displayXCLPage(String sourcePdf) throws FileNotFoundException, IncorrectFileTypeException
+    {
+        ArrayList<XclPage> xclPages = convertFileToXclPages(sourcePdf);
+        Collection<JFrame> frames = displayXCLPages(xclPages);
+
+        return frames;
+    }
+
+    public static ArrayList<XclPage> convertFileToXclPages(String sourcePdf) throws FileNotFoundException,
+                                                                           IncorrectFileTypeException
+    {
+        // Extract data from the source pdf file
+        ExtractedData extractedData = PdfConverter.extractFromFile(sourcePdf, new TextBlockIdentifier());
+
+        // Clean and merge if needed
+        extractedData.cleanDuplicatedData();
+        extractedData.mergeBlocks(1.5f);
+
+        // Sort Data
+        SortedData sortedData = PdfConverter.sortExtractedData(extractedData, 0, 1, true);
+
+        // Create 2D array pages containing information
+        return PdfConverter.createExcelPages(sortedData);
     }
 }

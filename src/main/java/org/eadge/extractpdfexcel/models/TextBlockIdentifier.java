@@ -30,6 +30,16 @@ public class TextBlockIdentifier
     public final double spaceBlockFactorThreshold;
 
     /**
+     * Used to merge near blocks
+     */
+    public final double mergeFactor;
+
+    /**
+     * If true, removed duplicated block.
+     */
+    public final boolean cleanDuplicated;
+
+    /**
      * Used to determine if a block is facing Y or X.
      *
      * We take two extremes points of blocks center line and compare coordinates. If difference is under
@@ -41,12 +51,16 @@ public class TextBlockIdentifier
     public TextBlockIdentifier(double sameLineThreshold,
                                double sameBlockFactorThreshold,
                                double spaceBlockFactorThreshold,
-                               double thresholdAlongY)
+                               double thresholdAlongY,
+                               double mergeFactor,
+                               boolean cleanDuplicated)
     {
         this.sameLineThreshold = sameLineThreshold;
         this.sameBlockFactorThreshold = sameBlockFactorThreshold;
         this.spaceBlockFactorThreshold = spaceBlockFactorThreshold;
         this.thresholdAlongY = thresholdAlongY;
+        this.mergeFactor = mergeFactor;
+        this.cleanDuplicated = cleanDuplicated;
     }
 
     public TextBlockIdentifier()
@@ -55,5 +69,7 @@ public class TextBlockIdentifier
         this.sameBlockFactorThreshold = 3.0f;
         this.spaceBlockFactorThreshold = 2.0f;
         this.thresholdAlongY = 0.00001f;
+        this.mergeFactor = 1.5f;
+        this.cleanDuplicated = true;
     }
 }

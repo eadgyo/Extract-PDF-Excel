@@ -35,14 +35,21 @@ public class TestSorter
         //System.out.println(Result.transformResult(resultSortExtractedPage) + " Sort extracted page");
     }
 
-    public static ExtractedPage createExtractedPageEx()
+    public static ExtractedPage createExtractedPageEx(String source)
+    {
+        Collection<ExtractedPage> pages = createExtractedDataEx(source).getPagesCollection();
+
+        return pages.iterator().next();
+    }
+
+    public static ExtractedData createExtractedDataEx(String source)
     {
         TextBlockIdentifier blockIdentifier = new TextBlockIdentifier();
 
         ExtractedData extractedPdf = null;
         try
         {
-            extractedPdf = PdfConverter.extractFromFile("test/pdf/example.pdf", blockIdentifier);
+            extractedPdf = PdfConverter.extractFromFile(source, blockIdentifier);
         }
         catch (FileNotFoundException e)
         {
@@ -53,16 +60,12 @@ public class TestSorter
             e.printStackTrace();
         }
 
-        PdfConverter.cleanAndMergeData(extractedPdf);
-
-        Collection<ExtractedPage> pages = extractedPdf.getPagesCollection();
-
-        return pages.iterator().next();
+        return extractedPdf;
     }
 
     public static boolean testBlockSorterExtractedPage()
     {
-        ExtractedPage extractedPage = createExtractedPageEx();
+        ExtractedPage extractedPage = createExtractedPageEx("test/pdf/example.pdf");
 
         Collection<Block> blocks      = extractedPage.getBlocks();
         ArrayList<Block>  addedBlocks = new ArrayList<>();

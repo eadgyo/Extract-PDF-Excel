@@ -10,8 +10,8 @@ import java.awt.*;
  */
 public class JResizedPanelPdf extends JPanel
 {
-    private double pdfWidth  = 0;
-    private double pdfHeight = 0;
+    protected double pdfWidth  = 0;
+    protected double pdfHeight = 0;
 
     public JResizedPanelPdf(double pdfWidth, double pdfHeight)
     {
@@ -32,9 +32,9 @@ public class JResizedPanelPdf extends JPanel
     public void autoScale(Graphics2D g2d)
     {
         // Get the minimum scale factor
-        double scale = Math.min(getWidth()/ pdfWidth, getHeight()/ pdfHeight);
+        double scale = Math.max(pdfWidth / getWidth(), pdfHeight / getHeight());
         // Scale render
-        g2d.scale(scale, scale);
+        //g2d.scale(scale, scale);
     }
 
     public void clearScreen(Graphics g)
