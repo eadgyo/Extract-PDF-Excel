@@ -60,7 +60,7 @@
             <manifest>
               <addClasspath>true</addClasspath>
               <classpathPrefix>lib/</classpathPrefix>
-              <mainClass>org.eadge.extractpdfexcel</mainClass>
+              <mainClass>org.eadge.extractpdfexcel.Main</mainClass>
             </manifest>
           </archive>
         </configuration>

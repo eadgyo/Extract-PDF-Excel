@@ -30,7 +30,7 @@ public class TextBlockIdentifier
     public final double spaceBlockFactorX;
 
     /**
-     * Used to merge near blocks
+     * Define space factor between block to consider as single block
      */
     public final double mergeFactor;
 

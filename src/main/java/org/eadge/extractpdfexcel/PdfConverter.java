@@ -345,7 +345,7 @@ public class PdfConverter
      * @param columnFactor column size factor
      * @return created excel sheet.
      */
-    public static HSSFSheet createExcelSheet(String sheetName, HSSFWorkbook wb, XclPage xclPage, int lineFactor, int
+    public static HSSFSheet createExcelSheet(String sheetName, HSSFWorkbook wb, XclPage xclPage, double lineFactor, double
             columnFactor)
     {
         // Create excel sheet
@@ -390,8 +390,6 @@ public class PdfConverter
      * @param textBlockIdentifier defines parameter used to
      * @param lineAxis 0 if the pdf is in portray mode
      * @param columnAxis 1 if the pdf is in portray mode
-     * @param cleanBlocks remove duplicated blocks
-     * @param mergeBlocks try to merge near blocks
      * @param lineFactor line size factor
      * @param columnFactor column size factor
      */
@@ -399,10 +397,8 @@ public class PdfConverter
                                        HSSFWorkbook workbook,
                                        TextBlockIdentifier textBlockIdentifier,
                                         int lineAxis,
-                                        int columnAxis,
-                                        boolean cleanBlocks,
-                                        boolean mergeBlocks, int lineFactor,
-                                                         int columnFactor) throws FileNotFoundException,
+                                        int columnAxis, double lineFactor,
+                                                         double columnFactor) throws FileNotFoundException,
                                                                         IncorrectFileTypeException
     {
         ArrayList<HSSFSheet> sheets = new ArrayList<>();
@@ -437,7 +433,7 @@ public class PdfConverter
                                                                                            FileNotFoundException,
                                                                                        IncorrectFileTypeException
     {
-        return createExcelSheets(sourcePDFPath, workbook, new TextBlockIdentifier(), 0, 1, true, true, 0, 0);
+        return createExcelSheets(sourcePDFPath, workbook, new TextBlockIdentifier(), 0, 1, 0, 0);
     }
 
     /**
@@ -447,8 +443,6 @@ public class PdfConverter
      * @param textBlockIdentifier defines parameter used to
      * @param lineAxis 0 if the pdf is in portray mode
      * @param columnAxis 1 if the pdf is in portray mode
-     * @param cleanBlocks remove duplicated blocks
-     * @param mergeBlocks try to merge near blocks
      * @param lineFactor line size factor
      * @param columnFactor column size factor
      */
@@ -456,10 +450,8 @@ public class PdfConverter
                                        TextBlockIdentifier textBlockIdentifier,
                                        int lineAxis,
                                        int columnAxis,
-                                       boolean cleanBlocks,
-                                       boolean mergeBlocks,
-                                       int lineFactor,
-                                       int columnFactor) throws IOException
+                                       double lineFactor,
+                                       double columnFactor) throws IOException
     {
         HSSFWorkbook workbook = new HSSFWorkbook();
 
@@ -468,8 +460,6 @@ public class PdfConverter
                                                              textBlockIdentifier,
                                                              lineAxis,
                                                              columnAxis,
-                                                             cleanBlocks,
-                                                             mergeBlocks,
                                                              lineFactor,
                                                              columnFactor);
 
@@ -485,7 +475,7 @@ public class PdfConverter
      */
     public static void createExcelFile(String sourcePDFPath, String xclPath) throws IOException
     {
-        createExcelFile(sourcePDFPath, xclPath, new TextBlockIdentifier(),0, 1, true, true,0, 0);
+        createExcelFile(sourcePDFPath, xclPath, new TextBlockIdentifier(),0, 1,0, 0);
     }
 
     /**

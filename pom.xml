@@ -39,12 +39,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.xerial</groupId>
-            <artifactId>sqlite-jdbc</artifactId>
-            <version>3.8.11.2</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-jdk15on</artifactId>
             <version>1.49</version>
@@ -116,7 +110,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>org.eadge.extractpdfexcel</mainClass>
+                            <mainClass>org.eadge.extractpdfexcel.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
