@@ -65,7 +65,7 @@ public class TestSorter
 
     public static boolean testBlockSorterExtractedPage()
     {
-        ExtractedPage extractedPage = createExtractedPageEx("test/pdf/example.pdf");
+        ExtractedPage extractedPage = createExtractedPageEx("test/pdf/test.pdf");
 
         Collection<Block> blocks      = extractedPage.getBlocks();
         ArrayList<Block>  addedBlocks = new ArrayList<>();
@@ -233,7 +233,6 @@ public class TestSorter
         blocks.add(new Block("Faire la table", new Rectangle2(304.0, 341.0, 112.0, 18.0)));
         blocks.add(new Block("Ranger les couverts", new Rectangle2(305.0, 371.0, 124.0, 13.0)));
         blocks.add(new Block("Je sais 2", new Rectangle2(147.0, 369.0, 143.0, 17.0)));
-
 
         extractedPage.addAllBlocks(blocks);
 

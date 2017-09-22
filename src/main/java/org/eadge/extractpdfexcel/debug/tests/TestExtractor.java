@@ -37,7 +37,7 @@ public class TestExtractor
         // Load the right pdf
         try
         {
-            ExtractedData extractedPdf = PdfConverter.extractFromFile("test/pdf/example.pdf", blockIdentifier);
+            ExtractedData extractedPdf = PdfConverter.extractFromFile("test/pdf/test.pdf", blockIdentifier);
 
             Collection<ExtractedPage> pages = extractedPdf.getPagesCollection();
 

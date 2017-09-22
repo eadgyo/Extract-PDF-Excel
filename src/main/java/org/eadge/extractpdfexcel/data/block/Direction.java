@@ -10,5 +10,20 @@ public enum Direction
     TOP,
     BOTTOM,
     LEFT,
-    RIGHT
+    RIGHT;
+
+    public boolean isInPortrayMode()
+    {
+        return this.equals(LEFT) || this.equals(RIGHT);
+    }
+
+    public int getLaneDirection()
+    {
+        return isInPortrayMode() ? 0 : 1;
+    }
+
+    public int getOppositeLaneDirection()
+    {
+        return isInPortrayMode() ? 1 : 0;
+    }
 }

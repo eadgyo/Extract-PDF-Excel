@@ -17,17 +17,17 @@ public class TextBlockIdentifier
     /**
      * Used to detect different block in extract process.
      *
-     * If space between two letters are above characterSpaceSize * sameBlockFactorThreshold, it's a different block.
+     * If space between two letters are above characterSpaceSize * sameBlockFactorX, it's a different block.
      */
-    public final double sameBlockFactorThreshold;
+    public final double sameBlockFactorX;
 
     /**
      * Used to detect space character in extract process.
      *
-     * If space is below characterSpaceSize * sameBlockFactorThreshold and above spaceBlockFactorThreshold, it's a space
+     * If space is below characterSpaceSize * sameBlockFactorX and above spaceBlockFactorX, it's a space
      * character.
      */
-    public final double spaceBlockFactorThreshold;
+    public final double spaceBlockFactorX;
 
     /**
      * Used to merge near blocks
@@ -49,15 +49,15 @@ public class TextBlockIdentifier
     public final double thresholdAlongY;
 
     public TextBlockIdentifier(double sameLineThreshold,
-                               double sameBlockFactorThreshold,
-                               double spaceBlockFactorThreshold,
+                               double sameBlockFactorX,
+                               double spaceBlockFactorX,
                                double thresholdAlongY,
                                double mergeFactor,
                                boolean cleanDuplicated)
     {
         this.sameLineThreshold = sameLineThreshold;
-        this.sameBlockFactorThreshold = sameBlockFactorThreshold;
-        this.spaceBlockFactorThreshold = spaceBlockFactorThreshold;
+        this.sameBlockFactorX = sameBlockFactorX;
+        this.spaceBlockFactorX = spaceBlockFactorX;
         this.thresholdAlongY = thresholdAlongY;
         this.mergeFactor = mergeFactor;
         this.cleanDuplicated = cleanDuplicated;
@@ -66,8 +66,8 @@ public class TextBlockIdentifier
     public TextBlockIdentifier()
     {
         this.sameLineThreshold = 1.0f;
-        this.sameBlockFactorThreshold = 3.0f;
-        this.spaceBlockFactorThreshold = 2.0f;
+        this.sameBlockFactorX = 3.0f;
+        this.spaceBlockFactorX = 2.0f;
         this.thresholdAlongY = 0.00001f;
         this.mergeFactor = 1.5f;
         this.cleanDuplicated = true;

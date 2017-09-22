@@ -112,27 +112,29 @@ public class DefaultSimpleExtractor implements TextExtractionStrategy
             Vector x2 = this.endLine;
 
             // Compute distance between current and last text
-            float dist = x2.subtract(x1).cross(x1.subtract(start)).lengthSquared() /
-                    x2.subtract(x1).lengthSquared();
+            float dist = x2.subtract(x1).cross(x1.subtract(start)).lengthSquared()
+                    / x2.subtract(x1).lengthSquared();
 
             if (dist > textBlockIdentifier.sameLineThreshold)
             {
                 // It's a new line. This text is not in the same block as the last one.
                 isNewBlock = true;
             }
-            else
+            else if (!letterIsBetween(startLine, endLine, start))
             {
+                // If letter is between start and end of the sentence
                 float spaceCharacterWidth = textRenderInfo.getSingleSpaceWidth();
                 float spacing             = endLine.subtract(start).length();
 
+
                 // If letters are too far
-                if (spacing > spaceCharacterWidth / textBlockIdentifier.sameBlockFactorThreshold)
+                if (spacing > spaceCharacterWidth / textBlockIdentifier.sameBlockFactorX)
                 {
                     // Letters are in two different blocks
                     isNewBlock = true;
                 }
                 // Else if letters are in the same block, but too far to be attached
-                else if (spacing > spaceCharacterWidth / textBlockIdentifier.spaceBlockFactorThreshold)
+                else if (spacing > spaceCharacterWidth / textBlockIdentifier.spaceBlockFactorX)
                 {
                     // Letters are separated with a space character
                     this.appendTextChunk(" ");
@@ -168,6 +170,18 @@ public class DefaultSimpleExtractor implements TextExtractionStrategy
 
         // Keep text info to create future block
         blockTextInfos.add(textRenderInfo);
+    }
+
+    private boolean letterIsBetween(Vector startLine, Vector endLine, Vector start)
+    {
+        Direction blockDirection = determineBlockDirection(startLine, endLine, lastAscent, lastDescent);
+
+        int laneDirection = blockDirection.getLaneDirection();
+        boolean test = start.get(laneDirection) > startLine.get(laneDirection) && start.get(laneDirection) < endLine.get
+                (laneDirection);
+
+        return start.get(laneDirection) > startLine.get(laneDirection) && start.get(laneDirection) < endLine.get
+            (laneDirection);
     }
 
     private void push()

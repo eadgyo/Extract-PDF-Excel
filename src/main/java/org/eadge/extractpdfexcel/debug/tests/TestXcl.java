@@ -78,6 +78,6 @@ public class TestXcl
 
     public static SortedPage createSortedPageEx()
     {
-        return PdfConverter.sortExtractedPage(TestSorter.createExtractedPageEx("test/pdf/test.pdf"), 0, 1, true);
+        return PdfConverter.sortExtractedPage(TestSorter.createExtractedPageEx("test/pdf/test.pdf"), 0, 1, false);
     }
 }

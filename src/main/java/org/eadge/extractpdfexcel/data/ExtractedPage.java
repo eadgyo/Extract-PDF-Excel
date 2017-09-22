@@ -161,18 +161,19 @@ public class ExtractedPage
                     && a.getTextOrientation().equals(b.getTextOrientation()))
             {
                 Rectangle2 aBound = a.getBound();
-                Rectangle2 bBound  = b.getBound();
-                if (a.getBlockOrientation().equals(Direction.TOP) || a.getBlockOrientation().equals(Direction.BOTTOM))
+                Rectangle2 bBound = b.getBound();
+                if (a.getBlockOrientation().equals(Direction.TOP) || a.getBlockOrientation()
+                                                                      .equals(Direction.BOTTOM))
                 {
                     double dist = bBound.getY() - aBound.getY();
                     thresholdY = Math.min(aBound.getHeight(), bBound.getHeight()) * mergeFactor;
                     if (Math.abs(dist) < thresholdY)
                     {
-                        /*
-                         * On sait que les éléments proche et on regarde si l'un est au dessus de l'autre
-                         * En plus on s'assure que le second texte soit au milieu du premier, au début ou à la fin.
-                         * Sinon on considère que les deux textes ne sont pas liés.
-                         */
+                    /*
+                     * On sait que les éléments proche et on regarde si l'un est au dessus de l'autre
+                     * En plus on s'assure que le second texte soit au milieu du premier, au début ou à la fin.
+                     * Sinon on considère que les deux textes ne sont pas liés.
+                     */
                         if (dist < 0) // On échange
                         {
                             Block tmp = a;
@@ -211,6 +212,7 @@ public class ExtractedPage
                 }
             }
         }
+
 
         finaliseMerging();
     }
