@@ -33,7 +33,7 @@ You can convert your pdf into an Excel file in java application.
 PdfConverter.createExcelFile("File.pdf", "File.xcl");
 ```
 ### Four steps conversion
-You can also do the 4 steps to create your xcl sheets.
+You can also execute each steps, in case you would like to access to data before creating the file.
 #### Extract Data
 Text information is extracted in keeps in blocks.
 ```
