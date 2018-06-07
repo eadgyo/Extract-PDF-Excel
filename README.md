@@ -1,17 +1,19 @@
 # PDF to Excel Converter
-Convert pdf text information to excel.
-## Using java application
-Convert from the java application in org/eadge/extractpdfexcel/0.1 directory.
+Convert pdf to excel. Only the text will be extracted.
+This was used
+
+## 1. Using java application
+You can use the java application (in org/eadge/extractpdfexcel/0.1 directory) to convert one pdf file into excel format.
 ```
 java -jar extractpdfexcel-0.1.jar source.pdf result.xcl
 ```
 
-To specify some options, consult the help.
+To specify some options, you can consult the help. You may want to specify column and row width.
 ```
 java -jar extractpdfexcel-0.1.jar
 ```
-## Convert in java
-### Import in your java project with Maven
+## 2. Convert using java
+### 2.1 Import in your java project with Maven
 Add the repository:
 ```
 <repository>
@@ -27,34 +29,34 @@ And the dependency:
     <version>0.1</version>
 </dependency>
 ```
-### One step conversion
+### 2.2 One step conversion
 You can convert your pdf into an Excel file in java application.
 ```
 PdfConverter.createExcelFile("File.pdf", "File.xcl");
 ```
-### Four steps conversion
+### 2.3 Four steps conversion
 You can also execute each steps, in case you would like to access to data before creating the file.
-#### Extract Data
+#### 2.3.1 Extract Data
 Text information is extracted in keeps in blocks.
 ```
 ExtractedData extractedData = PdfConverter.extractFromFile(sourcePDFPath, textBlockIdentifier);
 ```
-#### Sort Data
+#### 2.3.2 Sort Data
 Blocks are sorted, lines and columns are created.
 ```
 SortedData sortedData = PdfConverter.sortExtractedData(extractedData, lineAxis, columnAxis, true);
 ```
-#### Create XCL Pages
+#### 2.3.3 Create XCL Pages
 2D array containing text blocks are created.
 ```
 ArrayList<XclPage> excelPages = PdfConverter.createExcelPages(sortedData);
 ```
-#### Create sheets
+#### 2.3.4 Create sheets
 Using POI Library, you can create xcl sheets.
 ```
 HSSFSheet excelSheet = PdfConverter.createExcelSheet("sheetName", workbook, excelPage);
 ```
-### Visualize XCLPage
+### 2.4 Visualize XCLPage
 You can also visualize all the created excel sheets.
 ```
 PdfConverter.displayXCLPages(excelPages);
