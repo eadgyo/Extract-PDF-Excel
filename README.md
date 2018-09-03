@@ -1,6 +1,5 @@
 # PDF to Excel Converter
 Convert pdf to excel. Only the text will be extracted.
-This was used
 
 ## 1. Using java application
 You can use the java application (in org/eadge/extractpdfexcel/0.1 directory) to convert one pdf file into excel format.
