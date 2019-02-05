@@ -90,4 +90,8 @@ public class PdfParser
     {
         extractedData.mergeBlocks(mergeFactor);
     }
+
+    public void close() {
+        this.pdf.close();
+    }
 }

@@ -112,6 +112,7 @@ public class PdfConverter
             if (textBlockIdentifier.mergeFactor > 1.0)
                 parser.mergeBlocks(textBlockIdentifier.mergeFactor);
 
+            parser.close();
             // return extractedData extracted with parser
             return parser.getExtractedData();
         }
