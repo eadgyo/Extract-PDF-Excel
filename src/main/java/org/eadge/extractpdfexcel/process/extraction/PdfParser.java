@@ -61,6 +61,7 @@ public class PdfParser
         {
             // Extract content with defined extractor
             parser.processContent(pageIndex, extractor);
+            extractor.push();
         }
         catch (IOException e)
         {

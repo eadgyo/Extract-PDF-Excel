@@ -223,7 +223,7 @@ public class DefaultSimpleExtractor implements TextExtractionStrategy
             (laneDirection);
     }
 
-    private void push()
+    public void push()
     {
         if (blockTextInfos.size() <= 0)
             return;
