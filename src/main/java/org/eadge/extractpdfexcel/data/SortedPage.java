@@ -135,8 +135,17 @@ public class SortedPage
                     if (line == -1)
                         throw new NoCorrespondingLane();
 
-                    // Set at the position, the block
-                    my2DArray.set(col, line, block);
+                    if (my2DArray.get(col, line) != null)
+                    {
+                        Block block1 = my2DArray.get(col, line);
+                        block1.setFormattedText(block1.getFormattedText() + " \n"+ block.getFormattedText());
+                        block1.setOriginalText(block1.getOriginalText() + " \n" + block1.getOriginalText());
+                    }
+                    else
+                    {
+                        // Set at the position, the block
+                        my2DArray.set(col, line, block);
+                    }
                 }
                 catch (NoCorrespondingLane noCorrespondingLane)
                 {

@@ -2,6 +2,7 @@ package org.eadge.extractpdfexcel.tools;
 
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.pdf.DocumentFont;
+import com.itextpdf.text.pdf.PdfString;
 import com.itextpdf.text.pdf.parser.*;
 import org.eadge.extractpdfexcel.data.block.Block;
 import org.eadge.extractpdfexcel.data.block.Direction;
@@ -89,7 +90,6 @@ public class DefaultSimpleExtractor implements TextExtractionStrategy
 
     private void appendTextChunk(CharSequence text)
     {
-        this.result.append(text);
     }
 
     public void renderText(TextRenderInfo textRenderInfo)
@@ -541,7 +541,7 @@ public class DefaultSimpleExtractor implements TextExtractionStrategy
 
     public void renderImage(ImageRenderInfo imageRenderInfo)
     {
-
+        System.out.println("Image renderer not implemented");
     }
 
     public ArrayList<Block> getExtractedBlocks()

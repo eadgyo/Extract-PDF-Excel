@@ -1,5 +1,8 @@
 package org.eadge.extractpdfexcel;
 
+import com.itextpdf.text.pdf.AcroFields;
+import com.itextpdf.text.pdf.PRAcroForm;
+import com.itextpdf.text.pdf.PdfDictionary;
 import com.itextpdf.text.pdf.PdfReader;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -22,6 +25,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by eadgyo on 12/07/16.
@@ -99,7 +104,6 @@ public class PdfConverter
                 // pdf is not readable
                 throw new IncorrectFileTypeException(path);
             }
-
             // Pdf is readable
             // Create parser to extract data from pdf
             PdfParser parser = new PdfParser(pdf, textBlockIdentifier);

@@ -27,6 +27,7 @@ public class Block
     private Set<BaseColor> backColors;
     private Set<DocumentFont> fonts;
 
+
     private Block prev = null;
     private Block next = null;
 
