@@ -23,6 +23,7 @@ public class Main
             }
 
             System.out.println("No xcl path");
+            return;
         }
         Object parameters[] = {1.0, 3.0, 2.0, 0.00001, 1.4, true, 0.0, 0.0};
 

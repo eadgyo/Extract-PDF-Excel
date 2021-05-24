@@ -8,9 +8,13 @@ import org.eadge.extractpdfexcel.data.block.Direction;
 import org.eadge.extractpdfexcel.data.geom.Rectangle2;
 import org.eadge.extractpdfexcel.models.TextBlockIdentifier;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
+
+import static org.apache.commons.lang3.reflect.FieldUtils.getField;
+
 
 /**
  * Created by eadgyo on 12/07/16.
@@ -90,6 +94,9 @@ public class DefaultSimpleExtractor implements TextExtractionStrategy
 
     public void renderText(TextRenderInfo textRenderInfo)
     {
+        // Clone GraphicState to make further to be stored
+        cloneTextRenderInfoField(textRenderInfo);
+
         LineSegment segment = textRenderInfo.getBaseline();
 
         // Get start and end point of text
@@ -170,6 +177,38 @@ public class DefaultSimpleExtractor implements TextExtractionStrategy
 
         // Keep text info to create future block
         blockTextInfos.add(textRenderInfo);
+    }
+
+    private void cloneTextRenderInfoField(TextRenderInfo textRenderInfo)
+    {
+        Class textRenderInfoClass = textRenderInfo.getClass();
+        try
+        {
+            // Replace Graphics State
+            Field gsField = getField(textRenderInfoClass, "gs", true);
+            Object gs = gsField.get(textRenderInfo);
+            if (gs != null) {
+                GraphicsState sourceGS = (GraphicsState) gsField.get(textRenderInfo);
+                GraphicsState outGS = new GraphicsState(sourceGS);
+                gsField.set(textRenderInfo, outGS);
+            }
+
+            // Replace matrix userSpaceTransform
+            Field textToUserSpaceTransformMatrixField = getField(textRenderInfoClass, "textToUserSpaceTransformMatrix", true);
+            Object textToUserMatrix = textToUserSpaceTransformMatrixField.get(textRenderInfo);
+            if (textToUserMatrix != null) {
+                Matrix sourceMatrix = (Matrix) textToUserSpaceTransformMatrixField.get(textRenderInfo);
+                Matrix outMatrix = new Matrix(sourceMatrix.get(0), // a
+                        sourceMatrix.get(1), // b
+                        sourceMatrix.get(3), // c
+                        sourceMatrix.get(4), // d
+                        sourceMatrix.get(6), // e
+                        sourceMatrix.get(7)); // f
+                textToUserSpaceTransformMatrixField.set(textRenderInfo, outMatrix);
+            }
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 
     private boolean letterIsBetween(Vector startLine, Vector endLine, Vector start)

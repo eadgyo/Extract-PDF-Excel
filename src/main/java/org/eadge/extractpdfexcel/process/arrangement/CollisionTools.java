@@ -38,7 +38,7 @@ class CollisionTools
      *
      * @return true if they are colliding, false if they aren't
      */
-    private static boolean areRectColliding(int oneAxis, Rectangle2 rect1, Rectangle2 rect2)
+    public static boolean areRectColliding(int oneAxis, Rectangle2 rect1, Rectangle2 rect2)
     {
         return rect1.getPos(oneAxis) < rect2.getPos(oneAxis) + rect2.getLength(oneAxis) &&
                 rect1.getPos(oneAxis) + rect1.getLength(oneAxis) > rect2.getPos(oneAxis);

@@ -6,10 +6,7 @@ import org.eadge.extractpdfexcel.data.lane.Lane;
 import org.eadge.extractpdfexcel.data.lane.Lanes;
 import org.eadge.extractpdfexcel.data.utils.MyPair;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by eadgyo on 17/07/16.
@@ -38,40 +35,49 @@ public class BlockSorter
         Lane higherLane = floorAndHigherLane.getRight();
 
         // If lowerLane exists AND lowerLane is colliding
-        if (lowerLane != null && CollisionTools.isCollidingWithBlock(oppositeAxis, block, lowerLane))
+        if (lowerLane != null &&
+                CollisionTools.isCollidingWithBlock(oppositeAxis, block, lowerLane))
         {
             // Compare block to existing in lane blocks on lane axis
             Block      collidingBlock      = CollisionTools.getBlockCollidingInLane(axis, block, lowerLane);
             Set<Block> savedCollidingBlock = new HashSet<>();
 
-            // While there are blocks colliding along lane axis
-            while (collidingBlock != null)
+            if (collidingBlock != null && CollisionTools.areRectColliding(oppositeAxis, block.getBound(), collidingBlock.getBound()))
             {
-                // We have to find another lane to handle prevent collision
-                // If a good higher lane exists, use this one, else split lower lane in 2 lanes
-                Lane insertedLane = useExistingOrSplitLane(axis,
-                                                           oppositeAxis,
-                                                           block,
-                                                           collidingBlock,
-                                                           lowerLane,
-                                                           higherLane,
-                                                           lanes,
-                                                           savedCollidingBlock);
-                // If insert lane has changed
-                if (insertedLane != lowerLane)
+                // We are in a case were the 2 blocks are colliding, no decision made
+            }
+            else
+            {
+
+                // While there are blocks colliding along lane axis
+                while (collidingBlock != null)
                 {
-                    // Change lowerLane
-                    lowerLane = insertedLane;
+                    // We have to find another lane to handle prevent collision
+                    // If a good higher lane exists, use this one, else split lower lane in 2 lanes
+                    Lane insertedLane = useExistingOrSplitLane(axis,
+                                                               oppositeAxis,
+                                                               block,
+                                                               collidingBlock,
+                                                               lowerLane,
+                                                               higherLane,
+                                                               lanes,
+                                                               savedCollidingBlock);
+                    // If insert lane has changed
+                    if (insertedLane != lowerLane)
+                    {
+                        // Change lowerLane
+                        lowerLane = insertedLane;
 
-                    // Update higherLane
-                    higherLane = lanes.getHigherLane(lowerLane.getPos(oppositeAxis));
+                        // Update higherLane
+                        higherLane = lanes.getHigherLane(lowerLane.getPos(oppositeAxis));
+                    }
+
+                    // Update lanes' bounds
+                    updateLowerAndKnownHigher(oppositeAxis, lanes, lowerLane, higherLane);
+
+                    // Update collidingBlock
+                    collidingBlock = CollisionTools.getBlockCollidingInLane(axis, block, lowerLane);
                 }
-
-                // Update lanes' bounds
-                updateLowerAndKnownHigher(oppositeAxis, lanes, lowerLane, higherLane);
-
-                // Update collidingBlock
-                collidingBlock = CollisionTools.getBlockCollidingInLane(axis, block, lowerLane);
             }
 
             // Insert block in lowerLane
@@ -213,7 +219,7 @@ public class BlockSorter
                                                                      collidingBlock.getBound());
         Block lowerBlock, higherBlock;
 
-        // If the inserted block is at the right of the colliding block
+        // If the inserted block is at the right of colliding block
         if (relativeDirection == Direction.TOP)
         {
             lowerBlock = insertedBlock;
