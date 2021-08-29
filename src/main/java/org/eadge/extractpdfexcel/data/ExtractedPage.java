@@ -157,8 +157,9 @@ public class ExtractedPage
                 continue;
 
             // Same orientation
-            if (a.getBlockOrientation().equals(b.getBlockOrientation())
+            if ((a.getBlockOrientation().equals(b.getBlockOrientation())
                     && a.getTextOrientation().equals(b.getTextOrientation()))
+                    || SingletonConfig.getInstance().ignoreDirection)
             {
                 Rectangle2 aBound = a.getBound();
                 Rectangle2 bBound = b.getBound();

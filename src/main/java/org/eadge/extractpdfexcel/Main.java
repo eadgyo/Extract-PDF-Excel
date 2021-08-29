@@ -1,5 +1,6 @@
 package org.eadge.extractpdfexcel;
 
+import org.eadge.extractpdfexcel.data.SingletonConfig;
 import org.eadge.extractpdfexcel.models.TextBlockIdentifier;
 
 import java.io.IOException;
@@ -25,34 +26,35 @@ public class Main
             System.out.println("No xcl path");
             return;
         }
-        Object parameters[] = {1.0, 3.0, 2.0, 0.00001, 1.4, true, 0.0, 0.0};
+        Object parameters[] = {false, 1.0, 3.0, 2.0, 0.00001, 1.4, true, 0.0, 0.0};
 
         String sourcePdf = args[0];
         String renderXCL = args[1];
-
-        for (int i = 2; i < args.length; i++)
+        for (int i = 0; i < args.length-2; i++)
         {
-            if (i == 7)
+            if (i == 6 || i == 0)
             {
-                parameters[i] = Boolean.parseBoolean(args[i]);
+                parameters[i] = Boolean.parseBoolean(args[i+2]);
             }
             else
             {
-                parameters[i] = Double.parseDouble(args[i]);
+                parameters[i] = Double.parseDouble(args[i+2]);
             }
         }
 
-        TextBlockIdentifier textBlockIdentifier = new TextBlockIdentifier((double) parameters[0],
-                                                                          (double) parameters[1],
+        TextBlockIdentifier textBlockIdentifier = new TextBlockIdentifier((double) parameters[1],
                                                                           (double) parameters[2],
                                                                           (double) parameters[3],
                                                                           (double) parameters[4],
-                                                                          (boolean) parameters[5]);
+                                                                          (double) parameters[5],
+                                                                          (boolean) parameters[6]);
+
+        SingletonConfig.getInstance().ignoreDirection = (boolean) parameters[0];
 
         try
         {
-            PdfConverter.createExcelFile(sourcePdf, renderXCL, textBlockIdentifier, 0, 1, (double) parameters[6],
-                                         (double) parameters[7]);
+            PdfConverter.createExcelFile(sourcePdf, renderXCL, textBlockIdentifier, 0, 1, (double) parameters[7],
+                                         (double) parameters[8]);
         }
         catch (IOException e)
         {
@@ -62,11 +64,12 @@ public class Main
 
     public static void printHelp()
     {
-        System.out.println("Parameters: sourcePDFPath renderedXCLPath sameLineThreshold sameBlockFactorX " +
+        System.out.println("Parameters: sourcePDFPath renderedXCLPath ignoreDirection sameLineThreshold sameBlockFactorX " +
                                    "spaceBlockFactorX thresholdAlongY mergeFactor cleanDuplicated lineFactor " +
                                    "columnFactor");
 
         System.out.println("");
+        System.out.println("    -ignoreDirection (false): Used to ignore direction of block.\n");
 
         System.out.println("    -sameLineThreshold (1.0): Used to determine different block in extract process. Above" +
                                    " " +
